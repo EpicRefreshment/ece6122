@@ -23,9 +23,13 @@ to display the text required by the assignment.
 */
 int main()
 {
-    cout << "My name is: Jonathan Wolford\n";
-    cout << "This (\") is a double quote.\n";
-    cout << "This (\') is a single quote.\n";
-    cout << "This (\\) is a backslash.\n";
-    cout << "This (/) is a forward slash.\n";
+    // Output via insertion stream operators.
+    cout << "My name is: Jonathan Wolford" << endl;
+    cout << "This (\") is a double quote." << endl;
+    cout << "This (\') is a single quote." << endl;
+    cout << "This (\\) is a backslash." << endl;
+    cout << "This (/) is a forward slash." << endl;
+
+    // Operation successful. Exit program
+    return 0;
 }
