@@ -1,11 +1,12 @@
 /*
 Author: Jonathan Wolford
-Class: ECE6122
-Problem: Lab0_Problem1
+Class: ECE6122Q
 Date Created: 08/20/2025
 Date Last Modified: 08/20/2025
 
 Description:
+
+Lab 0 Problem 1
 
 This file is a simple C++ program that outputs text to the console that solves Problem 1 of Lab 0 in ECE6122.
 This program acts as an example of using insertion stream operators and escape characters
