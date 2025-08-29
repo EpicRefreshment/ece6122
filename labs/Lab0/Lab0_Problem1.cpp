@@ -19,7 +19,8 @@ using namespace std;
 
 /*
 Program entrypoint. Simple function that uses insertion stream operators
-to display the text required by the assignment.*/
+to display the text required by the assignment.
+*/
 int main()
 {
     cout << "My name is: Jonathan Wolford\n";
