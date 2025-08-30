@@ -39,10 +39,51 @@ vector<int> sieveOfEratosthenes(int limit)
 Naive implementation of finding all primes below a threshold.
 // Returns a vector of all primes below the threshold.
 */
+vector<int> findPrimesKnuth(int threshold)
+{
+    // Initialize primes vector.
+    vector<int> primes;
+
+    cout << "Finding primes below " << threshold << "." << endl;
+
+    // P1
+    primes.insert(primes.end(), {2, 3}); // This should always start with 2 and 3
+    for (int num = 5; num < threshold; num += 2) // skip even numbers.
+    {
+        bool prime = true;
+    }
+    // P3
+
+    return primes;
+}
+/*
+Naive implementation of finding all primes below a threshold.
+// Returns a vector of all primes below the threshold.
+*/
 vector<int> findPrimes(int threshold)
 {
-    vector<int> primes(2);
-    cout << "Finding primes below " << threshold << " ." << endl;
+    // Initialize primes vector.
+    vector<int> primes;
+
+    cout << "Finding primes below " << threshold << "." << endl;
+
+    primes.insert(primes.end(), 2); // This should always start with 2.
+    for (int num = 3; num < threshold; num += 2) // skip even numbers.
+    {
+        bool prime = true; // flag for prime status.
+        for (int div = 2; div * div <= num; div++) // check divisibility up to sqrt(num).
+        {
+            if (num % div == 0)
+            {
+                prime = false; // num is divisible by div, so it is not prime.
+                break; // no need to check further.
+            }
+        }
+        if (prime)
+        {
+            primes.insert(primes.end(), num); // add prime to list.
+        }
+    }
     return primes;
 }
 
@@ -50,12 +91,16 @@ bool validateInput(string userInput)
 {
     // Check if input is an integer.
     int tempInt; // local variable for testing cast to integer.
-    if (stringstream(userInput) >> tempInt)
+    stringstream userInputStream = stringstream(userInput);
+    userInputStream >> tempInt;
+
+    // Check if any fail bits are set and if the eof bit is not set.
+    // These are indicators that the input was not a valid integer.
+    if (userInputStream.eof() && !userInputStream.fail())
     {
-        cout << tempInt << endl;
         // if input is a valid integer, check if it is positive
         // and less than 2^32
-        if (tempInt < 0 || tempInt >= 4,294,967,296) // 2^32 = 4,294,967,296
+        if (tempInt < 0 || tempInt > 4294967295) // 2^32 = 4,294,967,296
         {
             return false; // Input is not positive or too large.
         }
@@ -96,7 +141,42 @@ int main()
         else 
         {
             stringstream(userInput) >> threshold;
+
+            // Naive method
+            auto start = chrono::high_resolution_clock::now();
+            primes = findPrimes(threshold);
+            auto end = chrono::high_resolution_clock::now();
+
+            double duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+            duration *= 1e-9; // convert to seconds.
+
+            cout << "Time taken to find primes with naive method: " << fixed << duration 
+                 << " seconds." << endl;
+
             cout << "Threshold: " << threshold << endl;
+            for (int prime : primes)
+            {
+                cout << prime << " ";
+            }
+            cout << endl;
+
+            // Donald Knuth method
+            start = chrono::high_resolution_clock::now();
+            primes = findPrimesKnuth(threshold);
+            end = chrono::high_resolution_clock::now();
+
+            duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+            duration *= 1e-9; // convert to seconds.
+
+            cout << "Time taken to find primes with Donald Knuth method: " << fixed << duration 
+                 << " seconds." << endl;
+
+            cout << "Threshold: " << threshold << endl;
+            for (int prime : primes)
+            {
+                cout << prime << " ";
+            }
+            cout << endl;
         }
 
     } while (threshold != 0);
