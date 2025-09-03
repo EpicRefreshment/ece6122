@@ -1,0 +1,6 @@
+[submodule "Beginning-Cpp-Game-Programming-Second-Edition"]
+	path = Beginning-Cpp-Game-Programming-Second-Edition
+	url = https://github.com/EpicRefreshment/Beginning-Cpp-Game-Programming-Second-Edition.git
+[submodule "Learn-CUDA-Programming"]
+	path = Learn-CUDA-Programming
+	url = https://github.com/EpicRefreshment/Learn-CUDA-Programming.git
