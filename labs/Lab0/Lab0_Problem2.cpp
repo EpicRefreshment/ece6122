@@ -27,8 +27,13 @@ using namespace std;
 /*
 This function generates a list of prime numbers below the given threshold
 This is a modified version of the Sieve of Eratosthenes algorithm that runs
-in O(n) time complexity
-Returns a vector of all primes below the threshold.
+in O(n) time complexity. Returns a vector of all primes below the threshold.
+
+Arguments:
+    threshold - upper limit given by user
+
+Return Values:
+    vector<int> - list of all prime numbers below the threshold
 */
 vector<int> findPrimes(int threshold)
 {
@@ -61,16 +66,30 @@ vector<int> findPrimes(int threshold)
         }
     }
 
-    return primes;
+    return primes; // return list of primes
 }
 
+/* 
+This function finds the longest sum of consecutive primes that results in a prime.
+It uses a sliding window on a given list of primes under a threshold. It returns
+a vector containing the primes that make up the sum with the resulting prime
+placed at the end of the vector.
+
+Arguments:
+    threshold - upper limit given by user
+    primes - vector of all primes below the threshold
+
+Return Values:
+    vector<int> - list of consecutive primes that sum to a prime, with the resulting prime
+                  placed at the end of the vector.
+*/
 vector<int> findPrimeSum(int threshold, vector<int> primes)
 {
     vector<int> primeSum; // Vector to store the longest sum of consecutive primes and the resulting prime.
     int sum = 0; // Temporary variable to store sum of consecutive primes.
-    int initialSum = 0; // Initial sum of consecutive primes.
-    int initialPrime = 0; // Starting index of the consecutive primes to mark start of subset of primes.
-    int endPrime = 0; // Ending index of the consecutive primes to mark end of subset of primes.
+    int initialSum = 0; // Starting sum of consecutive primes.
+    int initialPrime = 0; // Starting index of sliding window
+    int endPrime = 0; // Final index of sliding window.
 
     // Add each prime until threshold reached
     while (initialSum < threshold)
@@ -113,6 +132,16 @@ vector<int> findPrimeSum(int threshold, vector<int> primes)
     return primeSum; // Return empty vector if no sum found.
 }
 
+/*
+This function validates user input to ensure it is an integer value
+>=0 and <= 2^32 - 1. Returns boolean indicating validity.
+
+Arguments:
+    userInput - string input from user
+
+Return Values:
+    bool - true if input is valid, false otherwise
+*/
 bool validateInput(string userInput)
 {
     // Check if input is an integer.
@@ -141,6 +170,14 @@ bool validateInput(string userInput)
     }
 }
 
+/*
+This function displays the resulting sum of consecutive primes
+and the list of primes that make up the sum. Does not return a value.
+
+Arguments:
+    primeSum - vector of consecutive primes that sum to a prime, with the resulting prime
+               placed at the end of the vector.
+*/
 void displayResult(vector<int> primeSum)
 {
     // display sum of primes which is placed on the back of the vector.
@@ -160,6 +197,12 @@ void displayResult(vector<int> primeSum)
     }
 }
 
+/* 
+This is the main function that handles program flow.
+It takes in user input, checks input validity, and either
+outputs error message or displays result. 
+Calls functions to calculate the longest sum of consecutive primes below the given threshold
+*/
 int main()
 {
     // Instantiate variables.
