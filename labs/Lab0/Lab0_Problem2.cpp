@@ -2,7 +2,7 @@
 Author: Jonathan Wolford
 Class: ECE6122Q
 Date Created: 08/20/2025
-Date Last Modified: 08/20/2025
+Date Last Modified: 09/03/2025
 
 Description:
 
@@ -22,13 +22,12 @@ Invalid input will result in an error message and a prompt for new input.
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include <chrono>
 using namespace std;
 
 /*
 This function generates a list of prime numbers below the given threshold
 This is a modified version of the Sieve of Eratosthenes algorithm that runs
-in O(n) time complexity referenced from the GeeksOnGeeks website. 
+in O(n) time complexity
 Returns a vector of all primes below the threshold.
 */
 vector<int> findPrimes(int threshold)
@@ -39,8 +38,8 @@ vector<int> findPrimes(int threshold)
 
     isPrime[0] = isPrime[1] = false; // 0 and 1 are not prime numbers.
 
-    //Iterate through all numbers from 2 to threshold.
-    //If the number is marked as prime, add it to the list of primes
+    // Iterate through all numbers from 2 to threshold.
+    // If the number is marked as prime, add it to the list of primes
     for (int num = 2; num < threshold; num++)
     {
         if (isPrime[num])
@@ -55,9 +54,9 @@ vector<int> findPrimes(int threshold)
              num * primes[primeFactor] < threshold && primes[primeFactor] <= spf[num];
              primeFactor++)
         {
-            isPrime[num * primes[primeFactor]] = false;
+            isPrime[num * primes[primeFactor]] = false; // Mark composite (non-prime)
 
-            // Add smallest prime factor to SPF
+            // Add smallest prime factor of multiple to SPF
             spf[num * primes[primeFactor]] = primes[primeFactor];
         }
     }
@@ -73,18 +72,22 @@ vector<int> findPrimeSum(int threshold, vector<int> primes)
     int initialPrime = 0; // Starting index of the consecutive primes to mark start of subset of primes.
     int endPrime = 0; // Ending index of the consecutive primes to mark end of subset of primes.
 
+    // Add each prime until threshold reached
     while (initialSum < threshold)
     {
         initialSum += primes[endPrime];
         endPrime++;
     }
     
+    // These two loops calculate the sum of consecutive primes using a sliding window
+    // approach with num being the size of the window.
     for (int num = endPrime - 1; num > 0; num--)
     {
+        // initialize starting sum of primes[0 : num - 1]
         initialSum -= primes[num];
         sum = initialSum;
+        initialPrime = 0; // set starting index to 0 for each iteration
 
-        initialPrime = 0;
         while (sum < threshold)
         {
             // check if sum is prime
@@ -92,13 +95,17 @@ vector<int> findPrimeSum(int threshold, vector<int> primes)
             {
                 // Get iterators for subset of primes that meet the problem criteria
                 auto first = primes.begin() + initialPrime;
-                auto last = primes.begin() + num;
+                auto last = primes.begin() + (num + initialPrime);
+
                 // Initialize vector to store the longest sum of consecutive primes and the resulting prime
-                // with subset of primes vector.
+                // sum for convenient return value.
                 primeSum.assign(first, last);
                 primeSum.push_back(sum); // Add resulting prime to end of vector.
                 return primeSum; // Return the vector.
             }
+
+            // Calculate next sum of primes in subset in sliding window
+            // primes[initialPrime : initialPrime + num - 1]
             sum += primes[num + initialPrime] - primes[initialPrime];
             initialPrime++;
         }
@@ -136,9 +143,13 @@ bool validateInput(string userInput)
 
 void displayResult(vector<int> primeSum)
 {
+    // display sum of primes which is placed on the back of the vector.
     cout << "The answer is " << primeSum.back();
-    primeSum.pop_back(); // Remove the resulting prime from the vector.
+    primeSum.pop_back(); // Remove the prime sum from the vector.
+
     cout << " with " << primeSum.size() << " terms: ";
+    
+    // display list of primes in sum
     for (int prime : primeSum)
     {
         cout << prime << " ";
@@ -147,7 +158,6 @@ void displayResult(vector<int> primeSum)
             cout << "+ ";
         }
     }
-    cout << endl;
 }
 
 int main()
@@ -157,9 +167,6 @@ int main()
     vector<int> primes; // Vector to store prime numbers.
     vector<int> primeSum; // Vector to store the longest sum of consecutive primes and the resulting prime.
     bool valid; // Flag for valid input.
-    double duration; // Time in seconds
-    auto start = chrono::high_resolution_clock::now();
-    auto end = chrono::high_resolution_clock::now();
 
     // Begin main loop that asks for user input until user enters 0.
     do {
@@ -169,33 +176,26 @@ int main()
         // Prompt user for input.
         cout << "Please enter a natural number (0 to quit): ";
         getline(cin, userInput);
+        stringstream(userInput) >> threshold;
 
         // Check for valid input.
         valid = validateInput(userInput);
         if (!valid) 
         {
             cout << "Error! Invalid input!" << endl;
-            threshold = -1; // set threshold so loop continues.
+            threshold = -1; // set threshold to int value so loop continues.
         }   
-        else 
+        else if (threshold != 0) // check if user terminated program
         {
-            stringstream(userInput) >> threshold;
-
-            // Sieve method
-            start = chrono::high_resolution_clock::now();
+            // Generate list of primes below threshold
             primes = findPrimes(threshold);
-            end = chrono::high_resolution_clock::now();
 
-            duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-            duration *= 1e-9; // convert to seconds.
-
-            cout << "Time taken to find primes with sieve method: " << fixed << duration 
-                 << " seconds." << endl;
-
-            cout << "Threshold: " << threshold << endl;
+            // Find longest consecutive sum of primes from prime list
             primeSum = findPrimeSum(threshold, primes);
-            if (!primeSum.empty())
+
+            if (!primeSum.empty()) // Check if vector is empty
             {
+                // Display resulting sum and list of primes in proper format
                 displayResult(primeSum);
             }
             else
@@ -205,7 +205,7 @@ int main()
             cout << endl;
         }
 
-    } while (threshold != 0);
+    } while (threshold != 0); // 0 terminates program
 
     // User terminated program.
     cout << "Program terminated." << endl;
