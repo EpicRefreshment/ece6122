@@ -230,12 +230,22 @@ int main()
         }   
         else if (threshold != 0) // check if user terminated program
         {
-            // Generate list of primes below threshold
-            primes = findPrimes(threshold);
+            if (threshold > 3)
+            {
+                // Generate list of primes below threshold
+                primes = findPrimes(threshold);
 
-            // Find longest consecutive sum of primes from prime list
-            primeSum = findPrimeSum(threshold, primes);
-
+                // Find longest consecutive sum of primes from prime list
+                primeSum = findPrimeSum(threshold, primes);
+            }
+            else if (threshold <= 2)
+            {
+                primeSum = {}; // No primes less than or equal to 2, so return empty vector.
+            }
+            else // threshold is 3
+            {
+                primeSum = {2, 2}; // Only prime less than 3 is 2, so return vector with single prime sum.
+            }
             if (!primeSum.empty()) // Check if vector is empty
             {
                 // Display resulting sum and list of primes in proper format
@@ -243,7 +253,7 @@ int main()
             }
             else
             {
-                cout << "No sum of consecutive primes found that results in a prime below the threshold." << endl;
+                cout << "The answer is 0 with 0 terms:";
             }
             cout << endl;
         }
