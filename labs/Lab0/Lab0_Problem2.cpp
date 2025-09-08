@@ -242,7 +242,7 @@ int main()
             {
                 primeSum = {}; // No primes less than or equal to 2, so return empty vector.
             }
-            else // threshold is 3
+            else // threshold is 3. This case results in undefined behavior if not handled specifically.
             {
                 primeSum = {2, 2}; // Only prime less than 3 is 2, so return vector with single prime sum.
             }
