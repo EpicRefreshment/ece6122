@@ -4,3 +4,6 @@
 [submodule "Learn-CUDA-Programming"]
 	path = Learn-CUDA-Programming
 	url = https://github.com/EpicRefreshment/Learn-CUDA-Programming.git
+[submodule "labs/Lab1/SFML"]
+	path = labs/Lab1/SFML
+	url = https://github.com/EpicRefreshment/SFML.git
