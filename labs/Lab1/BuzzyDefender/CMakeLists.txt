@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add source files
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
-                  ${PROJECT_SOURCE_DIR}/code/ECE_Buzzy.cpp)
+                  ${PROJECT_SOURCE_DIR}/code/ECE_Buzzy.cpp
+                  ${PROJECT_SOURCE_DIR}/code/ECE_Defender.cpp)
 
 # Add the executable
 add_executable(BuzzyDefender ${SOURCES})

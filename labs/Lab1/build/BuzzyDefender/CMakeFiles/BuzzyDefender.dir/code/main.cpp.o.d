@@ -256,4 +256,6 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o: \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Sprite.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Text.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/VertexBuffer.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Defender.h \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Buzzy.h \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Buzzy.h

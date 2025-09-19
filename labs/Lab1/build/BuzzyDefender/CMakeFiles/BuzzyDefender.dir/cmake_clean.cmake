@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "../output/bin/BuzzyDefender.pdb"
   "CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o"
   "CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o.d"
+  "CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o"
+  "CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o.d"
   "CMakeFiles/BuzzyDefender.dir/code/main.cpp.o"
   "CMakeFiles/BuzzyDefender.dir/code/main.cpp.o.d"
 )

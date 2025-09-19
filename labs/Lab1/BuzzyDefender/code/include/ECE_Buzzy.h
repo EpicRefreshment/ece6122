@@ -10,17 +10,20 @@ using namespace std;
 class ECE_Buzzy: public Sprite
 {
 public:
-    ECE_Buzzy(Vector2u windowSize);
+    // Public member functions
+    ECE_Buzzy();
+    void scaleBuzzy(Vector2u windowSize);
+    void setInitialPosition();
     void update();
     void fireLaser();
     bool collisionDetected(const Sprite& object);
-    Sprite spriteBuzzy;
 private:
-    Texture textureBuzzy;
+    // Private member variables
+    Texture buzzyTexture;
     Vector2u buzzySize;
-    float speedBuzzy;
-    float positionXBuzzy;
-    float positionYBuzzy;
+    float buzzySpeed;
+    float buzzyPosX;
+    float buzzyPosY;
     Vector2u screenBoundary;
 };
 
