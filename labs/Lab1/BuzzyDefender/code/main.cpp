@@ -15,7 +15,7 @@ using namespace sf;
 
 int main()
 {
-	// Create object to manage the game window
+	// Create object to manage the game window and overall game state
 	// This object exists mainly to keep 'main' clean
 	ECE_Defender defender;
 
@@ -43,14 +43,11 @@ int main()
 		// Make sure we are accepting input
 		if (acceptInput)
 		{
+			// Update all game objects in scene
 			defender.updateScene();
 		}
 
-		// Update scene
-
-		// Draw scene
-
-		// Refresh display
+		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}
 
