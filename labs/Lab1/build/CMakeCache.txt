@@ -18,6 +18,15 @@
 // static libraries
 BUILD_SHARED_LIBS:BOOL=TRUE
 
+//Value Computed by CMake
+BuzzyDefender_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender
+
+//Value Computed by CMake
+BuzzyDefender_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+BuzzyDefender_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
@@ -203,7 +212,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Tutorials
+CMAKE_PROJECT_NAME:STATIC=Lab1
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=1.0
@@ -355,13 +364,13 @@ Fontconfig_INCLUDE_DIR:PATH=/usr/include
 Fontconfig_LIBRARY:FILEPATH=/usr/lib64/libfontconfig.so
 
 //Value Computed by CMake
-Lab1_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender
+Lab1_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build
 
 //Value Computed by CMake
-Lab1_IS_TOP_LEVEL:STATIC=OFF
+Lab1_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-Lab1_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender
+Lab1_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1
 
 //Path to a file.
 OPENGL_EGL_INCLUDE_DIR:PATH=/usr/include
@@ -455,15 +464,6 @@ SFML_USE_DRM:BOOL=FALSE
 
 //TRUE to use system dependencies, FALSE to use the bundled ones.
 SFML_USE_SYSTEM_DEPS:BOOL=FALSE
-
-//Value Computed by CMake
-Tutorials_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build
-
-//Value Computed by CMake
-Tutorials_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Tutorials_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1
 
 //Path to a file.
 UDEV_INCLUDE_DIR:PATH=/usr/include

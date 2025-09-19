@@ -12,6 +12,7 @@ class ECE_Buzzy: public Sprite
 public:
     ECE_Buzzy(Vector2u windowSize);
     void update();
+    void fireLaser();
     bool collisionDetected(const Sprite& object);
     Sprite spriteBuzzy;
 private:

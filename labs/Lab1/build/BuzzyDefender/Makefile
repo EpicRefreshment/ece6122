@@ -195,30 +195,6 @@ BuzzyDefender/fast:
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build
 .PHONY : BuzzyDefender/fast
 
-code/BuzzyDefender.o: code/BuzzyDefender.cpp.o
-.PHONY : code/BuzzyDefender.o
-
-# target to build an object file
-code/BuzzyDefender.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/BuzzyDefender.cpp.o
-.PHONY : code/BuzzyDefender.cpp.o
-
-code/BuzzyDefender.i: code/BuzzyDefender.cpp.i
-.PHONY : code/BuzzyDefender.i
-
-# target to preprocess a source file
-code/BuzzyDefender.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/BuzzyDefender.cpp.i
-.PHONY : code/BuzzyDefender.cpp.i
-
-code/BuzzyDefender.s: code/BuzzyDefender.cpp.s
-.PHONY : code/BuzzyDefender.s
-
-# target to generate assembly for a file
-code/BuzzyDefender.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/BuzzyDefender.cpp.s
-.PHONY : code/BuzzyDefender.cpp.s
-
 code/ECE_Buzzy.o: code/ECE_Buzzy.cpp.o
 .PHONY : code/ECE_Buzzy.o
 
@@ -243,6 +219,30 @@ code/ECE_Buzzy.cpp.s:
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.s
 .PHONY : code/ECE_Buzzy.cpp.s
 
+code/main.o: code/main.cpp.o
+.PHONY : code/main.o
+
+# target to build an object file
+code/main.cpp.o:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o
+.PHONY : code/main.cpp.o
+
+code/main.i: code/main.cpp.i
+.PHONY : code/main.i
+
+# target to preprocess a source file
+code/main.cpp.i:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.i
+.PHONY : code/main.cpp.i
+
+code/main.s: code/main.cpp.s
+.PHONY : code/main.s
+
+# target to generate assembly for a file
+code/main.cpp.s:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.s
+.PHONY : code/main.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -258,12 +258,12 @@ help:
 	@echo "... package_source"
 	@echo "... rebuild_cache"
 	@echo "... BuzzyDefender"
-	@echo "... code/BuzzyDefender.o"
-	@echo "... code/BuzzyDefender.i"
-	@echo "... code/BuzzyDefender.s"
 	@echo "... code/ECE_Buzzy.o"
 	@echo "... code/ECE_Buzzy.i"
 	@echo "... code/ECE_Buzzy.s"
+	@echo "... code/main.o"
+	@echo "... code/main.i"
+	@echo "... code/main.s"
 .PHONY : help
 
 
