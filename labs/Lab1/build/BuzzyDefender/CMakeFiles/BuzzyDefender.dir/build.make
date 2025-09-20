@@ -97,10 +97,24 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.s"
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && /usr/local/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_Defender.cpp -o CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.s
 
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/flags.make
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_LaserBlast.cpp
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o"
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && /usr/local/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o -MF CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o.d -o CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o -c /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_LaserBlast.cpp
+
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.i"
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && /usr/local/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_LaserBlast.cpp > CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.i
+
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.s"
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && /usr/local/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_LaserBlast.cpp -o CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.s
+
 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/flags.make
 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o: /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/main.cpp
 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o"
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && /usr/local/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o -MF CMakeFiles/BuzzyDefender.dir/code/main.cpp.o.d -o CMakeFiles/BuzzyDefender.dir/code/main.cpp.o -c /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/main.cpp
 
 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.i: cmake_force
@@ -115,6 +129,7 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.s: cmake_force
 BuzzyDefender_OBJECTS = \
 "CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o" \
 "CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o" \
+"CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o" \
 "CMakeFiles/BuzzyDefender.dir/code/main.cpp.o"
 
 # External object files for target BuzzyDefender
@@ -122,13 +137,14 @@ BuzzyDefender_EXTERNAL_OBJECTS =
 
 output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o
 output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o
+output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o
 output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o
 output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make
 output/bin/BuzzyDefender: output/lib/libsfml-graphics.so.2.6.2
 output/bin/BuzzyDefender: output/lib/libsfml-window.so.2.6.2
 output/bin/BuzzyDefender: output/lib/libsfml-system.so.2.6.2
 output/bin/BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ../output/bin/BuzzyDefender"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ../output/bin/BuzzyDefender"
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/BuzzyDefender.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

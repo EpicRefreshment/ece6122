@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "ECE_Buzzy.h"
 
 using namespace sf;
@@ -7,28 +5,34 @@ using namespace std;
 
 ECE_Buzzy::ECE_Buzzy()
 {
-    // Load the buzzy texture from file
-    buzzyTexture.loadFromFile("graphics/Buzzy_blue.png");
-
-    // Create sprite and scale to fit screen proportionally
-    this->setTexture(buzzyTexture);
-
     // Set speed
     buzzySpeed = 300.0f;
 }
 
-void ECE_Buzzy::scaleBuzzy(Vector2u windowSize)
+void ECE_Buzzy::setupBuzzy(const Texture& texture, Vector2u windowSize)
+{
+    // Update screen boundary
+    screenBoundary = windowSize;
+
+    // Initialize Buzzy with its texture
+    this->setTexture(texture);
+
+    // Get size of buzzy sprite
+    buzzySize = texture.getSize();
+
+    // Scale buzzy to fit screen proportionally and set initial position
+    this->scaleBuzzy();
+    this->setInitialPosition();
+}
+
+void ECE_Buzzy::scaleBuzzy()
 {
     // Scale buzzy to fit screen proportionally
-    buzzySize = buzzyTexture.getSize();
-    float scaleX = (float) windowSize.y / buzzySize.x; // Maintain aspect ratio to avoid stretching image
-    float scaleY = (float) windowSize.y / buzzySize.y;
+    float scaleX = (float) screenBoundary.y / buzzySize.x; // Maintain aspect ratio to avoid stretching image
+    float scaleY = (float) screenBoundary.y / buzzySize.y;
 
     // Rescale sprite
     this->setScale(scaleX / 10.0f, scaleY / 10.0f); // Scale down to 1/10 size
-
-    // Update screen boundary
-    screenBoundary = windowSize;
 }
 
 void ECE_Buzzy::setInitialPosition()
@@ -65,4 +69,16 @@ void ECE_Buzzy::update()
 
     // Update sprite position
     this->setPosition(buzzyPosX, buzzyPosY);
+}
+
+bool ECE_Buzzy::fireLaser()
+{
+    // Return true if spacebar is pressed to indicate firing a laser
+    return Keyboard::isKeyPressed(Keyboard::Space);
+}
+
+bool ECE_Buzzy::collisionDetected(const Sprite& object)
+{
+    // Check for bounding box intersection
+    return this->getGlobalBounds().intersects(object.getGlobalBounds());
 }

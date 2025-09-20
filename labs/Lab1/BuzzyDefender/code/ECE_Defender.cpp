@@ -12,22 +12,28 @@ ECE_Defender::ECE_Defender()
 
     windowSize = this->getSize(); // Get the actual window size
 
+    loadTextures(); // Load all textures
     setupBackground(); // Setup the background
 
-    // Initialize game objects
+    // Initialize player and enemies
     // Buzzy
-    buzzy.scaleBuzzy(windowSize);
-    buzzy.setInitialPosition();
+    buzzy.setupBuzzy(buzzyTexture, windowSize);
     // Enemies
+}
 
-    // Lasers
+void ECE_Defender::loadTextures()
+{
+    // Load all textures from file
+    backgroundTexture.loadFromFile("graphics/background.png");
+    buzzyTexture.loadFromFile("graphics/Buzzy_blue.png");
+    enemyTexture.loadFromFile("graphics/enemyRed1.png");
+    playerLaserTexture.loadFromFile("graphics/player_laser.png");
+    enemyLaserTexture.loadFromFile("graphics/enemy_laser.png");
+
 }
 
 void ECE_Defender::setupBackground()
-{
-    // Load the background texture from file
-    backgroundTexture.loadFromFile("graphics/background.png");
-    
+{   
     // Scale background to fit screen
     backgroundSize = backgroundTexture.getSize();
     float scaleX = (float) windowSize.x / backgroundSize.x;
@@ -44,14 +50,43 @@ void ECE_Defender::refreshDisplay()
     this->clear();
     this->draw(backgroundSprite);
     this->draw(buzzy);
+    for (auto laser = laserBlasts.begin(); laser != laserBlasts.end(); ++laser)
+    {
+        this->draw(*laser);
+    }
     this->display();
 }
 
 void ECE_Defender::updateScene()
 {
-    // Update game objects
+    this->fireCooldown = milliseconds(250); // 250 ms cooldown
 
     // Update buzzy based on user input
     buzzy.update();
+
+    // Update laser blasts on the next frame after they were initialized
+    for (auto laser = laserBlasts.begin(); laser != laserBlasts.end(); )
+    {
+        laser->update();
+        if (laser->boundaryDetected())
+        {
+            // Remove laser if it goes out of bounds
+            laser = laserBlasts.erase(laser);
+        }
+        else
+        {
+            // erase automatically advances iterator so iterate here
+            ++laser;
+        }
+    }
+
+    // Fire laser only if cooldown has passed
+    if (buzzy.fireLaser() && this->fireClock.getElapsedTime() > this->fireCooldown)
+    {
+        // Create a new laser blast at Buzzy's position
+        ECE_LaserBlast playerLaser(playerLaserTexture, buzzy, false, windowSize);
+        laserBlasts.push_back(playerLaser);
+        this->fireClock.restart();
+    }
 }
 

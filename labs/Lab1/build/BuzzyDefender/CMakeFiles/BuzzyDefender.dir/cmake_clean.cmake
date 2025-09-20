@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o.d"
   "CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o"
   "CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o.d"
+  "CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o"
+  "CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o.d"
   "CMakeFiles/BuzzyDefender.dir/code/main.cpp.o"
   "CMakeFiles/BuzzyDefender.dir/code/main.cpp.o.d"
 )

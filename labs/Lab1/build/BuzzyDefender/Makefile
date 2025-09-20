@@ -243,6 +243,30 @@ code/ECE_Defender.cpp.s:
 	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.s
 .PHONY : code/ECE_Defender.cpp.s
 
+code/ECE_LaserBlast.o: code/ECE_LaserBlast.cpp.o
+.PHONY : code/ECE_LaserBlast.o
+
+# target to build an object file
+code/ECE_LaserBlast.cpp.o:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o
+.PHONY : code/ECE_LaserBlast.cpp.o
+
+code/ECE_LaserBlast.i: code/ECE_LaserBlast.cpp.i
+.PHONY : code/ECE_LaserBlast.i
+
+# target to preprocess a source file
+code/ECE_LaserBlast.cpp.i:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.i
+.PHONY : code/ECE_LaserBlast.cpp.i
+
+code/ECE_LaserBlast.s: code/ECE_LaserBlast.cpp.s
+.PHONY : code/ECE_LaserBlast.s
+
+# target to generate assembly for a file
+code/ECE_LaserBlast.cpp.s:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.s
+.PHONY : code/ECE_LaserBlast.cpp.s
+
 code/main.o: code/main.cpp.o
 .PHONY : code/main.o
 
@@ -288,6 +312,9 @@ help:
 	@echo "... code/ECE_Defender.o"
 	@echo "... code/ECE_Defender.i"
 	@echo "... code/ECE_Defender.s"
+	@echo "... code/ECE_LaserBlast.o"
+	@echo "... code/ECE_LaserBlast.i"
+	@echo "... code/ECE_LaserBlast.s"
 	@echo "... code/main.o"
 	@echo "... code/main.i"
 	@echo "... code/main.s"

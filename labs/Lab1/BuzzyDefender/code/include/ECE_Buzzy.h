@@ -1,5 +1,4 @@
-#ifndef ECE_BUZZY_H
-#define ECE_BUZZY_H
+#pragma once
 
 // Include SFML libraries here
 #include <SFML/Graphics.hpp>
@@ -12,19 +11,19 @@ class ECE_Buzzy: public Sprite
 public:
     // Public member functions
     ECE_Buzzy();
-    void scaleBuzzy(Vector2u windowSize);
+    void setupBuzzy(const Texture& texture, Vector2u windowSize);
+    void scaleBuzzy();
     void setInitialPosition();
     void update();
-    void fireLaser();
+    bool fireLaser();
     bool collisionDetected(const Sprite& object);
-private:
-    // Private member variables
-    Texture buzzyTexture;
+
+    // Public member variables
     Vector2u buzzySize;
-    float buzzySpeed;
     float buzzyPosX;
     float buzzyPosY;
+private:
+    // Private member variables
+    float buzzySpeed;
     Vector2u screenBoundary;
 };
-
-#endif // ECE_BUZZY_H
