@@ -19,9 +19,8 @@ int main()
 	// This object exists mainly to keep 'main' clean
 	ECE_Defender defender;
 
-	// Initialize variables for game loop
-	bool paused = true;
-	bool acceptInput = false;
+	// Start game in paused state (i.e. show start screen)
+	defender.pauseGame();
 
 	while (defender.isOpen())
 	{
@@ -33,20 +32,23 @@ int main()
 		}
 
 		// Start the game
-		if (Keyboard::isKeyPressed(Keyboard::Return))
+		if (Keyboard::isKeyPressed(Keyboard::Return) && defender.isGamePaused())
 		{
-			paused = false;
-			acceptInput = true;
+			defender.startGame();
 		}
 
-		// Wrap the player controls to
-		// Make sure we are accepting input
-		if (acceptInput)
+		// If game is over, pause the game to return to start screen
+		if (defender.isGameOver())
 		{
-			// Update all game objects in scene
+			defender.pauseGame();
+		}
+
+		// Update all game objects in scene if game is running	
+		if (!defender.isGamePaused())
+		{
 			defender.updateScene();
-		}
-
+		}	
+		
 		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}

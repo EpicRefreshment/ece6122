@@ -13,43 +13,93 @@ ECE_Defender::ECE_Defender()
     windowSize = this->getSize(); // Get the actual window size
 
     loadTextures(); // Load all textures
-    setupBackground(); // Setup the background
+    backgroundSprite = setupFullScreenSprite(backgroundTexture); // Setup the background
+    startScreenSprite = setupFullScreenSprite(startScreenTexture); // Setup the start screen
+    gameOverScreenSprite = setupFullScreenSprite(gameOverScreenTexture); // Setup the game over screen
 
     // Initialize player
     buzzy.setupBuzzy(buzzyTexture, windowSize);
-
-    // Initialize game variables
-    level = 1;
-    score = 0;
-    lives = 3;
-    maxEnemies = 20;
-    totalEnemies = 0;
-    gameOver = false;
 }
 
 void ECE_Defender::refreshDisplay()
 {
+    // clear the window
     this->clear();
-    this->draw(backgroundSprite);
-    this->draw(buzzy);
-    for (auto laser = laserBlasts.begin(); laser != laserBlasts.end(); ++laser)
+
+    if (isGamePaused())
     {
-        this->draw(*laser);
+        this->draw(startScreenSprite);
     }
+    else if (isGameOver())
+    {
+        this->draw(gameOverScreenSprite);
+    }
+    else
+    {
+        drawGameObjects();
+    }
+
+    // Display updated frame
     this->display();
 }
 
 void ECE_Defender::updateScene()
 {
-    // Update buzzy based on user input
-    buzzy.update();
-
+    updateBuzzy(); // Update buzzy
     updateLasers(); // Update all laser blasts
     updateEnemies(); // Update all enemies
-    spawnEnemy(); // Spawn new enemies
-    firePlayerLaser(); // Fire player laser if spacebar is pressed
-    fireEnemyLasers(); // Fire enemy lasers if their cooldown has passed
-    handleCollisions(); // Handle all collisions between objects
+}
+
+/*
+------------------------------------------------------------------------------------------------
+Functions to handle game state
+------------------------------------------------------------------------------------------------
+*/
+
+void ECE_Defender::startGame()
+{
+    // Reset game variables
+    level = 1;
+    score = 0;
+    buzzy.setLives(3);
+    maxEnemies = 20;
+    totalEnemies = 0;
+    enemies.clear();
+    playerLaserBlasts.clear();
+    enemyLaserBlasts.clear();
+    gameOver = false;
+    gamePaused = false;
+
+    // Reset Buzzy's position
+    buzzy.setStartPosition();
+}
+
+void ECE_Defender::pauseGame()
+{
+    if (gameClock.getElapsedTime() > gameOverCooldown)
+    {
+        gameOver = false;
+        gamePaused = true;
+    }
+}
+
+bool ECE_Defender::isGameOver()
+{
+    if (buzzy.getLives() <= 0)
+    {
+        gameOver = true;
+        gameOverCooldown = milliseconds(2000); // show game over screen for 2 seconds
+    }
+    else
+    {
+        gameOver = false;
+    }
+    return gameOver;
+}
+
+bool ECE_Defender::isGamePaused()
+{
+    return gamePaused;
 }
 
 Vector2u ECE_Defender::getWindowSize()
@@ -57,39 +107,270 @@ Vector2u ECE_Defender::getWindowSize()
     return windowSize;
 }
 
+/*
+------------------------------------------------------------------------------------------------
+Functions to handle game state
+------------------------------------------------------------------------------------------------
+*/
+
 void ECE_Defender::loadTextures()
 {
     // Load all textures from file
     backgroundTexture.loadFromFile("graphics/background.png");
+    startScreenTexture.loadFromFile("Start_Screen.png");
+    gameOverScreenTexture.loadFromFile("gameover.png");
     buzzyTexture.loadFromFile("graphics/Buzzy_blue.png");
-    enemyTexture.loadFromFile("graphics/enemyRed1.png");
+    enemyTexture1.loadFromFile("graphics/bulldog.png");
+    enemyTexture2.loadFromFile("graphics/clemson_tigers.png");
+    enemyTexture3.loadFromFile("graphics/rolltide.png");
     playerLaserTexture.loadFromFile("graphics/player_laser.png");
     enemyLaserTexture.loadFromFile("graphics/enemy_laser.png");
 
 }
 
-void ECE_Defender::setupBackground()
+Sprite ECE_Defender::setupFullScreenSprite(const Texture& texture)
 {   
     // Scale background to fit screen
-    backgroundSize = backgroundTexture.getSize();
-    float scaleX = (float) windowSize.x / backgroundSize.x;
-    float scaleY = (float) windowSize.y / backgroundSize.y;
+    Vector2u textureSize = texture.getSize();
+    float scaleX = (float) windowSize.x / textureSize.x;
+    float scaleY = (float) windowSize.y / textureSize.y;
 
     // Create sprite
-    backgroundSprite.setTexture(backgroundTexture);
-    backgroundSprite.setScale(scaleX, scaleY);
-    backgroundSprite.setPosition(0, 0);
+    Sprite fullScreenSprite;
+    fullScreenSprite.setTexture(texture);
+    fullScreenSprite.setScale(scaleX, scaleY);
+    fullScreenSprite.setPosition(0, 0);
+
+    return fullScreenSprite;
 }
+
+/*
+------------------------------------------------------------------------------------------------
+Functions to handle game state
+------------------------------------------------------------------------------------------------
+*/
+
+void ECE_Defender::initializeGame()
+{
+    // Reset game variables
+    level = 1;
+    score = 0;
+    buzzy.setLives(3);
+    maxEnemies = 20;
+    totalEnemies = 0;
+    enemies.clear();
+    playerLaserBlasts.clear();
+    enemyLaserBlasts.clear();
+    gameOver = false;
+    gamePaused = false;
+
+    // Reset Buzzy's position
+    buzzy.setStartPosition();
+}
+
+/*
+------------------------------------------------------------------------------------------------
+Helper functions for game display
+------------------------------------------------------------------------------------------------
+*/
+
+void ECE_Defender::drawGameObjects()
+{
+    // Draw background
+    this->draw(backgroundSprite);
+    // Draw Buzzy
+    this->draw(buzzy);
+    // Draw all player lasers
+    for (auto laser = playerLaserBlasts.begin(); laser != playerLaserBlasts.end(); ++laser)
+    {
+        this->draw(*laser);
+    }
+    // Draw all enemy lasers
+    for (auto laser = enemyLaserBlasts.begin(); laser != enemyLaserBlasts.end(); ++laser)
+    {
+        this->draw(*laser);
+    }
+    // Draw all enemies
+    for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy)
+    {
+        this->draw(*enemy);
+    }
+}
+
+/*
+------------------------------------------------------------------------------------------------
+Functions to update game objects
+------------------------------------------------------------------------------------------------
+*/
+
+void ECE_Defender::updateBuzzy()
+{
+    buzzy.update(); // update Buzzy's position
+    firePlayerLaser(); // handle player firing laser
+}
+
+void ECE_Defender::updateEnemies()
+{
+    // Update enemies on the next frame after they were initialized
+    for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy)
+    {
+        enemy->update(); // update enemy position
+    }
+    spawnEnemy(); // Spawn new enemies
+    fireEnemyLasers(); // Handle enemies firing lasers
+}
+
+void ECE_Defender::updateLasers()
+{
+    updatePlayerLasers(); // Update player lasers
+    updateEnemyLasers(); // Update enemy lasers
+}
+
+void ECE_Defender::updatePlayerLasers()
+{
+    // Update player laser blasts on the next frame after they were initialized
+    for (auto laser = playerLaserBlasts.begin(); laser != playerLaserBlasts.end(); )
+    {
+        laser->update();
+        if (laser->boundaryDetected())
+        {
+            // Remove laser if it goes out of bounds
+            laser = playerLaserBlasts.erase(laser);
+        }
+        else
+        {
+            // erase automatically advances iterator so iterate here
+            ++laser;
+        }
+    }
+}
+
+void ECE_Defender::updateEnemyLasers()
+{
+    // Update player laser blasts on the next frame after they were initialized
+    for (auto laser = enemyLaserBlasts.begin(); laser != enemyLaserBlasts.end(); )
+    {
+        laser->update();
+        if (laser->boundaryDetected())
+        {
+            // Remove laser if it goes out of bounds
+            laser = enemyLaserBlasts.erase(laser);
+        }
+        else
+        {
+            // erase automatically advances iterator so iterate here
+            ++laser;
+        }
+    }
+}
+
+/*
+------------------------------------------------------------------------------------------------
+Functions to handle collisions
+------------------------------------------------------------------------------------------------
+*/
+
+void ECE_Defender::handleCollisions()
+{
+    handlePlayerCollisions(); // check if buzzy has run into an enemy
+    handleEnemyCollisions(); // check if any lasers have hit the enemy
+    handleLaserCollisions(); // check if any lasers have hit buzzy
+}
+
+void ECE_Defender::handlePlayerCollisions()
+{
+    // Check for collisions between enemies and player
+    auto enemy = enemies.begin();
+    while (enemy != enemies.end())
+    {
+        if (enemy->collisionDetected(buzzy)) // If enemy collides with player
+        {
+            buzzy.setLives(0);
+            if (buzzy.getLives() <= 0)
+            {
+                gameOver = true;
+            }
+        }
+        else
+        {
+            ++enemy; // advance iterator if no collision
+        }
+    }
+}
+
+void ECE_Defender::handleEnemyCollisions()
+{
+    // Check for collisions between laser blasts and enemies
+    auto laser = playerLaserBlasts.begin();
+    while (laser != playerLaserBlasts.end())
+    {
+        enemyHit = false;
+        auto enemy = enemies.begin();
+        while (enemy != enemies.end() && !enemyHit)
+        {
+            if (laser->collisionDetected(*enemy)) // If player laser hits enemy
+            {
+                // Remove the enemy and the laser
+                enemy = enemies.erase(enemy);
+                laser = playerLaserBlasts.erase(laser);
+                score += 1; // Increase score for destroying an enemy
+                enemyHit = true; // Exit inner loop since laser is gone
+            }
+            else
+            {
+                ++enemy; // advance iterator if enemy not erased
+            }
+        }
+        if (enemyHit)
+        {
+            ++laser; // advance iterator if laser was not erased
+        }
+    }
+}
+
+void ECE_Defender::handleLaserCollisions()
+{
+    // Check for collisions between laser blasts and buzzy
+    auto laser = enemyLaserBlasts.begin();
+    while (laser != enemyLaserBlasts.end())
+    {
+        if (laser->collisionDetected(buzzy)) // If enemy laser hits player
+        {
+            if (laser->collisionDetected(buzzy))
+            {
+                // Remove the laser and lose a life
+                laser = enemyLaserBlasts.erase(laser);
+                buzzy.setLives(buzzy.getLives() - 1);
+                if (buzzy.getLives() <= 0)
+                {
+                    gameOver = true;
+                }
+            }
+            
+        }
+        else
+        {
+            ++laser; // advance iterator if laser was not erased
+        }
+    }
+}
+
+/*
+------------------------------------------------------------------------------------------------
+Helper functions for game objects
+------------------------------------------------------------------------------------------------
+*/
 
 void ECE_Defender::spawnEnemy()
 {
     // Spawn an enemy at random intervals so they don't just come in a even line
-    if (totalEnemies < maxEnemies && rand() % 100 < 2) // 2% chance to spawn each frame
+    if (totalEnemies < maxEnemies && rand() % 100 < 20) // 20% chance to spawn each frame
     {
         // Only spawn if there are no enemies or the last enemy has cleared the spawn boundary
         if (enemies.empty() || enemies.back().spawnBoundaryClear())
         {
-            ECE_Enemy newEnemy(enemyTexture, windowSize);
+            // Randomly select one of two enemy textures
+            ECE_Enemy newEnemy(randomEnemyTexture(), windowSize);
             enemies.push_back(newEnemy);
             totalEnemies++;
         }
@@ -103,118 +384,34 @@ void ECE_Defender::firePlayerLaser()
     {
         // Create a new laser blast at Buzzy's position
         ECE_LaserBlast playerLaser(playerLaserTexture, buzzy, false, windowSize);
-        laserBlasts.push_back(playerLaser);
+        playerLaserBlasts.push_back(playerLaser);
     }
 }
 
-// CHECK THIS FUNCTION FOR CORRECTNESS!!
 void ECE_Defender::fireEnemyLasers()
 {
     // Check if any enemies can fire a laser
     for (auto& enemy : enemies)
     {
-        if (enemy.fireLaser())
+        if (enemy.fireLaser() && rand() % 100 < 10) // 10% chance to fire each frame
         {
             // Create a new laser blast at the enemy's position
             ECE_LaserBlast enemyLaser(enemyLaserTexture, enemy, true, windowSize);
-            laserBlasts.push_back(enemyLaser);
+            enemyLaserBlasts.push_back(enemyLaser);
         }
     }
 }
 
-void ECE_Defender::updateLasers()
+Texture ECE_Defender::randomEnemyTexture()
 {
-    // Update laser blasts on the next frame after they were initialized
-    for (auto laser = laserBlasts.begin(); laser != laserBlasts.end(); )
+    int enemyType = rand() % 2;
+    switch (enemyType)
     {
-        laser->update();
-        if (laser->boundaryDetected())
-        {
-            // Remove laser if it goes out of bounds
-            laser = laserBlasts.erase(laser);
-        }
-        else
-        {
-            // erase automatically advances iterator so iterate here
-            ++laser;
-        }
+        case 0:
+            return enemyTexture1;
+        case 1:
+            return enemyTexture2;
+        default:
+            return enemyTexture1; // Fallback
     }
 }
-
-// CHECK THIS FUNCTION FOR CORRECTNESS!!
-void ECE_Defender::updateEnemies()
-{
-    // Update enemies on the next frame after they were initialized
-    for (auto enemy = enemies.begin(); enemy != enemies.end(); )
-    {
-        enemy->update();
-        if (enemy->getPosition().y > windowSize.y) // If enemy goes off bottom of screen
-        {
-            // Remove enemy and lose a life
-            enemy = enemies.erase(enemy);
-            lives--;
-            if (lives <= 0)
-            {
-                gameOver = true;
-                cout << "Game Over! Final Score: " << score << endl;
-            }
-        }
-        else
-        {
-            // erase automatically advances iterator so iterate here
-            ++enemy;
-        }
-    }
-}
-
-// CHECK THIS FUNCTION FOR CORRECTNESS!!
-void ECE_Defender::handleCollisions()
-{
-    // Check for collisions between laser blasts and enemies or player
-    for (auto laser = laserBlasts.begin(); laser != laserBlasts.end(); )
-    {
-        bool laserErased = false; // Flag to track if the laser has been erased
-
-        if (laser->getSpeed() < 0) // Player laser
-        {
-            for (auto enemy = enemies.begin(); enemy != enemies.end(); )
-            {
-                if (laser->collisionDetected(*enemy))
-                {
-                    // Remove both the laser and the enemy
-                    enemy = enemies.erase(enemy);
-                    laser = laserBlasts.erase(laser);
-                    score += 100; // Increase score for destroying an enemy
-                    laserErased = true; // Set flag to true since the laser has been erased
-                    break; // Exit the inner loop since the laser is gone
-                }
-                else
-                {
-                    ++enemy;
-                }
-            }
-        }
-        else // Enemy laser
-        {
-            if (laser->collisionDetected(buzzy))
-            {
-                // Remove the laser and lose a life
-                laser = laserBlasts.erase(laser);
-                lives--;
-                if (lives <= 0)
-                {
-                    gameOver = true;
-                    cout << "Game Over! Final Score: " << score << endl;
-                }
-                laserErased = true; // Set flag to true since the laser has been erased
-            }
-        }
-
-        if (!laserErased)
-        {
-            ++laser; // Only advance iterator if the laser wasn't erased
-        }
-    }
-}
-
-

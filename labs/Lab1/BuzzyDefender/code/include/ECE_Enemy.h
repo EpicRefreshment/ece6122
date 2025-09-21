@@ -12,6 +12,9 @@ public:
     // Public member functions
     ECE_Enemy(const Texture& texture, Vector2u windowSize);
     void update();
+    void moveLeft();
+    void moveRight();
+    void moveUp();
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     bool spawnBoundaryClear();

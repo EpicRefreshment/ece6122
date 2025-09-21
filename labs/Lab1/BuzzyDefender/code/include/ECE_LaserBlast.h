@@ -11,12 +11,16 @@ public:
     // Public member functions
     ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bool isEnemy, Vector2u windowSize);
     void update();
+    void moveUp();
+    void moveDown();
     bool collisionDetected(const Sprite& object);
     bool boundaryDetected();
     Vector2f getSize();
     Vector2f getPosition();
     float getSpeed();
     FloatRect getBoundary();
+    bool isPlayerLaser();
+    bool isEnemyLaser();
 
 private:
     // Private member functions

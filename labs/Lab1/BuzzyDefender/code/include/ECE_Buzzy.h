@@ -12,22 +12,29 @@ public:
     // Public member functions
     ECE_Buzzy();
     void setupBuzzy(const Texture& texture, Vector2u windowSize);
-    void scaleBuzzy(Vector2u textureSize);
-    void setInitialPosition();
+    void setStartPosition();
     void update();
+    void moveRight();
+    void moveLeft();
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     Vector2f getSize();
     Vector2f getPosition();
     float getSpeed();
     FloatRect getBoundary();
-
-    // Public member variables
+    void setLives(int lives);
+    int getLives();
 private:
+    // Private member functions
+    void scaleBuzzy(Vector2u textureSize);
+
     // Private member variables
     Vector2f buzzySize;
     Vector2f buzzyPos;
     float buzzySpeed;
     FloatRect buzzyBoundary;
     Vector2u screenBoundary;
+    Clock fireClock;
+    Time fireCooldown;
+    int lives;
 };

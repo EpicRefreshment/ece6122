@@ -65,16 +65,26 @@ void ECE_LaserBlast::update()
     if (isEnemy)
     {
         // Move laser blast upwards
-        laserPos.y += laserSpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+        moveUp();
     }
     else
     {
         // Move laser blast downwards
-        laserPos.x -= laserSpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+        moveDown();
     }
 
     // Update sprite position
     this->setPosition(laserPos.x, laserPos.y);
+}
+
+void ECE_LaserBlast::moveUp()
+{
+    laserPos.y -= laserSpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+}
+
+void ECE_LaserBlast::moveDown()
+{
+    laserPos.y += laserSpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
 }
 
 bool ECE_LaserBlast::collisionDetected(const Sprite& object)
@@ -107,4 +117,14 @@ float ECE_LaserBlast::getSpeed()
 FloatRect ECE_LaserBlast::getBoundary()
 {
     return laserBoundary;
+}
+
+bool ECE_LaserBlast::isPlayerLaser()
+{
+    return !isEnemy;
+}
+
+bool ECE_LaserBlast::isEnemyLaser()
+{
+    return isEnemy;
 }

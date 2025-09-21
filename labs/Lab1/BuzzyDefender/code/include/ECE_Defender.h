@@ -18,38 +18,93 @@ class ECE_Defender: public RenderWindow
 {
 public:
     // Public member functions
-    ECE_Defender();
-    void refreshDisplay();
-    void updateScene();
-    Vector2u getWindowSize();
+
+    ECE_Defender(); // Constructor
+    void refreshDisplay(); // Clears and redraws all appropriate game objects
+    void updateScene(); // main function for updating all game objects
+
+    // Functions to manage game state
+    void startGame(); // sets flag to start the game
+    void pauseGame(); // sets flag to pause the game i.e. show start screen
+    bool isGameOver(); // Returns true if game is over
+    bool isGamePaused(); // Returns true if game is paused
+
+    Vector2u getWindowSize(); // Returns size of game window
 private:
     // Private member functions
+
+    // Helper functions to setup the game
     void loadTextures();
-    void setupBackground();
+    Sprite setupFullScreenSprite(const Texture& texture);
+
+    // Handle game state
+    void initializeGame();
+
+    // helper function for game display
+    void drawGameObjects();
+
+    // Update game objects
+    void updateBuzzy();
+    void updateEnemies();
+    void updateLasers();
+    void updatePlayerLasers();
+    void updateEnemyLasers();
+
+    // Handle collisions
+    void handleCollisions();
+    void handlePlayerCollisions();
+    void handleEnemyCollisions();
+    void handleLaserCollisions();
+
+    // Helper functions for game objects
     void spawnEnemy();
     void firePlayerLaser();
     void fireEnemyLasers();
-    void updateLasers();
-    void updateEnemies();
-    void handleCollisions();
+    Texture randomEnemyTexture();
 
     // Private member variables
+
+    // Variables for main game window
     VideoMode vm;
     Vector2u windowSize;
+
+    // Variables for objects that cover entire screen
     Texture backgroundTexture;
+    Texture startScreenTexture;
+    Texture gameOverScreenTexture;
+    Sprite backgroundSprite;
+    Sprite startScreenSprite;
+    Sprite gameOverScreenSprite;
+
+    // Textures for all game objects
     Texture buzzyTexture;
-    Texture enemyTexture;
+    Texture enemyTexture1;
+    Texture enemyTexture2;
+    Texture enemyTexture3;
     Texture playerLaserTexture;
     Texture enemyLaserTexture;
-    Sprite backgroundSprite;
-    Vector2u backgroundSize;
+
+    // Buzzy object
     ECE_Buzzy buzzy;
-    list<ECE_LaserBlast> laserBlasts;
+
+    // List containers for lasers and enemies
+    list<ECE_LaserBlast> playerLaserBlasts;
+    list<ECE_LaserBlast> enemyLaserBlasts;
     list<ECE_Enemy> enemies;
+
+    // Game logic variables
     int level;
     int score;
-    int lives;
     int maxEnemies;
     int totalEnemies;
+    bool enemyHit;
+
+    // Game state flags
     bool gameOver;
+    bool gamePaused;
+
+    // These two are just for keeping the Game Over screen up for a bit
+    // before reverting to the start screen
+    Clock gameClock;
+    Time gameOverCooldown;
 };

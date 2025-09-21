@@ -24,7 +24,7 @@ void ECE_Buzzy::setupBuzzy(const Texture& texture, Vector2u windowSize)
     Vector2u textureSize = texture.getSize();
 
     // Scale buzzy to fit screen proportionally and set initial position
-    this->scaleBuzzy(textureSize);
+    scaleBuzzy(textureSize);
 
     // Update size and position after scaling
     buzzyBoundary = this->getGlobalBounds();
@@ -32,7 +32,7 @@ void ECE_Buzzy::setupBuzzy(const Texture& texture, Vector2u windowSize)
     buzzyPos = buzzyBoundary.getPosition();
 
     // Set initial position
-    this->setInitialPosition();
+    setStartPosition();
 }
 
 void ECE_Buzzy::scaleBuzzy(Vector2u textureSize)
@@ -45,7 +45,7 @@ void ECE_Buzzy::scaleBuzzy(Vector2u textureSize)
     this->setScale(scaleX / 10.0f, scaleY / 10.0f); // Scale down to 1/10 size
 }
 
-void ECE_Buzzy::setInitialPosition()
+void ECE_Buzzy::setStartPosition()
 {
     // Set initial position
     //buzzyPos.x = (screenBoundary.x / 2.0f) - buzzySize.x / 20.0f; // Center horizontally
@@ -60,27 +60,37 @@ void ECE_Buzzy::update()
     // Move Buzzy left
     if (Keyboard::isKeyPressed(Keyboard::Left))
     {
-        buzzyPos.x -= buzzySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
-        if (buzzyPos.x < 0)
-        {
-            // Prevent moving off left edge
-            buzzyPos.x = 0;
-        }
+        moveLeft();
     }
 
     // Move Buzzy right
     if (Keyboard::isKeyPressed(Keyboard::Right))
     {
-        buzzyPos.x += buzzySpeed * 0.016f;
-        if (buzzyPos.x > screenBoundary.x - buzzySize.x /*/ 4.0f*/)
-        { 
-            // Prevent moving off right edge
-            buzzyPos.x = screenBoundary.x - buzzySize.x /*/ 4.0f*/;
-        }
+        moveRight();
     }
 
     // Update sprite position
     this->setPosition(buzzyPos.x, buzzyPos.y);
+}
+
+void ECE_Buzzy::moveLeft()
+{
+    buzzyPos.x -= buzzySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+    if (buzzyPos.x < 0)
+    {
+        // Prevent moving off left edge
+        buzzyPos.x = 0;
+    }
+}
+
+void ECE_Buzzy::moveRight()
+{
+    buzzyPos.x += buzzySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+    if (buzzyPos.x > screenBoundary.x - buzzySize.x /*/ 4.0f*/)
+    { 
+        // Prevent moving off right edge
+        buzzyPos.x = screenBoundary.x - buzzySize.x /*/ 4.0f*/;
+    }
 }
 
 bool ECE_Buzzy::fireLaser()
@@ -88,18 +98,18 @@ bool ECE_Buzzy::fireLaser()
     // Return true if spacebar is pressed and cooldown has passed
     if (Keyboard::isKeyPressed(Keyboard::Space) && fireClock.getElapsedTime() > fireCooldown)
     {
-        fireClock.restart();
+        fireClock.restart(); // restart the cooldown
         return true;
     }
     else
     {
-        return false;
+        return false; // laser cannot be fired yet
     }
 }
 
 bool ECE_Buzzy::collisionDetected(const Sprite& object)
 {
-    // Check for bounding box intersection
+    // Check if Sprite rectangle boundaries intersect
     return this->getGlobalBounds().intersects(object.getGlobalBounds());
 }
 

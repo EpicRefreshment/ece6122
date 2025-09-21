@@ -21,7 +21,7 @@ ECE_Enemy::ECE_Enemy(const Texture& texture, Vector2u windowSize)
     Vector2u textureSize = texture.getSize();
 
     // Scale enemy to fit screen proportionally and set initial position
-    this->scaleEnemy(textureSize);
+    scaleEnemy(textureSize);
 
     // Update size and position after scaling
     enemyBoundary = this->getGlobalBounds();
@@ -29,8 +29,8 @@ ECE_Enemy::ECE_Enemy(const Texture& texture, Vector2u windowSize)
     enemyPos = enemyBoundary.getPosition();
 
     // Set initial position
-    this->setSpawnLocation();
-    this->setInitialPosition();
+    setSpawnLocation();
+    setInitialPosition();
 }
 
 void ECE_Enemy::scaleEnemy(Vector2u textureSize)
@@ -69,27 +69,39 @@ void ECE_Enemy::update()
     // Move enemy to the side
     if (direction) // move right
     {
-        enemyPos.x += enemySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+        moveRight();
         if (enemyPos.x > screenBoundary.x - enemySize.x * 1.5f) // Prevent moving off right edge of spawn boundary
         {
-            // flip direction
-            direction = false;
-            // Move up a row
-            enemyPos.y -= enemySize.y * 0.5f;
+            moveUp();
         }
     }
     else // move left
     {
-        enemyPos.x -= enemySpeed * 0.016f;
+        moveLeft();
         if (enemyPos.x < enemySize.x * 0.5f) // Prevent moving off left edge of spawn boundary
         {
-            direction = true; // flip direction
-            // Move up a row
-            enemyPos.y -= enemySize.y * 0.5f;
+            moveUp();
         }
     }
     
     this->setPosition(enemyPos.x, enemyPos.y);
+}
+
+void ECE_Enemy::moveLeft()
+{
+    enemyPos.x -= enemySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+}
+
+void ECE_Enemy::moveRight()
+{
+    enemyPos.x += enemySpeed * 0.016f; // Assuming 60 FPS, so frame time ~0.016s
+}
+
+void ECE_Enemy::moveUp()
+{
+    direction = true; // flip direction
+    // Move up a row
+    enemyPos.y -= enemySize.y * 0.5f;
 }
 
 bool ECE_Enemy::fireLaser()
@@ -97,7 +109,7 @@ bool ECE_Enemy::fireLaser()
     // Return true if cooldown has passed to indicate a laser can be fired
     if (fireClock.getElapsedTime() > fireCooldown)
     {
-        fireClock.restart();
+        fireClock.restart(); // this should only restart once laser has already been fired.
         return true;
     }
     else
