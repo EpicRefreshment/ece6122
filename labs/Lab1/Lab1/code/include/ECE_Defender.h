@@ -1,3 +1,19 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/02/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 1
+
+This is the header file for the ECE_Defender class.
+This class is derived from the SFML Window class.
+ECE_Defender manages all game objects, state, and logic. 
+
+*/
+
 #pragma once
 
 #include <list>
@@ -40,9 +56,6 @@ private:
     void setupStartScreenSprite();
     void setupGameOverSprite();
     void setupGameWonSprite();
-
-    // Handle game state
-    void initializeGame();
 
     // helper function for game display
     void drawGameObjects();

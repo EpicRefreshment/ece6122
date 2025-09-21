@@ -1,3 +1,21 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/02/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 1
+
+This is the header file for the ECE_Enemy class.
+This class is derived from the SFML Sprite class.
+ECE_Enemy manages details for the enemy, initiatilizes the object,
+maintains position, manages spawn location, moves enemy, and detects collisions with other objects
+and fires laser.
+
+*/
+
 #pragma once
 
 // Include SFML libraries here
@@ -20,7 +38,6 @@ public:
     bool spawnBoundaryClear();
     Vector2f getSpawnPosition();
     Vector2f getSize();
-    Vector2f getPosition();
     FloatRect getBoundary();
     float getSpeed();
 private:

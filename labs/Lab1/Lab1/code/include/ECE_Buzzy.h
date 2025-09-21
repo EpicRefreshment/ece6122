@@ -1,3 +1,21 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/02/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 1
+
+This is the header file for the ECE_Buzzy class.
+This class is derived from the SFML Sprite class.
+ECE_Buzzy manages details for Buzzy, initiatilizes the object,
+maintains position, manages spawn location, moves Buzzy, and detects collisions with other objects
+and fires laser.
+
+*/
+
 #pragma once
 
 // Include SFML libraries here
@@ -19,7 +37,6 @@ public:
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     Vector2f getSize();
-    Vector2f getPosition();
     float getSpeed();
     FloatRect getBoundary();
     void setLives(int lives);

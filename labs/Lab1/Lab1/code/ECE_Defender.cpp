@@ -1,10 +1,36 @@
-#include <iostream>
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/02/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 1
+
+This is the source file for the ECE_Defender class and implements all functions
+and maintains all variables defined in ECE_Defender.h.
+This class is derived from the SFML Window class.
+ECE_Defender manages all game objects, state, and logic. 
+
+*/
 
 #include "ECE_Defender.h"
 
 using namespace sf;
 using namespace std;
 
+/*
+This is the constructor for ECE_Defender. This function initializes the window
+and initializes all game logic variables. Calls other helper functions to initialize
+different aspects of the game.
+
+Arguments:
+    N/A
+
+Return Values:
+    ECE_Defender
+*/
 ECE_Defender::ECE_Defender()
 {
     vm = VideoMode(1920, 1080); // Set window size
@@ -12,6 +38,7 @@ ECE_Defender::ECE_Defender()
 
     windowSize = this->getSize(); // Get the actual window size
 
+    // game state flags
     gamePaused = true;
     gameOver = false;
     gameWon = false;
@@ -35,32 +62,52 @@ ECE_Defender::ECE_Defender()
     buzzy.setupBuzzy(buzzyTexture, windowSize);
 }
 
+/*
+This function refreshes the entire display by clearing the window,
+drawing Sprites determined by game state, and finally displaying all Sprites.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::refreshDisplay()
 {
     // clear the window
     this->clear();
 
-    if (isGamePaused())
+    if (isGamePaused()) // show start screen
     {
         this->draw(startScreenSprite);
     }
-    else if (isGameOver())
+    else if (isGameOver()) // show game over screen
     {
         this->draw(gameOverScreenSprite);
     }
-    else if (isGameWon())
+    else if (isGameWon()) // show YOU WON!! screen
     {
         this->draw(gameWonScreenSprite);
     }
     else
     {
-        drawGameObjects();
+        drawGameObjects(); // draw all game objects when game is in play
     }
 
     // Display updated frame
     this->display();
 }
 
+/*
+This function updates position of all objects currently in game.
+Calls several helper functions to keep the code looking a little cleaner.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updateScene()
 {
     updateBuzzy(); // Update buzzy
@@ -75,26 +122,49 @@ Functions to handle game state
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function initializes the game once the player starts the game. 
+Also used when the game is restarted after a win or loss.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::startGame()
 {
     // Reset game variables
-    level = 1;
-    score = 0;
+    level = 1; // future use
+    score = 0; // future use
     buzzy.setLives(3);
     maxEnemies = 21;
     totalEnemies = 0;
+    // clear all lists of game objects
     enemies.clear();
     playerLaserBlasts.clear();
     enemyLaserBlasts.clear();
+    //reset game state flags
     gamePaused = false;
     gameOver = false;
     gameWon = false;
     gameClockStarted = false;
+    bossReady = false;
     
     // Reset Buzzy's position
     buzzy.setStartPosition();
 }
 
+/*
+This function puts the game into the pause state so the 
+start screen is displayed.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::pauseGame()
 {
     while (!gamePaused)
@@ -114,6 +184,16 @@ void ECE_Defender::pauseGame()
     }
 }
 
+/*
+This function checks if the game is over determined by number of lives
+the player has left.
+
+Arguments:
+    N/A
+
+Return Values:
+    bool - flag that's true if game is over, false if not
+*/
 bool ECE_Defender::isGameOver()
 {
     if (buzzy.getLives() <= 0)
@@ -127,6 +207,16 @@ bool ECE_Defender::isGameOver()
     return gameOver;
 }
 
+/*
+This function checks if the game has been won determined by number of enemies left
+out of total enemies that will spawn.
+
+Arguments:
+    N/A
+
+Return Values:
+    bool - flag that's true if game has been won, false if not
+*/
 bool ECE_Defender::isGameWon()
 {
     if (totalEnemies >= 21 && enemies.empty())
@@ -140,11 +230,29 @@ bool ECE_Defender::isGameWon()
     return gameWon;
 }
 
+/*
+This function checks if the game has been paused
+
+Arguments:
+    N/A
+
+Return Values:
+    bool - flag that's true if game is paused, false if not
+*/
 bool ECE_Defender::isGamePaused()
 {
     return gamePaused;
 }
 
+/*
+This function returns the size of the game window.
+
+Arguments:
+    N/A
+
+Return Values:
+    Vector2u - size of window
+*/
 Vector2u ECE_Defender::getWindowSize()
 {
     return windowSize;
@@ -156,22 +264,41 @@ Functions to handle game state
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function loads all textures so they are all loaded once. Called as part of ECE_Defender initialization.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::loadTextures()
 {
     // Load all textures from file
-    backgroundTexture.loadFromFile("graphics/background.png");
-    startScreenTexture.loadFromFile("graphics/Start_Screen.png");
-    gameOverScreenTexture.loadFromFile("graphics/gameover.png");
-    gameWonScreenTexture.loadFromFile("graphics/success.png");
-    buzzyTexture.loadFromFile("graphics/Buzzy_blue.png");
-    enemyTexture1.loadFromFile("graphics/bulldog.png");
-    enemyTexture2.loadFromFile("graphics/clemson_tigers.png");
-    enemyTexture3.loadFromFile("graphics/rolltide.png");
-    playerLaserTexture.loadFromFile("graphics/player_laser.png");
-    enemyLaserTexture.loadFromFile("graphics/enemy_laser.png");
+    backgroundTexture.loadFromFile("graphics/background.png"); // Background
+    startScreenTexture.loadFromFile("graphics/Start_Screen.png"); // Start Screen
+    gameOverScreenTexture.loadFromFile("graphics/gameover.png"); // Game Over Screen
+    gameWonScreenTexture.loadFromFile("graphics/success.png"); // You Won!! Screen
+    buzzyTexture.loadFromFile("graphics/Buzzy_blue.png"); // Buzzy itself
+    enemyTexture1.loadFromFile("graphics/bulldog.png"); // Georgia Bulldogs
+    enemyTexture2.loadFromFile("graphics/clemson_tigers.png"); // Clemson Tigers
+    enemyTexture3.loadFromFile("graphics/rolltide.png"); // Alabama Crimson Tide (used to be huge rivals in the Bear Bryant days)
+    // The above is my alma mater (undergrad) and I'm very aware we're the bad guys in college football
+    playerLaserTexture.loadFromFile("graphics/player_laser.png"); // Player Laser. Green for good guys
+    enemyLaserTexture.loadFromFile("graphics/enemy_laser.png"); // Enemy Laser. Red for bad guys
 
 }
 
+/*
+This function sets up the background sprite. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::setupBackgroundSprite()
 {   
     // Scale background to fit screen
@@ -185,6 +312,15 @@ void ECE_Defender::setupBackgroundSprite()
     backgroundSprite.setPosition(0, 0);
 }
 
+/*
+This function sets up the start screen sprite. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::setupStartScreenSprite()
 {   
     // Scale startScreen to fit screen
@@ -198,6 +334,15 @@ void ECE_Defender::setupStartScreenSprite()
     startScreenSprite.setPosition(0, 0);
 }
 
+/*
+This function sets up the game over screen sprite. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::setupGameOverSprite()
 {   
     // Scale gameOverScreen to fit screen
@@ -211,6 +356,15 @@ void ECE_Defender::setupGameOverSprite()
     gameOverScreenSprite.setPosition(0, 0);
 }
 
+/*
+This function sets up the game won sprite. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::setupGameWonSprite()
 {   
     // Scale gameWonScreen to fit screen
@@ -226,34 +380,19 @@ void ECE_Defender::setupGameWonSprite()
 
 /*
 ------------------------------------------------------------------------------------------------
-Functions to handle game state
-------------------------------------------------------------------------------------------------
-*/
-
-void ECE_Defender::initializeGame()
-{
-    // Reset game variables
-    level = 1; // Future use
-    score = 0; // Future use
-    buzzy.setLives(3);
-    maxEnemies = 20;
-    totalEnemies = 0;
-    enemies.clear();
-    playerLaserBlasts.clear();
-    enemyLaserBlasts.clear();
-    gameOver = false;
-    gamePaused = false;
-
-    // Reset Buzzy's position
-    buzzy.setStartPosition();
-}
-
-/*
-------------------------------------------------------------------------------------------------
 Helper functions for game display
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function collects all calls to draw all game objects. Keeps code a bit cleaner. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::drawGameObjects()
 {
     // Draw background
@@ -283,11 +422,29 @@ Functions to update game objects
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function calls Buzzy's update function 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updateBuzzy()
 {
     buzzy.update(frameTime); // update Buzzy's position
 }
 
+/*
+This function calls all enemies' update functions
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updateEnemies()
 {
     // Update enemies on the next frame after they were initialized
@@ -298,6 +455,17 @@ void ECE_Defender::updateEnemies()
     spawnEnemy(); // Spawn new enemies
 }
 
+/*
+This function calls all lasers' update functions via two helper functions.
+One for lasers fired by player and one for lasers fired by enemies. 
+Also calls functions to handle lasers being fired.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updateLasers()
 {
     updatePlayerLasers(); // Update player lasers
@@ -306,6 +474,16 @@ void ECE_Defender::updateLasers()
     fireEnemyLasers(); // Handle enemies firing lasers
 }
 
+/*
+This function calls update function for all lasers fired by player.
+If the laser hits the edge of the screen, it is erased from the list container.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updatePlayerLasers()
 {
     // Update player laser blasts on the next frame after they were initialized
@@ -326,6 +504,16 @@ void ECE_Defender::updatePlayerLasers()
     }
 }
 
+/*
+This function calls update function for all lasers fired by enemy.
+If the laser hits the edge of the screen, it is erased from the list container.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::updateEnemyLasers()
 {
     // Update player laser blasts on the next frame after they were initialized
@@ -351,6 +539,15 @@ Functions to handle collisions
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function collects all helper functions to handle collision detection for each game object.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::handleCollisions()
 {
     handlePlayerCollisions(); // check if buzzy has run into an enemy
@@ -358,6 +555,16 @@ void ECE_Defender::handleCollisions()
     handleLaserCollisions(); // check if any lasers have hit buzzy
 }
 
+/*
+This function checks for collisions between player and each enemy. If collision detected,
+buzzy's lives are reduced to 0 and the game is over.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::handlePlayerCollisions()
 {
     // Check for collisions between enemies and player
@@ -381,6 +588,17 @@ void ECE_Defender::handlePlayerCollisions()
     }
 }
 
+/*
+This function checks for collisions between each enemy and lasers fired by the player. 
+If collision detected, the enemy is erased from the list. The score is incremented, although
+that does nothing for now.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::handleEnemyCollisions()
 {
     // Check for collisions between laser blasts and enemies
@@ -412,6 +630,16 @@ void ECE_Defender::handleEnemyCollisions()
     }
 }
 
+/*
+This function checks for collisions between each laser fired by enemies and the player. 
+If collision detected, the player loses a life. if lives reach 0, the game is over.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::handleLaserCollisions()
 {
     // Check for collisions between laser blasts and buzzy
@@ -445,6 +673,21 @@ Helper functions for game objects
 ------------------------------------------------------------------------------------------------
 */
 
+/*
+This function handles spawning enemies to attack the player until it reaches the enemy limit. 
+It only spawns an enemy if the list is empty or the spawn location is clear. 
+It randomizes the spawning of an enemy so they don't come at regular intervals. It also randomly
+chooses between textures when spawning an enemy.
+For the last enemy, it spawns a boss with it's own unique texture that moves a bit faster. 
+The boss is spawned once all other enemies are defeated.
+It manages a list container to track all enemies in game.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::spawnEnemy()
 {
     // Spawn an enemy at random intervals so they don't just come in a even line
@@ -461,10 +704,10 @@ void ECE_Defender::spawnEnemy()
                 switch (enemyType)
                 {
                 case 0:
-                    newEnemy = ECE_Enemy(enemyTexture1, false, windowSize);
+                    newEnemy = ECE_Enemy(enemyTexture1, false, windowSize); // Georgia Bulldog
                     break;
                 case 1:
-                    newEnemy = ECE_Enemy(enemyTexture2, false, windowSize);
+                    newEnemy = ECE_Enemy(enemyTexture2, false, windowSize); // Clemson Tigers
                     break;
                 default:
                     newEnemy = ECE_Enemy(enemyTexture1, false, windowSize); // Fallback
@@ -493,6 +736,17 @@ void ECE_Defender::spawnEnemy()
     }
 }
 
+/*
+This function checks checks if the laser can be fired by calling Buzzy's fireLaser function.
+Buzzy handles the user input and fireability.
+Manages a list container of lasers fired by player.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::firePlayerLaser()
 {
     // Check if player can fire a laser
@@ -504,6 +758,18 @@ void ECE_Defender::firePlayerLaser()
     }
 }
 
+/*
+This function checks checks if the laser can be fired by calling the enemy's fireLaser function.
+The enemy handles the user input and fireability.
+Manages a list container of lasers fired by the enemy.
+It iterates through each enemy and each enemy has a random chance to fire.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
 void ECE_Defender::fireEnemyLasers()
 {
     // Check if any enemies can fire a laser

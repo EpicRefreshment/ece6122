@@ -1,3 +1,18 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/02/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 1
+
+This is the main file for Buzzy Defender.
+This handles simple overview of game state via ECE_Defender object. 
+
+*/
+
 // Include standard C++ libraries here
 #include <iostream>
 
@@ -34,7 +49,7 @@ int main()
 			defender.startGame();
 		}
 
-		// If game is over, pause the game to return to start screen
+		// If game is over or won, pause the game to return to start screen
 		if (defender.isGameOver() || defender.isGameWon())
 		{
 			defender.pauseGame();
