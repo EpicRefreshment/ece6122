@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ECE_LaserBlast.h"
 
 using namespace sf;
@@ -7,6 +9,9 @@ ECE_LaserBlast::ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bo
 {
     // Set screen boundary to window size argument
     screenBoundary = windowSize;
+
+    // Set speed
+    laserSpeed = 150.0f;
     
     // Create sprite and scale to fit screen proportionally
     this->setTexture(texture);
@@ -22,7 +27,7 @@ ECE_LaserBlast::ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bo
     Vector2u textureSize = texture.getSize();
 
     // Scale laser to fit screen proportionally and set initial position
-    this->scaleLaser(textureSize);
+    scaleLaser(textureSize);
 
     // Update size and position after scaling
     laserBoundary = this->getGlobalBounds();
@@ -36,26 +41,24 @@ ECE_LaserBlast::ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bo
 void ECE_LaserBlast::scaleLaser(Vector2u textureSize)
 {
     // Scale laser to fit screen proportionally
-    float scaleX = (float) screenBoundary.x / laserSize.x; // Maintain aspect ratio to avoid stretching image
-    float scaleY = (float) screenBoundary.y / laserSize.y;
+    float scaleX = (float) screenBoundary.x / textureSize.x; // Maintain aspect ratio to avoid stretching image
+    float scaleY = (float) screenBoundary.y / textureSize.y;
 
     // Rescale sprite
-    this->setScale(scaleX / 60.0f, scaleY / 60.0f); // Scale down to 1/10 size
+    this->setScale(scaleX / 100.0f, scaleY / 20.0f); // Scale down to 1/10 size
 }
 
 void ECE_LaserBlast::setInitialPosition()
 {
     // Set initial position based on shooter's position
-    laserPos.x = shooterPos.x + (shooterSize.x /*/ 9.0f*/); // Center laser on shooter horizontally
+    laserPos.x = shooterPos.x + (shooterSize.x / 2.0f); // Center laser on shooter horizontally
     if (isEnemy)
     {
         laserPos.y = shooterPos.y; // Start at the top of the enemy shooter
-        laserSpeed = 200.0f; // Move upwards
     }
     else
     {
-        laserPos.y = shooterPos.y + (shooterSize.y /*/ 5.0f*/); // Start below the player shooter
-        laserSpeed = -200.0f; // Move downwards
+        laserPos.y = shooterPos.y + (shooterSize.y); // Start below the player shooter
     } 
     this->setPosition(laserPos.x, laserPos.y);
 }
@@ -117,14 +120,4 @@ float ECE_LaserBlast::getSpeed()
 FloatRect ECE_LaserBlast::getBoundary()
 {
     return laserBoundary;
-}
-
-bool ECE_LaserBlast::isPlayerLaser()
-{
-    return !isEnemy;
-}
-
-bool ECE_LaserBlast::isEnemyLaser()
-{
-    return isEnemy;
 }

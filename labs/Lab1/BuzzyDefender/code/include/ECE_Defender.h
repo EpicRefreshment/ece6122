@@ -27,6 +27,7 @@ public:
     void startGame(); // sets flag to start the game
     void pauseGame(); // sets flag to pause the game i.e. show start screen
     bool isGameOver(); // Returns true if game is over
+    bool isGameWon(); // Returns true if the player beat the game
     bool isGamePaused(); // Returns true if game is paused
 
     Vector2u getWindowSize(); // Returns size of game window
@@ -35,7 +36,10 @@ private:
 
     // Helper functions to setup the game
     void loadTextures();
-    Sprite setupFullScreenSprite(const Texture& texture);
+    void setupBackgroundSprite();
+    void setupStartScreenSprite();
+    void setupGameOverSprite();
+    void setupGameWonSprite();
 
     // Handle game state
     void initializeGame();
@@ -68,13 +72,19 @@ private:
     VideoMode vm;
     Vector2u windowSize;
 
-    // Variables for objects that cover entire screen
+    // Full screen textures and sizes
     Texture backgroundTexture;
     Texture startScreenTexture;
     Texture gameOverScreenTexture;
+    Texture gameWonScreenTexture;
+    Vector2u backgroundSize;
+    Vector2u startScreenSize;
+    Vector2u gameOverScreenSize;
+    Vector2u gameWonScreenSize;
     Sprite backgroundSprite;
     Sprite startScreenSprite;
     Sprite gameOverScreenSprite;
+    Sprite gameWonScreenSprite;
 
     // Textures for all game objects
     Texture buzzyTexture;
@@ -100,11 +110,13 @@ private:
     bool enemyHit;
 
     // Game state flags
+    bool gameWon;
     bool gameOver;
     bool gamePaused;
+    bool gameClockStarted;
 
     // These two are just for keeping the Game Over screen up for a bit
     // before reverting to the start screen
     Clock gameClock;
-    Time gameOverCooldown;
+    Time gameEndCooldown;
 };

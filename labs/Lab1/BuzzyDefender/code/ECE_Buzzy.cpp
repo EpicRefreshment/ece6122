@@ -9,7 +9,10 @@ ECE_Buzzy::ECE_Buzzy()
     buzzySpeed = 300.0f;
 
     // Set fire cooldown
-    fireCooldown = milliseconds(250); // 250 ms cooldown
+    fireCooldown = milliseconds(500); // 250 ms cooldown
+
+    // Set buzzy lives
+    buzzyLives = 0;
 }
 
 void ECE_Buzzy::setupBuzzy(const Texture& texture, Vector2u windowSize)
@@ -48,10 +51,8 @@ void ECE_Buzzy::scaleBuzzy(Vector2u textureSize)
 void ECE_Buzzy::setStartPosition()
 {
     // Set initial position
-    //buzzyPos.x = (screenBoundary.x / 2.0f) - buzzySize.x / 20.0f; // Center horizontally
-    buzzyPos.x = (screenBoundary.x / 2.0f) - buzzySize.x; // Center horizontally
-    //buzzyPos.y = buzzySize.y / 20.0f; // Keep Buzzy a bit below top of window
-    buzzyPos.y = buzzySize.y * 0.5f; // Keep Buzzy a bit below top of window
+    buzzyPos.x = (screenBoundary.x / 2.0f) - buzzySize.x / 2.0f; // Center horizontally
+    buzzyPos.y = buzzySize.y * 0.25f; // Keep Buzzy a bit below top of window
     this->setPosition(buzzyPos.x, buzzyPos.y);
 }
 
@@ -131,4 +132,14 @@ float ECE_Buzzy::getSpeed()
 FloatRect ECE_Buzzy::getBoundary()
 {
     return buzzyBoundary;
+}
+
+void ECE_Buzzy::setLives(int lives)
+{
+    buzzyLives = lives;
+}
+
+int ECE_Buzzy::getLives()
+{
+    return buzzyLives;
 }

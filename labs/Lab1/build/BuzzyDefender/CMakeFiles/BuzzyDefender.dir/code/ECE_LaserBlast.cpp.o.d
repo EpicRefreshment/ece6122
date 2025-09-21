@@ -1,18 +1,7 @@
 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_LaserBlast.cpp \
  /usr/include/stdc-predef.h \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_LaserBlast.h \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Window.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Config.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Clock.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Export.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Time.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Err.hpp \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ostream \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ios \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/iosfwd \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/iostream \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/x86_64-pc-linux-gnu/bits/c++config.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -21,6 +10,9 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/x86_64-pc-linux-gnu/bits/cpu_defines.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/pstl/pstl_config.h \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ostream \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ios \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/iosfwd \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/stringfwd.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/memoryfwd.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/postypes.h \
@@ -152,6 +144,17 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o: \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/locale_facets.tcc \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/basic_ios.tcc \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/ostream.tcc \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/istream \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/istream.tcc \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_LaserBlast.h \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Window.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Config.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Clock.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Export.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Time.hpp \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/Err.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/FileInputStream.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/InputStream.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System/NonCopyable.hpp \

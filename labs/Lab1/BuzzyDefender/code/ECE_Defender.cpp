@@ -12,10 +12,19 @@ ECE_Defender::ECE_Defender()
 
     windowSize = this->getSize(); // Get the actual window size
 
+    gamePaused = true;
+    gameOver = false;
+    gameWon = false;
+    gameClockStarted = false;
+
+    // show post game screens for 2 seconds before reverting to start screen
+    gameEndCooldown = milliseconds(2000);
+
     loadTextures(); // Load all textures
-    backgroundSprite = setupFullScreenSprite(backgroundTexture); // Setup the background
-    startScreenSprite = setupFullScreenSprite(startScreenTexture); // Setup the start screen
-    gameOverScreenSprite = setupFullScreenSprite(gameOverScreenTexture); // Setup the game over screen
+    setupBackgroundSprite(); // Setup the background
+    setupStartScreenSprite(); // Setup the start screen
+    setupGameOverSprite(); // Setup the game over screen
+    setupGameWonSprite(); // Setup the game won screen
 
     // Initialize player
     buzzy.setupBuzzy(buzzyTexture, windowSize);
@@ -34,6 +43,10 @@ void ECE_Defender::refreshDisplay()
     {
         this->draw(gameOverScreenSprite);
     }
+    else if (isGameWon())
+    {
+        this->draw(gameWonScreenSprite);
+    }
     else
     {
         drawGameObjects();
@@ -46,8 +59,9 @@ void ECE_Defender::refreshDisplay()
 void ECE_Defender::updateScene()
 {
     updateBuzzy(); // Update buzzy
-    updateLasers(); // Update all laser blasts
     updateEnemies(); // Update all enemies
+    updateLasers(); // Update all laser blasts
+    handleCollisions(); // handle all collisions
 }
 
 /*
@@ -67,19 +81,31 @@ void ECE_Defender::startGame()
     enemies.clear();
     playerLaserBlasts.clear();
     enemyLaserBlasts.clear();
-    gameOver = false;
     gamePaused = false;
-
+    gameOver = false;
+    gameWon = false;
+    gameClockStarted = false;
+    
     // Reset Buzzy's position
     buzzy.setStartPosition();
 }
 
 void ECE_Defender::pauseGame()
 {
-    if (gameClock.getElapsedTime() > gameOverCooldown)
+    while (!gamePaused)
     {
-        gameOver = false;
-        gamePaused = true;
+        if (!gameClockStarted)
+        {
+            gameClock.restart();
+            gameClockStarted = true;
+        }
+        if (gameClock.getElapsedTime() > gameEndCooldown)
+        {
+            gameOver = false;
+            gameWon = false;
+            gamePaused = true;
+            gameClockStarted = false;
+        }
     }
 }
 
@@ -88,13 +114,25 @@ bool ECE_Defender::isGameOver()
     if (buzzy.getLives() <= 0)
     {
         gameOver = true;
-        gameOverCooldown = milliseconds(2000); // show game over screen for 2 seconds
     }
     else
     {
         gameOver = false;
     }
     return gameOver;
+}
+
+bool ECE_Defender::isGameWon()
+{
+    if (totalEnemies >= 20 && enemies.empty())
+    {
+        gameWon = true;
+    }
+    else
+    {
+        gameWon = false;
+    }
+    return gameWon;
 }
 
 bool ECE_Defender::isGamePaused()
@@ -117,8 +155,9 @@ void ECE_Defender::loadTextures()
 {
     // Load all textures from file
     backgroundTexture.loadFromFile("graphics/background.png");
-    startScreenTexture.loadFromFile("Start_Screen.png");
-    gameOverScreenTexture.loadFromFile("gameover.png");
+    startScreenTexture.loadFromFile("graphics/Start_Screen.png");
+    gameOverScreenTexture.loadFromFile("graphics/gameover.png");
+    gameWonScreenTexture.loadFromFile("graphics/success.png");
     buzzyTexture.loadFromFile("graphics/Buzzy_blue.png");
     enemyTexture1.loadFromFile("graphics/bulldog.png");
     enemyTexture2.loadFromFile("graphics/clemson_tigers.png");
@@ -128,20 +167,56 @@ void ECE_Defender::loadTextures()
 
 }
 
-Sprite ECE_Defender::setupFullScreenSprite(const Texture& texture)
+void ECE_Defender::setupBackgroundSprite()
 {   
     // Scale background to fit screen
-    Vector2u textureSize = texture.getSize();
-    float scaleX = (float) windowSize.x / textureSize.x;
-    float scaleY = (float) windowSize.y / textureSize.y;
+    backgroundSize = backgroundTexture.getSize();
+    float scaleX = (float) windowSize.x / backgroundSize.x; // use Y to keep it squareish and not stretch
+    float scaleY = (float) windowSize.y / backgroundSize.y;
 
-    // Create sprite
-    Sprite fullScreenSprite;
-    fullScreenSprite.setTexture(texture);
-    fullScreenSprite.setScale(scaleX, scaleY);
-    fullScreenSprite.setPosition(0, 0);
+    // setup sprite
+    backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setScale(scaleX, scaleY);
+    backgroundSprite.setPosition(0, 0);
+}
 
-    return fullScreenSprite;
+void ECE_Defender::setupStartScreenSprite()
+{   
+    // Scale startScreen to fit screen
+    startScreenSize = startScreenTexture.getSize();
+    float scaleX = (float) windowSize.x / startScreenSize.x; // use Y to keep it squareish and not stretch
+    float scaleY = (float) windowSize.y / startScreenSize.y;
+
+    // setup sprite
+    startScreenSprite.setTexture(startScreenTexture);
+    startScreenSprite.setScale(scaleX, scaleY);
+    startScreenSprite.setPosition(0, 0);
+}
+
+void ECE_Defender::setupGameOverSprite()
+{   
+    // Scale gameOverScreen to fit screen
+    gameOverScreenSize = gameOverScreenTexture.getSize();
+    float scaleX = (float) windowSize.x / gameOverScreenSize.x; // use Y to keep it squareish and not stretch
+    float scaleY = (float) windowSize.y / gameOverScreenSize.y;
+
+    // setup sprite
+    gameOverScreenSprite.setTexture(gameOverScreenTexture);
+    gameOverScreenSprite.setScale(scaleX, scaleY);
+    gameOverScreenSprite.setPosition(0, 0);
+}
+
+void ECE_Defender::setupGameWonSprite()
+{   
+    // Scale gameWonScreen to fit screen
+    gameWonScreenSize = gameWonScreenTexture.getSize();
+    float scaleX = (float) windowSize.x / gameWonScreenSize.x; // use Y to keep it squareish and not stretch
+    float scaleY = (float) windowSize.y / gameWonScreenSize.y;
+
+    // setup sprite
+    gameWonScreenSprite.setTexture(gameWonScreenTexture);
+    gameWonScreenSprite.setScale(scaleX, scaleY);
+    gameWonScreenSprite.setPosition(0, 0);
 }
 
 /*
@@ -206,7 +281,6 @@ Functions to update game objects
 void ECE_Defender::updateBuzzy()
 {
     buzzy.update(); // update Buzzy's position
-    firePlayerLaser(); // handle player firing laser
 }
 
 void ECE_Defender::updateEnemies()
@@ -217,13 +291,14 @@ void ECE_Defender::updateEnemies()
         enemy->update(); // update enemy position
     }
     spawnEnemy(); // Spawn new enemies
-    fireEnemyLasers(); // Handle enemies firing lasers
 }
 
 void ECE_Defender::updateLasers()
 {
     updatePlayerLasers(); // Update player lasers
     updateEnemyLasers(); // Update enemy lasers
+    firePlayerLaser(); // handle player firing laser
+    fireEnemyLasers(); // Handle enemies firing lasers
 }
 
 void ECE_Defender::updatePlayerLasers()
@@ -283,13 +358,15 @@ void ECE_Defender::handlePlayerCollisions()
     auto enemy = enemies.begin();
     while (enemy != enemies.end())
     {
-        if (enemy->collisionDetected(buzzy)) // If enemy collides with player
+        if (enemy->collisionDetected(buzzy))
         {
+            enemies.erase(enemy);
             buzzy.setLives(0);
             if (buzzy.getLives() <= 0)
             {
                 gameOver = true;
             }
+            break;
         }
         else
         {
@@ -315,13 +392,14 @@ void ECE_Defender::handleEnemyCollisions()
                 laser = playerLaserBlasts.erase(laser);
                 score += 1; // Increase score for destroying an enemy
                 enemyHit = true; // Exit inner loop since laser is gone
+                break;
             }
             else
             {
                 ++enemy; // advance iterator if enemy not erased
             }
         }
-        if (enemyHit)
+        if (!enemyHit)
         {
             ++laser; // advance iterator if laser was not erased
         }
@@ -370,7 +448,20 @@ void ECE_Defender::spawnEnemy()
         if (enemies.empty() || enemies.back().spawnBoundaryClear())
         {
             // Randomly select one of two enemy textures
-            ECE_Enemy newEnemy(randomEnemyTexture(), windowSize);
+            int enemyType = rand() % 2;
+            ECE_Enemy newEnemy(enemyTexture1, windowSize); // Default initialization
+            switch (enemyType)
+            {
+            case 0:
+                newEnemy = ECE_Enemy(enemyTexture1, windowSize);
+                break;
+            case 1:
+                newEnemy = ECE_Enemy(enemyTexture2, windowSize);
+                break;
+            default:
+                newEnemy = ECE_Enemy(enemyTexture1, windowSize); // Fallback
+                break;
+            }
             enemies.push_back(newEnemy);
             totalEnemies++;
         }
@@ -399,19 +490,5 @@ void ECE_Defender::fireEnemyLasers()
             ECE_LaserBlast enemyLaser(enemyLaserTexture, enemy, true, windowSize);
             enemyLaserBlasts.push_back(enemyLaser);
         }
-    }
-}
-
-Texture ECE_Defender::randomEnemyTexture()
-{
-    int enemyType = rand() % 2;
-    switch (enemyType)
-    {
-        case 0:
-            return enemyTexture1;
-        case 1:
-            return enemyTexture2;
-        default:
-            return enemyTexture1; // Fallback
     }
 }

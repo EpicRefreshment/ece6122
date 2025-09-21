@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ECE_Enemy.h"
 
 using namespace sf;
@@ -10,6 +12,7 @@ ECE_Enemy::ECE_Enemy(const Texture& texture, Vector2u windowSize)
 
     // Set speed
     enemySpeed = 150.0f;
+    direction = false; // false = left, true = right
 
     // Set fire cooldown
     fireCooldown = milliseconds(1000); // 1 second cooldown
@@ -48,8 +51,8 @@ void ECE_Enemy::setSpawnLocation()
     // Set spawn boundary to bottom left 1/4 of screen
     enemySpawnBoundary.left = screenBoundary.x - enemySize.x * 1.5f;
     enemySpawnBoundary.top = screenBoundary.y - enemySize.y * 1.5f;
-    enemySpawnBoundary.width = enemySize.x * 1.5f; // Make spawn boundary wider than enemy to avoid immediate collisions
-    enemySpawnBoundary.height = enemySize.y * 1.5f; // Make spawn boundary taller than enemy to avoid immediate collisions
+    enemySpawnBoundary.width = enemySize.x * 1.5f;
+    enemySpawnBoundary.height = enemySize.y * 1.5f; 
 
     // Set spawn position to middle of spawn boundary
     enemySpawnPos.x = enemySpawnBoundary.left + enemySize.x * 0.25f;
@@ -83,6 +86,11 @@ void ECE_Enemy::update()
             moveUp();
         }
     }
+
+    if (enemyPos.y < screenBoundary.y / 2.0f)
+    {
+        enemySpeed = 200.0f;
+    }
     
     this->setPosition(enemyPos.x, enemyPos.y);
 }
@@ -99,9 +107,9 @@ void ECE_Enemy::moveRight()
 
 void ECE_Enemy::moveUp()
 {
-    direction = true; // flip direction
+    direction = !direction; // flip direction
     // Move up a row
-    enemyPos.y -= enemySize.y * 0.5f;
+    enemyPos.y -= enemySize.y * 2.0f;
 }
 
 bool ECE_Enemy::fireLaser()

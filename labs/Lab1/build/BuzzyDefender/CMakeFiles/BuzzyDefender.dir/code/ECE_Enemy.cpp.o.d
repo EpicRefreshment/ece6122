@@ -1,5 +1,5 @@
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o: \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_Defender.cpp \
+BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Enemy.cpp.o: \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/ECE_Enemy.cpp \
  /usr/include/stdc-predef.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/iostream \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -146,12 +146,7 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o: \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/ostream.tcc \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/istream \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/istream.tcc \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Defender.h \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/list \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/stl_list.h \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/allocated_ptr.h \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ext/aligned_buffer.h \
- /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/list.tcc \
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Enemy.h \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Window.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/System.hpp \
@@ -244,6 +239,7 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o: \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Image.hpp \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/map \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/stl_tree.h \
+ /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/ext/aligned_buffer.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/node_handle.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/bits/stl_map.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/tuple \
@@ -260,7 +256,4 @@ BuzzyDefender/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o: \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Glsl.inl \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Sprite.hpp \
  /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/Text.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/VertexBuffer.hpp \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Buzzy.h \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_Enemy.h \
- /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/code/include/ECE_LaserBlast.h
+ /home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender/../SFML/include/SFML/Graphics/VertexBuffer.hpp

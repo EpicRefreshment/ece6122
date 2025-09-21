@@ -19,9 +19,6 @@ int main()
 	// This object exists mainly to keep 'main' clean
 	ECE_Defender defender;
 
-	// Start game in paused state (i.e. show start screen)
-	defender.pauseGame();
-
 	while (defender.isOpen())
 	{
 		
@@ -38,7 +35,7 @@ int main()
 		}
 
 		// If game is over, pause the game to return to start screen
-		if (defender.isGameOver())
+		if (defender.isGameOver() || defender.isGameWon())
 		{
 			defender.pauseGame();
 		}
@@ -48,7 +45,7 @@ int main()
 		{
 			defender.updateScene();
 		}	
-		
+
 		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}

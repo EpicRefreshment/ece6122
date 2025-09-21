@@ -39,5 +39,5 @@ private:
     Vector2u screenBoundary;
     Clock fireClock;
     Time fireCooldown;
-    bool direction = false; // false = left, true = right
+    bool direction; // false = left, true = right
 };

@@ -36,5 +36,5 @@ private:
     Vector2u screenBoundary;
     Clock fireClock;
     Time fireCooldown;
-    int lives;
+    int buzzyLives;
 };
