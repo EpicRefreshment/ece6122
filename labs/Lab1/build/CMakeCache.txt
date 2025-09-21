@@ -19,13 +19,13 @@
 BUILD_SHARED_LIBS:BOOL=TRUE
 
 //Value Computed by CMake
-BuzzyDefender_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build/BuzzyDefender
+BuzzyDefender_BINARY_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1
 
 //Value Computed by CMake
 BuzzyDefender_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-BuzzyDefender_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/BuzzyDefender
+BuzzyDefender_SOURCE_DIR:STATIC=/home/hice1/jwolford6/ece6122/labs/Lab1/Lab1
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line

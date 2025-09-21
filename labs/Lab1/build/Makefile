@@ -243,7 +243,7 @@ BuzzyDefender: cmake_check_build_system
 
 # fast build rule for target.
 BuzzyDefender/fast:
-	$(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build
+	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/build
 .PHONY : BuzzyDefender/fast
 
 # Help Target

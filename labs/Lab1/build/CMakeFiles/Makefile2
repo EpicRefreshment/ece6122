@@ -64,33 +64,33 @@ CMAKE_BINARY_DIR = /home/hice1/jwolford6/ece6122/labs/Lab1/build
 
 # The main recursive "all" target.
 all: SFML/all
-all: BuzzyDefender/all
+all: Lab1/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: SFML/preinstall
-preinstall: BuzzyDefender/preinstall
+preinstall: Lab1/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: SFML/clean
-clean: BuzzyDefender/clean
+clean: Lab1/clean
 .PHONY : clean
 
 #=============================================================================
-# Directory level rules for directory BuzzyDefender
+# Directory level rules for directory Lab1
 
 # Recursive "all" directory target.
-BuzzyDefender/all: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all
-.PHONY : BuzzyDefender/all
+Lab1/all: Lab1/CMakeFiles/BuzzyDefender.dir/all
+.PHONY : Lab1/all
 
 # Recursive "preinstall" directory target.
-BuzzyDefender/preinstall:
-.PHONY : BuzzyDefender/preinstall
+Lab1/preinstall:
+.PHONY : Lab1/preinstall
 
 # Recursive "clean" directory target.
-BuzzyDefender/clean: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/clean
-.PHONY : BuzzyDefender/clean
+Lab1/clean: Lab1/CMakeFiles/BuzzyDefender.dir/clean
+.PHONY : Lab1/clean
 
 #=============================================================================
 # Directory level rules for directory SFML
@@ -297,32 +297,32 @@ SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/clean:
 .PHONY : SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/clean
 
 #=============================================================================
-# Target rules for target BuzzyDefender/CMakeFiles/BuzzyDefender.dir
+# Target rules for target Lab1/CMakeFiles/BuzzyDefender.dir
 
 # All Build rule for target.
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/System/CMakeFiles/sfml-system.dir/all
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/Window/CMakeFiles/sfml-window.dir/all
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/all
-	$(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/depend
-	$(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build
+Lab1/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/System/CMakeFiles/sfml-system.dir/all
+Lab1/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/Window/CMakeFiles/sfml-window.dir/all
+Lab1/CMakeFiles/BuzzyDefender.dir/all: SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/all
+	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/depend
+	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target BuzzyDefender"
-.PHONY : BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all
+.PHONY : Lab1/CMakeFiles/BuzzyDefender.dir/all
 
 # Build rule for subdir invocation for target.
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/rule: cmake_check_build_system
+Lab1/CMakeFiles/BuzzyDefender.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles 85
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 BuzzyDefender/CMakeFiles/BuzzyDefender.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Lab1/CMakeFiles/BuzzyDefender.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hice1/jwolford6/ece6122/labs/Lab1/build/CMakeFiles 0
-.PHONY : BuzzyDefender/CMakeFiles/BuzzyDefender.dir/rule
+.PHONY : Lab1/CMakeFiles/BuzzyDefender.dir/rule
 
 # Convenience name for target.
-BuzzyDefender: BuzzyDefender/CMakeFiles/BuzzyDefender.dir/rule
+BuzzyDefender: Lab1/CMakeFiles/BuzzyDefender.dir/rule
 .PHONY : BuzzyDefender
 
 # clean rule for target.
-BuzzyDefender/CMakeFiles/BuzzyDefender.dir/clean:
-	$(MAKE) $(MAKESILENT) -f BuzzyDefender/CMakeFiles/BuzzyDefender.dir/build.make BuzzyDefender/CMakeFiles/BuzzyDefender.dir/clean
-.PHONY : BuzzyDefender/CMakeFiles/BuzzyDefender.dir/clean
+Lab1/CMakeFiles/BuzzyDefender.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/clean
+.PHONY : Lab1/CMakeFiles/BuzzyDefender.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
