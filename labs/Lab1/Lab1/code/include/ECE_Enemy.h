@@ -27,20 +27,34 @@ using namespace std;
 class ECE_Enemy: public Sprite
 {
 public:
-    // Public member functions
+    /***************************
+      Public member functions
+    ****************************/
+
+    // Constructor
     ECE_Enemy(const Texture& texture, bool isBoss, Vector2u windowSize);
+
+    // update position
     void update(Time lastFrameTime);
+
+    // functions to check if laser can be fired, enemy collided object, and if enemy can spawn
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     bool spawnBoundaryClear();
+
+    // Getters for some enemy private member variables
     Vector2f getSpawnPosition();
     Vector2f getSize();
     FloatRect getBoundary();
     float getSpeed();
 private:
-    // Private member functions
-    void scaleEnemy(Vector2u textureSize);
-    void setSpawnLocation();
+    /***************************
+      Private member functions
+    ****************************/
+
+    // Helper functions to initialize enemy
+    void scaleEnemy(Vector2u textureSize); // scale to fit window
+    void setSpawnLocation(); // set location for enemies to appear from
     void setInitialPosition();
 
     // move enemy
@@ -48,15 +62,27 @@ private:
     void moveRight(Time lastFrameTime);
     void moveUp();
 
-    // Private member variables
+    /***************************
+      Private member variables
+    ****************************/
+
+    // enemy variables 
     float enemySpeed;
     Vector2f enemySize;
     Vector2f enemyPos;
+
+    // enemy spawn variables
     Vector2f enemySpawnPos;
     FloatRect enemySpawnBoundary;
     FloatRect enemyBoundary;
+
+    // window size
     Vector2u screenBoundary;
+
+    // variables to keep enemies from firing consecutively too fast
     Clock fireClock;
     Time fireCooldown;
+
+    // enemy travel direction
     bool direction; // false = left, true = right
 };

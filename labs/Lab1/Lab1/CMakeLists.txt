@@ -27,4 +27,5 @@ link_directories(${PROJECT_SOURCE_DIR}/../SFML/lib)
 target_link_libraries(Lab1 PUBLIC sfml-graphics sfml-system sfml-window)
 
 file(COPY "${PROJECT_SOURCE_DIR}/graphics" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
+file(COPY "${PROJECT_SOURCE_DIR}/fonts" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
 

@@ -33,9 +33,14 @@ using namespace std;
 class ECE_Defender: public RenderWindow
 {
 public:
-    // Public member functions
+    /***************************
+      Public member functions
+    ****************************/
 
-    ECE_Defender(); // Constructor
+    // Constructor
+    ECE_Defender();
+
+    // Manage window and objects
     void refreshDisplay(); // Clears and redraws all appropriate game objects
     void updateScene(Time lastFrameTime); // main function for updating all game objects
 
@@ -48,10 +53,13 @@ public:
 
     Vector2u getWindowSize(); // Returns size of game window
 private:
-    // Private member functions
+    /***************************
+      Private member functions
+    ****************************/
 
     // Helper functions to setup the game
     void loadTextures(); // load all necessary textures
+
     // setup sprites that display over the full screen
     void setupBackgroundSprite(); 
     void setupStartScreenSprite();
@@ -79,7 +87,9 @@ private:
     void firePlayerLaser(); // Handles player firing laser
     void fireEnemyLasers(); // Handles enemy firing laser
 
-    // Private member variables
+    /***************************
+      Private member variables
+    ****************************/
 
     // Variables for main game window
     VideoMode vm;

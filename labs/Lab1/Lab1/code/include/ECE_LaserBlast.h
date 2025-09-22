@@ -26,45 +26,55 @@ using namespace std;
 class ECE_LaserBlast : public Sprite
 {
 public:
-    // Public member functions
+    /***************************
+      Public member functions
+    ****************************/
 
     // Constructor
     ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bool isEnemy, Vector2u windowSize);
 
-    // Functions to move laser and set position
-    void update(Time lastFrameTime); // updates laser position
+    // update position
+    void update(Time lastFrameTime);
 
     // Functions to detect collision with game window or other sprite
     bool collisionDetected(const Sprite& object);
     bool boundaryDetected();
 
-    // Functions to get laser member variables
+    // Functions to get private member variables
     Vector2f getSize();
     float getSpeed();
     FloatRect getBoundary();
 
 private:
-    // Private member functions
+    /***************************
+      Private member functions
+    ****************************/
 
     // Helper functions for initializing laser
     void scaleLaser(Vector2u textureSize); // scale laser to fit window size
     void setInitialPosition(); // put the laser in it's starting position
 
     // Functions for laser movement
-    void moveUp(Time lastFrameTime); // moves laser up
-    void moveDown(Time lastFrameTime); // moves laser down
+    void moveUp(Time lastFrameTime);
+    void moveDown(Time lastFrameTime);
     
-    // Private member variables
-    Vector2u screenBoundary; // stores window size
+    /***************************
+      Private member variables
+    ****************************/
 
-    Vector2f laserSize; // size of laser
-    Vector2f laserPos; // position of laser
-    Vector2f shooterSize; // size of sprite shooting laser
-    Vector2f shooterPos; // position of sprite shooting laser
+    // window size
+    Vector2u screenBoundary; 
 
-    bool isEnemy; // flag set to true if an enemy shoots the laser. False if buzzy.
-
-    float laserSpeed; // sets how fast laser moves up or down screen
-
+    // laser variables
+    Vector2f laserSize;
+    Vector2f laserPos; 
+    float laserSpeed;
     FloatRect laserBoundary; // stores sprite bounds
+
+    // variables for object firing the laser
+    Vector2f shooterSize;
+    Vector2f shooterPos;
+
+    // flag set to true if an enemy shoots the laser. False if buzzy.
+    bool isEnemy; 
 };
