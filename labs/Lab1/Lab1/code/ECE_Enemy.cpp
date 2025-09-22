@@ -106,7 +106,7 @@ void ECE_Enemy::setSpawnLocation()
 {
     // Set spawn boundary to bottom left 1/4 of screen
     enemySpawnBoundary.left = screenBoundary.x - enemySize.x * 1.5f;
-    enemySpawnBoundary.top = screenBoundary.y - enemySize.y * 1.5f;
+    enemySpawnBoundary.top = screenBoundary.y - enemySize.y * 3.0f;
     enemySpawnBoundary.width = enemySize.x * 1.5f;
     enemySpawnBoundary.height = enemySize.y * 1.5f; 
 
@@ -212,7 +212,7 @@ void ECE_Enemy::moveUp()
 {
     direction = !direction; // flip direction
     // Move up a row
-    enemyPos.y -= enemySize.y * 2.0f;
+    enemyPos.y -= enemySize.y * 1.0f;
 }
 
 /*
@@ -259,7 +259,7 @@ bool ECE_Enemy::collisionDetected(const Sprite& object)
 This function checks if the spawn location is clear so another enemy can spawn.
 
 Arguments:
-    object - Sprite that the object may or may not be colliding with.
+    N/A
 
 Return Values:
     bool - true if spawn clear, false if not
@@ -267,6 +267,29 @@ Return Values:
 bool ECE_Enemy::spawnBoundaryClear()
 {
     if (enemyPos.x < enemySpawnBoundary.left - (enemySize.x * 1.25f))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/*
+This function checks if the enemy is in the top row with the player. 
+This function is useful for telling the game manager it's worth checking 
+to see if the enemy is colliding with the player
+
+Arguments:
+    N/A
+
+Return Values:
+    bool - true if enemy in top row with player, false if not
+*/
+bool ECE_Enemy::inTopRow()
+{
+    if (enemyPos.y < enemySize.y) // enemies are about the same size
     {
         return true;
     }

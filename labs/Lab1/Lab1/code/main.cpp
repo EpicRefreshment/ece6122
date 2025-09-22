@@ -39,39 +39,44 @@ int main()
 	Time lastFrameTime = Time::Zero;
 	float lag;
 
+	const Time timePerFrame = seconds(1.0f/60.0f);
+
 	while (defender.isOpen())
 	{
 		// Measure frame time and lag
-		lastFrameTime = frameClock.restart();
-		lag = lastFrameTime.asSeconds();
+		//lastFrameTime = frameClock.restart();
+		//lag = lastFrameTime.asSeconds();
 
-		while (lag > 1.0f / 60.0f)
+		Time dt = frameClock.restart();
+		lastFrameTime += dt;
+
+		// Close the game
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
-			// Close the game
-			if (Keyboard::isKeyPressed(Keyboard::Escape))
-			{
-				defender.close();
-			}
-
-			// Start the game
-			if (Keyboard::isKeyPressed(Keyboard::Return) && defender.isGamePaused())
-			{
-				defender.startGame();
-			}
-
-			// If game is over or won, pause the game to return to start screen
-			if (defender.isGameOver() || defender.isGameWon())
-			{
-				defender.pauseGame();
-			}
-
-			// Update all game objects in scene if game is running	
-			if (!defender.isGamePaused())
-			{
-				defender.updateScene(lastFrameTime);
-			}
-			lag -= 1.0f / 60.0f;
+			defender.close();
 		}
+
+		// Start the game
+		if (Keyboard::isKeyPressed(Keyboard::Return) && defender.isGamePaused())
+		{
+			defender.startGame();
+		}
+
+		// Update all game objects in scene if game is running	
+		if (!defender.isGamePaused())
+		{
+			while (lastFrameTime > timePerFrame)
+			{
+				lastFrameTime -= timePerFrame;
+				defender.updateScene(timePerFrame);
+				// If game is over or won, pause the game to return to start screen
+				if (defender.isGameOver() || defender.isGameWon())
+				{
+					defender.pauseGame();
+				}
+			}
+		}
+		
 		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}

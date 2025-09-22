@@ -41,6 +41,7 @@ public:
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     bool spawnBoundaryClear();
+    bool inTopRow();
 
     // Getters for some enemy private member variables
     Vector2f getSpawnPosition();

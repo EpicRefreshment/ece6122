@@ -39,7 +39,7 @@ ECE_Defender::ECE_Defender()
     windowSize = this->getSize(); // Get the actual window size
 
     // set frame rate cap
-    this->setFramerateLimit(60);
+    //this->setFramerateLimit(60);
 
     // game state flags
     gamePaused = true;
@@ -144,6 +144,7 @@ void ECE_Defender::startGame()
     totalEnemies = 0;
     // clear all lists of game objects
     enemies.clear();
+    topRowEnemies.clear();
     playerLaserBlasts.clear();
     enemyLaserBlasts.clear();
     //reset game state flags
@@ -262,7 +263,7 @@ Vector2u ECE_Defender::getWindowSize()
 
 /*
 ------------------------------------------------------------------------------------------------
-Functions to handle game state
+Functions to initialize textures and fullscreen sprites
 ------------------------------------------------------------------------------------------------
 */
 
@@ -453,6 +454,10 @@ void ECE_Defender::updateEnemies(Time lastFrameTime)
     for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy)
     {
         enemy->update(lastFrameTime); // update enemy position
+        if (enemy->inTopRow())
+        {
+            topRowEnemies.push_back(*enemy);
+        }
     }
     spawnEnemy(); // Spawn new enemies
 }
@@ -552,7 +557,10 @@ Return Values:
 */
 void ECE_Defender::handleCollisions()
 {
-    handlePlayerCollisions(); // check if buzzy has run into an enemy
+    if (!topRowEnemies.empty())
+    {   // don't bother checking if there no enemies in line with the player
+        handlePlayerCollisions(); // check if buzzy has run into an enemy
+    }
     handleEnemyCollisions(); // check if any lasers have hit the enemy
     handleLaserCollisions(); // check if any lasers have hit buzzy
 }
@@ -570,8 +578,8 @@ Return Values:
 void ECE_Defender::handlePlayerCollisions()
 {
     // Check for collisions between enemies and player
-    auto enemy = enemies.begin();
-    while (enemy != enemies.end())
+    auto enemy = topRowEnemies.begin();
+    while (enemy != topRowEnemies.end())
     {
         if (enemy->collisionDetected(buzzy))
         {

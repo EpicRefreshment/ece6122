@@ -126,6 +126,7 @@ private:
     list<ECE_LaserBlast> playerLaserBlasts;
     list<ECE_LaserBlast> enemyLaserBlasts;
     list<ECE_Enemy> enemies;
+    list<ECE_Enemy> topRowEnemies;
 
     // Game logic variables
     int level; // curent level. Always level 1

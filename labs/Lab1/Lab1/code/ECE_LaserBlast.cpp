@@ -84,7 +84,7 @@ void ECE_LaserBlast::scaleLaser(Vector2u textureSize)
     float scaleX = (float) screenBoundary.x / textureSize.x;
     float scaleY = (float) screenBoundary.y / textureSize.y;
 
-    this->setScale(scaleX / 100.0f, scaleY / 20.0f); // Scale down: width by 1/100, height by 1/20
+    this->setScale(scaleX / 120.0f, scaleY / 20.0f); // Scale down: width by 1/100, height by 1/20
 }
 
 /*
