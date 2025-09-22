@@ -59,6 +59,12 @@ ECE_Defender::ECE_Defender()
     setupGameOverSprite(); // Setup the game over screen
     setupGameWonSprite(); // Setup the game won screen
 
+    // Fonts
+    loadFonts();
+    setupLivesText();
+    setupLevelText();
+    setupScoreText();
+
     // Initialize player
     buzzy.setupBuzzy(buzzyTexture, windowSize);
 }
@@ -93,6 +99,7 @@ void ECE_Defender::refreshDisplay()
     else
     {
         drawGameObjects(); // draw all game objects when game is in play
+        drawText(); // draw in game text
     }
 
     // Display updated frame
@@ -184,6 +191,7 @@ void ECE_Defender::pauseGame()
             gamePaused = true;
             gameClockStarted = false;
         }
+        refreshDisplay();
     }
 }
 
@@ -294,6 +302,20 @@ void ECE_Defender::loadTextures()
 }
 
 /*
+This function loads all fonts from file so they are all loaded once. Called as part of ECE_Defender initialization.
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
+void ECE_Defender::loadFonts()
+{
+    defenderFont.loadFromFile("fonts/KOMIKAP_.ttf"); // load the one font
+}
+
+/*
 This function sets up the background sprite. 
 
 Arguments:
@@ -382,6 +404,60 @@ void ECE_Defender::setupGameWonSprite()
 }
 
 /*
+This function sets up the lives remaining text. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
+void ECE_Defender::setupLivesText()
+{
+    livesText.setFont(defenderFont);
+    livesText.setCharacterSize(24);
+    livesText.setFillColor(Color::Red);
+    livesText.setStyle(Text::Bold);
+    livesText.setPosition(10, windowSize.y - 30);
+}
+
+/*
+This function sets up the score text. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
+void ECE_Defender::setupScoreText()
+{
+    scoreText.setFont(defenderFont);
+    scoreText.setCharacterSize(24);
+    scoreText.setFillColor(Color::Red);
+    scoreText.setStyle(Text::Bold);
+    scoreText.setPosition((windowSize.x / 2.0f) - 40, windowSize.y - 30);
+}
+
+/*
+This function sets up the level text. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
+void ECE_Defender::setupLevelText()
+{
+    levelText.setFont(defenderFont);
+    levelText.setCharacterSize(24);
+    levelText.setFillColor(Color::Red);
+    levelText.setStyle(Text::Bold);
+    levelText.setPosition(windowSize.x - 140, windowSize.y - 30);
+}
+
+/*
 ------------------------------------------------------------------------------------------------
 Helper functions for game display
 ------------------------------------------------------------------------------------------------
@@ -417,6 +493,33 @@ void ECE_Defender::drawGameObjects()
     {
         this->draw(*enemy);
     }
+}
+
+/*
+This function collects all calls to draw all game objects. Keeps code a bit cleaner. 
+
+Arguments:
+    N/A
+
+Return Values:
+    void
+*/
+void ECE_Defender::drawText()
+{
+    // Lives text
+    livesString = "Lives: " + to_string(buzzy.getLives());
+    livesText.setString(livesString);
+    this->draw(livesText);
+
+    // Score text
+    scoreString = "Score: " + to_string(score);
+    scoreText.setString(scoreString);
+    this->draw(scoreText);
+
+    // Level text
+    levelString = "Level: " + to_string(level);
+    levelText.setString(levelString);
+    this->draw(levelText);
 }
 
 /*

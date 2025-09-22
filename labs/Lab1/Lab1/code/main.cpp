@@ -37,16 +37,12 @@ int main()
 	// Manage frame update time to keep movement smooth
 	Clock frameClock;
 	Time lastFrameTime = Time::Zero;
-	float lag;
 
 	const Time timePerFrame = seconds(1.0f/60.0f);
 
 	while (defender.isOpen())
 	{
-		// Measure frame time and lag
-		//lastFrameTime = frameClock.restart();
-		//lag = lastFrameTime.asSeconds();
-
+		// Measure frame time
 		Time dt = frameClock.restart();
 		lastFrameTime += dt;
 
@@ -76,7 +72,7 @@ int main()
 				}
 			}
 		}
-		
+
 		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}

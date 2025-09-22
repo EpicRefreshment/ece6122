@@ -59,6 +59,7 @@ private:
 
     // Helper functions to setup the game
     void loadTextures(); // load all necessary textures
+    void loadFonts(); // load all necessary fonts
 
     // setup sprites that display over the full screen
     void setupBackgroundSprite(); 
@@ -66,8 +67,14 @@ private:
     void setupGameOverSprite();
     void setupGameWonSprite();
 
+    // Setup Text for Display
+    void setupLivesText();
+    void setupLevelText();
+    void setupScoreText();
+
     // helper function for game display
     void drawGameObjects();
+    void drawText();
 
     // Update game object positions scaled with time from last frame update
     void updateBuzzy(Time lastFrameTime);
@@ -104,6 +111,15 @@ private:
     Vector2u startScreenSize;
     Vector2u gameOverScreenSize;
     Vector2u gameWonScreenSize;
+
+    // Font and Text variables
+    Font defenderFont;
+    Text livesText;
+    Text levelText;
+    Text scoreText;
+    string livesString;
+    string levelString;
+    string scoreString;
 
     // Full screen sprites
     Sprite backgroundSprite;
