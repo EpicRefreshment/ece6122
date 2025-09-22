@@ -32,7 +32,7 @@ public:
     ECE_LaserBlast(const Texture& texture, const Sprite& shooter, bool isEnemy, Vector2u windowSize);
 
     // Functions to move laser and set position
-    void update(float frameTime); // updates laser position
+    void update(Time lastFrameTime); // updates laser position
 
     // Functions to detect collision with game window or other sprite
     bool collisionDetected(const Sprite& object);
@@ -51,8 +51,8 @@ private:
     void setInitialPosition(); // put the laser in it's starting position
 
     // Functions for laser movement
-    void moveUp(float frameTime); // moves laser up
-    void moveDown(float frameTime); // moves laser down
+    void moveUp(Time lastFrameTime); // moves laser up
+    void moveDown(Time lastFrameTime); // moves laser down
     
     // Private member variables
     Vector2u screenBoundary; // stores window size

@@ -1,4 +1,4 @@
-Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Enemy.cpp.o: \
+Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Enemy.cpp.o: \
  /home/hice1/jwolford6/ece6122/labs/Lab1/Lab1/code/ECE_Enemy.cpp \
  /usr/include/stdc-predef.h \
  /storage/pace-apps/spack/packages/linux-rhel9-x86_64_v3/gcc-11.3.1/gcc-12.3.0-ukkkutsxfl5kpnnaxflpkq2jtliwthfz/bin/../lib/gcc/x86_64-pc-linux-gnu/12.3.0/../../../../include/c++/12.3.0/iostream \

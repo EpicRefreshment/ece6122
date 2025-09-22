@@ -34,33 +34,44 @@ int main()
 	// This object exists mainly to keep 'main' clean
 	ECE_Defender defender;
 
+	// Manage frame update time to keep movement smooth
+	Clock frameClock;
+	Time lastFrameTime = Time::Zero;
+	float lag;
+
 	while (defender.isOpen())
 	{
-		
-		// Close the game
-		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		// Measure frame time and lag
+		lastFrameTime = frameClock.restart();
+		lag = lastFrameTime.asSeconds();
+
+		while (lag > 1.0f / 60.0f)
 		{
-			defender.close();
+			// Close the game
+			if (Keyboard::isKeyPressed(Keyboard::Escape))
+			{
+				defender.close();
+			}
+
+			// Start the game
+			if (Keyboard::isKeyPressed(Keyboard::Return) && defender.isGamePaused())
+			{
+				defender.startGame();
+			}
+
+			// If game is over or won, pause the game to return to start screen
+			if (defender.isGameOver() || defender.isGameWon())
+			{
+				defender.pauseGame();
+			}
+
+			// Update all game objects in scene if game is running	
+			if (!defender.isGamePaused())
+			{
+				defender.updateScene(lastFrameTime);
+			}
+			lag -= 1.0f / 60.0f;
 		}
-
-		// Start the game
-		if (Keyboard::isKeyPressed(Keyboard::Return) && defender.isGamePaused())
-		{
-			defender.startGame();
-		}
-
-		// If game is over or won, pause the game to return to start screen
-		if (defender.isGameOver() || defender.isGameWon())
-		{
-			defender.pauseGame();
-		}
-
-		// Update all game objects in scene if game is running	
-		if (!defender.isGamePaused())
-		{
-			defender.updateScene();
-		}	
-
 		// Clear and redraw the window with updated scene
 		defender.refreshDisplay();
 	}

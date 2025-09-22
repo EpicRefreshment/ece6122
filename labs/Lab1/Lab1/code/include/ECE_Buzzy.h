@@ -31,9 +31,7 @@ public:
     ECE_Buzzy();
     void setupBuzzy(const Texture& texture, Vector2u windowSize);
     void setStartPosition();
-    void update(float frameTime);
-    void moveRight(float frameTime);
-    void moveLeft(float frameTime);
+    void update(Time lastFrameTime);
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     Vector2f getSize();
@@ -44,6 +42,10 @@ public:
 private:
     // Private member functions
     void scaleBuzzy(Vector2u textureSize);
+
+    // Move buzzy
+    void moveRight(Time lastFrameTime);
+    void moveLeft(Time lastFrameTime);
 
     // Private member variables
     Vector2f buzzySize;

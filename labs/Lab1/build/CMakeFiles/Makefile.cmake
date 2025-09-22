@@ -102,5 +102,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "SFML/src/SFML/Window/CMakeFiles/sfml-window.dir/DependInfo.cmake"
   "SFML/src/SFML/Network/CMakeFiles/sfml-network.dir/DependInfo.cmake"
   "SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/DependInfo.cmake"
-  "Lab1/CMakeFiles/BuzzyDefender.dir/DependInfo.cmake"
+  "Lab1/CMakeFiles/Lab1.exe.dir/DependInfo.cmake"
   )

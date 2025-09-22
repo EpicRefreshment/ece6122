@@ -182,25 +182,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-Lab1/CMakeFiles/BuzzyDefender.dir/rule:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Lab1/CMakeFiles/BuzzyDefender.dir/rule
-.PHONY : Lab1/CMakeFiles/BuzzyDefender.dir/rule
+Lab1/CMakeFiles/Lab1.exe.dir/rule:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Lab1/CMakeFiles/Lab1.exe.dir/rule
+.PHONY : Lab1/CMakeFiles/Lab1.exe.dir/rule
 
 # Convenience name for target.
-BuzzyDefender: Lab1/CMakeFiles/BuzzyDefender.dir/rule
-.PHONY : BuzzyDefender
+Lab1.exe: Lab1/CMakeFiles/Lab1.exe.dir/rule
+.PHONY : Lab1.exe
 
 # fast build rule for target.
-BuzzyDefender/fast:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/build
-.PHONY : BuzzyDefender/fast
+Lab1.exe/fast:
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/build
+.PHONY : Lab1.exe/fast
 
 code/ECE_Buzzy.o: code/ECE_Buzzy.cpp.o
 .PHONY : code/ECE_Buzzy.o
 
 # target to build an object file
 code/ECE_Buzzy.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.o
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Buzzy.cpp.o
 .PHONY : code/ECE_Buzzy.cpp.o
 
 code/ECE_Buzzy.i: code/ECE_Buzzy.cpp.i
@@ -208,7 +208,7 @@ code/ECE_Buzzy.i: code/ECE_Buzzy.cpp.i
 
 # target to preprocess a source file
 code/ECE_Buzzy.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.i
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Buzzy.cpp.i
 .PHONY : code/ECE_Buzzy.cpp.i
 
 code/ECE_Buzzy.s: code/ECE_Buzzy.cpp.s
@@ -216,7 +216,7 @@ code/ECE_Buzzy.s: code/ECE_Buzzy.cpp.s
 
 # target to generate assembly for a file
 code/ECE_Buzzy.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Buzzy.cpp.s
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Buzzy.cpp.s
 .PHONY : code/ECE_Buzzy.cpp.s
 
 code/ECE_Defender.o: code/ECE_Defender.cpp.o
@@ -224,7 +224,7 @@ code/ECE_Defender.o: code/ECE_Defender.cpp.o
 
 # target to build an object file
 code/ECE_Defender.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.o
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Defender.cpp.o
 .PHONY : code/ECE_Defender.cpp.o
 
 code/ECE_Defender.i: code/ECE_Defender.cpp.i
@@ -232,7 +232,7 @@ code/ECE_Defender.i: code/ECE_Defender.cpp.i
 
 # target to preprocess a source file
 code/ECE_Defender.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.i
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Defender.cpp.i
 .PHONY : code/ECE_Defender.cpp.i
 
 code/ECE_Defender.s: code/ECE_Defender.cpp.s
@@ -240,7 +240,7 @@ code/ECE_Defender.s: code/ECE_Defender.cpp.s
 
 # target to generate assembly for a file
 code/ECE_Defender.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Defender.cpp.s
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Defender.cpp.s
 .PHONY : code/ECE_Defender.cpp.s
 
 code/ECE_Enemy.o: code/ECE_Enemy.cpp.o
@@ -248,7 +248,7 @@ code/ECE_Enemy.o: code/ECE_Enemy.cpp.o
 
 # target to build an object file
 code/ECE_Enemy.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Enemy.cpp.o
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Enemy.cpp.o
 .PHONY : code/ECE_Enemy.cpp.o
 
 code/ECE_Enemy.i: code/ECE_Enemy.cpp.i
@@ -256,7 +256,7 @@ code/ECE_Enemy.i: code/ECE_Enemy.cpp.i
 
 # target to preprocess a source file
 code/ECE_Enemy.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Enemy.cpp.i
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Enemy.cpp.i
 .PHONY : code/ECE_Enemy.cpp.i
 
 code/ECE_Enemy.s: code/ECE_Enemy.cpp.s
@@ -264,7 +264,7 @@ code/ECE_Enemy.s: code/ECE_Enemy.cpp.s
 
 # target to generate assembly for a file
 code/ECE_Enemy.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_Enemy.cpp.s
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_Enemy.cpp.s
 .PHONY : code/ECE_Enemy.cpp.s
 
 code/ECE_LaserBlast.o: code/ECE_LaserBlast.cpp.o
@@ -272,7 +272,7 @@ code/ECE_LaserBlast.o: code/ECE_LaserBlast.cpp.o
 
 # target to build an object file
 code/ECE_LaserBlast.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.o
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_LaserBlast.cpp.o
 .PHONY : code/ECE_LaserBlast.cpp.o
 
 code/ECE_LaserBlast.i: code/ECE_LaserBlast.cpp.i
@@ -280,7 +280,7 @@ code/ECE_LaserBlast.i: code/ECE_LaserBlast.cpp.i
 
 # target to preprocess a source file
 code/ECE_LaserBlast.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.i
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_LaserBlast.cpp.i
 .PHONY : code/ECE_LaserBlast.cpp.i
 
 code/ECE_LaserBlast.s: code/ECE_LaserBlast.cpp.s
@@ -288,7 +288,7 @@ code/ECE_LaserBlast.s: code/ECE_LaserBlast.cpp.s
 
 # target to generate assembly for a file
 code/ECE_LaserBlast.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/ECE_LaserBlast.cpp.s
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/ECE_LaserBlast.cpp.s
 .PHONY : code/ECE_LaserBlast.cpp.s
 
 code/main.o: code/main.cpp.o
@@ -296,7 +296,7 @@ code/main.o: code/main.cpp.o
 
 # target to build an object file
 code/main.cpp.o:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/main.cpp.o
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/main.cpp.o
 .PHONY : code/main.cpp.o
 
 code/main.i: code/main.cpp.i
@@ -304,7 +304,7 @@ code/main.i: code/main.cpp.i
 
 # target to preprocess a source file
 code/main.cpp.i:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/main.cpp.i
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/main.cpp.i
 .PHONY : code/main.cpp.i
 
 code/main.s: code/main.cpp.s
@@ -312,7 +312,7 @@ code/main.s: code/main.cpp.s
 
 # target to generate assembly for a file
 code/main.cpp.s:
-	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/code/main.cpp.s
+	cd /home/hice1/jwolford6/ece6122/labs/Lab1/build && $(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/code/main.cpp.s
 .PHONY : code/main.cpp.s
 
 # Help Target
@@ -329,7 +329,7 @@ help:
 	@echo "... package"
 	@echo "... package_source"
 	@echo "... rebuild_cache"
-	@echo "... BuzzyDefender"
+	@echo "... Lab1.exe"
 	@echo "... code/ECE_Buzzy.o"
 	@echo "... code/ECE_Buzzy.i"
 	@echo "... code/ECE_Buzzy.s"

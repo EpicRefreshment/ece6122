@@ -37,7 +37,7 @@ public:
 
     ECE_Defender(); // Constructor
     void refreshDisplay(); // Clears and redraws all appropriate game objects
-    void updateScene(); // main function for updating all game objects
+    void updateScene(Time lastFrameTime); // main function for updating all game objects
 
     // Functions to manage game state
     void startGame(); // sets flag to start the game
@@ -51,8 +51,9 @@ private:
     // Private member functions
 
     // Helper functions to setup the game
-    void loadTextures();
-    void setupBackgroundSprite();
+    void loadTextures(); // load all necessary textures
+    // setup sprites that display over the full screen
+    void setupBackgroundSprite(); 
     void setupStartScreenSprite();
     void setupGameOverSprite();
     void setupGameWonSprite();
@@ -60,24 +61,23 @@ private:
     // helper function for game display
     void drawGameObjects();
 
-    // Update game objects
-    void updateBuzzy();
-    void updateEnemies();
-    void updateLasers();
-    void updatePlayerLasers();
-    void updateEnemyLasers();
+    // Update game object positions scaled with time from last frame update
+    void updateBuzzy(Time lastFrameTime);
+    void updateEnemies(Time lastFrameTime);
+    void updateLasers(Time lastFrameTime);
+    void updatePlayerLasers(Time lastFrameTime);
+    void updateEnemyLasers(Time lastFrameTime);
 
     // Handle collisions
-    void handleCollisions();
-    void handlePlayerCollisions();
-    void handleEnemyCollisions();
-    void handleLaserCollisions();
+    void handleCollisions(); // Master function that collects all helper function calls
+    void handlePlayerCollisions(); // Handle player collisions with enemy
+    void handleEnemyCollisions(); // Handle enemy collisions with lasers
+    void handleLaserCollisions(); // Handle enemy laser collisions with player
 
     // Helper functions for game objects
-    void spawnEnemy();
-    void firePlayerLaser();
-    void fireEnemyLasers();
-    Texture randomEnemyTexture();
+    void spawnEnemy(); // spawns enemies and adds them to list
+    void firePlayerLaser(); // Handles player firing laser
+    void fireEnemyLasers(); // Handles enemy firing laser
 
     // Private member variables
 
@@ -94,6 +94,8 @@ private:
     Vector2u startScreenSize;
     Vector2u gameOverScreenSize;
     Vector2u gameWonScreenSize;
+
+    // Full screen sprites
     Sprite backgroundSprite;
     Sprite startScreenSprite;
     Sprite gameOverScreenSprite;
@@ -116,24 +118,27 @@ private:
     list<ECE_Enemy> enemies;
 
     // Game logic variables
-    int level;
-    int score;
-    int maxEnemies;
-    int totalEnemies;
-    float frameTime;
+    int level; // curent level. Always level 1
+    int score; // number of enemies defeated
+    int maxEnemies; // max number of enemies in level
+    int totalEnemies; // total enemies that have been spawned
+
+    // flag that is true if enemy was hit by a laser from the player, false if not
     bool enemyHit;
 
     // Game state flags
-    bool gameWon;
-    bool gameOver;
-    bool gamePaused;
-    bool gameClockStarted;
-    bool bossReady;
+    bool gameWon; // you won the game!
+    bool gameOver; // you lost the game!
+    bool gamePaused; // game is paused and showing start screen
+    bool gameClockStarted; // true if the game clock has already been started
+    bool bossReady; // true if all other enemies have been defeated
 
     // These two are just for keeping the Game Over screen up for a bit
     // before reverting to the start screen
     Clock gameClock;
-    Clock bossClock;
     Time gameEndCooldown;
+
+    // keeps the boss on cooldown so it doesn't pop out immediately to create tension
+    Clock bossClock;
     Time bossCooldown;
 };

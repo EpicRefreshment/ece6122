@@ -234,17 +234,17 @@ sfml-graphics/fast:
 .PHONY : sfml-graphics/fast
 
 #=============================================================================
-# Target rules for targets named BuzzyDefender
+# Target rules for targets named Lab1.exe
 
 # Build rule for target.
-BuzzyDefender: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 BuzzyDefender
-.PHONY : BuzzyDefender
+Lab1.exe: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Lab1.exe
+.PHONY : Lab1.exe
 
 # fast build rule for target.
-BuzzyDefender/fast:
-	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/BuzzyDefender.dir/build.make Lab1/CMakeFiles/BuzzyDefender.dir/build
-.PHONY : BuzzyDefender/fast
+Lab1.exe/fast:
+	$(MAKE) $(MAKESILENT) -f Lab1/CMakeFiles/Lab1.exe.dir/build.make Lab1/CMakeFiles/Lab1.exe.dir/build
+.PHONY : Lab1.exe/fast
 
 # Help Target
 help:
@@ -260,7 +260,7 @@ help:
 	@echo "... package"
 	@echo "... package_source"
 	@echo "... rebuild_cache"
-	@echo "... BuzzyDefender"
+	@echo "... Lab1.exe"
 	@echo "... sfml-graphics"
 	@echo "... sfml-network"
 	@echo "... sfml-system"

@@ -38,14 +38,15 @@ ECE_Defender::ECE_Defender()
 
     windowSize = this->getSize(); // Get the actual window size
 
+    // set frame rate cap
+    this->setFramerateLimit(60);
+
     // game state flags
     gamePaused = true;
     gameOver = false;
     gameWon = false;
     gameClockStarted = false;
     bossReady = false;
-
-    frameTime = 0.008f; // Sets speed scaling for all game objects i.e. 8 ms
 
     // show post game screens for 2 seconds before reverting to start screen
     gameEndCooldown = milliseconds(2000);
@@ -108,11 +109,12 @@ Arguments:
 Return Values:
     void
 */
-void ECE_Defender::updateScene()
+void ECE_Defender::updateScene(Time lastFrameTime)
 {
-    updateBuzzy(); // Update buzzy
-    updateEnemies(); // Update all enemies
-    updateLasers(); // Update all laser blasts
+
+    updateBuzzy(lastFrameTime); // Update buzzy
+    updateEnemies(lastFrameTime); // Update all enemies
+    updateLasers(lastFrameTime); // Update all laser blasts
     handleCollisions(); // handle all collisions
 }
 
@@ -426,31 +428,31 @@ Functions to update game objects
 This function calls Buzzy's update function 
 
 Arguments:
-    N/A
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Defender::updateBuzzy()
+void ECE_Defender::updateBuzzy(Time lastFrameTime)
 {
-    buzzy.update(frameTime); // update Buzzy's position
+    buzzy.update(lastFrameTime); // update Buzzy's position
 }
 
 /*
 This function calls all enemies' update functions
 
 Arguments:
-    N/A
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Defender::updateEnemies()
+void ECE_Defender::updateEnemies(Time lastFrameTime)
 {
     // Update enemies on the next frame after they were initialized
     for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy)
     {
-        enemy->update(frameTime); // update enemy position
+        enemy->update(lastFrameTime); // update enemy position
     }
     spawnEnemy(); // Spawn new enemies
 }
@@ -461,15 +463,15 @@ One for lasers fired by player and one for lasers fired by enemies.
 Also calls functions to handle lasers being fired.
 
 Arguments:
-    N/A
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Defender::updateLasers()
+void ECE_Defender::updateLasers(Time lastFrameTime)
 {
-    updatePlayerLasers(); // Update player lasers
-    updateEnemyLasers(); // Update enemy lasers
+    updatePlayerLasers(lastFrameTime); // Update player lasers
+    updateEnemyLasers(lastFrameTime); // Update enemy lasers
     firePlayerLaser(); // handle player firing laser
     fireEnemyLasers(); // Handle enemies firing lasers
 }
@@ -479,17 +481,17 @@ This function calls update function for all lasers fired by player.
 If the laser hits the edge of the screen, it is erased from the list container.
 
 Arguments:
-    N/A
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Defender::updatePlayerLasers()
+void ECE_Defender::updatePlayerLasers(Time lastFrameTime)
 {
     // Update player laser blasts on the next frame after they were initialized
     for (auto laser = playerLaserBlasts.begin(); laser != playerLaserBlasts.end(); )
     {
-        laser->update(frameTime);
+        laser->update(lastFrameTime);
 
         if (laser->boundaryDetected())
         {
@@ -509,17 +511,17 @@ This function calls update function for all lasers fired by enemy.
 If the laser hits the edge of the screen, it is erased from the list container.
 
 Arguments:
-    N/A
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Defender::updateEnemyLasers()
+void ECE_Defender::updateEnemyLasers(Time lastFrameTime)
 {
     // Update player laser blasts on the next frame after they were initialized
     for (auto laser = enemyLaserBlasts.begin(); laser != enemyLaserBlasts.end(); )
     {
-        laser->update(frameTime);
+        laser->update(lastFrameTime);
         if (laser->boundaryDetected())
         {
             // Remove laser if it goes out of bounds
@@ -540,7 +542,7 @@ Functions to handle collisions
 */
 
 /*
-This function collects all helper functions to handle collision detection for each game object.
+This function collects all helper function calls to handle collision detection for each game object.
 
 Arguments:
     N/A

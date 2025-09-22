@@ -137,17 +137,17 @@ This function updates the position of the laser. Calls three helper functions to
 various directions: left, right, and up. Moves up if the enemy reaches the edge of the screen.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Enemy::update(float frameTime)
+void ECE_Enemy::update(Time lastFrameTime)
 {
     // Move enemy to the side
     if (direction) // move right
     {
-        moveRight(frameTime);
+        moveRight(lastFrameTime);
         if (enemyPos.x > screenBoundary.x - enemySize.x * 1.5f) // Prevent moving off right edge of spawn boundary
         {
             moveUp();
@@ -155,7 +155,7 @@ void ECE_Enemy::update(float frameTime)
     }
     else // move left
     {
-        moveLeft(frameTime);
+        moveLeft(lastFrameTime);
         if (enemyPos.x < enemySize.x * 0.5f) // Prevent moving off left edge of spawn boundary
         {
             moveUp();
@@ -175,28 +175,28 @@ void ECE_Enemy::update(float frameTime)
 This function moves the enemy left.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Enemy::moveLeft(float frameTime)
+void ECE_Enemy::moveLeft(Time lastFrameTime)
 {
-    enemyPos.x -= enemySpeed * frameTime;
+    enemyPos.x -= (enemySpeed * lastFrameTime.asSeconds());
 }
 
 /*
 This function moves the enemy right.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Enemy::moveRight(float frameTime)
+void ECE_Enemy::moveRight(Time lastFrameTime)
 {
-    enemyPos.x += enemySpeed * frameTime;
+    enemyPos.x += (enemySpeed * lastFrameTime.asSeconds());
 }
 
 /*

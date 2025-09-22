@@ -122,23 +122,23 @@ This function updates the position of the laser. Calls two helper functions to m
 either left or right based on user input (Left and Right on keyboard).
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Buzzy::update(float frameTime)
+void ECE_Buzzy::update(Time lastFrameTime)
 {
     // Move Buzzy left
     if (Keyboard::isKeyPressed(Keyboard::Left))
     {
-        moveLeft(frameTime);
+        moveLeft(lastFrameTime);
     }
 
     // Move Buzzy right
     if (Keyboard::isKeyPressed(Keyboard::Right))
     {
-        moveRight(frameTime);
+        moveRight(lastFrameTime);
     }
 
     // Update sprite position
@@ -149,14 +149,14 @@ void ECE_Buzzy::update(float frameTime)
 This function moves Buzzy left.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Buzzy::moveLeft(float frameTime)
+void ECE_Buzzy::moveLeft(Time lastFrameTime)
 {
-    buzzyPos.x -= buzzySpeed * frameTime;
+    buzzyPos.x -= (buzzySpeed * lastFrameTime.asSeconds());
     if (buzzyPos.x < 0)
     {
         // Prevent moving off left edge
@@ -168,14 +168,14 @@ void ECE_Buzzy::moveLeft(float frameTime)
 This function moves buzzy right.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_Buzzy::moveRight(float frameTime)
+void ECE_Buzzy::moveRight(Time lastFrameTime)
 {
-    buzzyPos.x += buzzySpeed * frameTime; 
+    buzzyPos.x += (buzzySpeed * lastFrameTime.asSeconds()); 
     if (buzzyPos.x > screenBoundary.x - buzzySize.x)
     { 
         // Prevent moving off right edge

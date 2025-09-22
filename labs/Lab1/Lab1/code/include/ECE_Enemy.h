@@ -29,10 +29,7 @@ class ECE_Enemy: public Sprite
 public:
     // Public member functions
     ECE_Enemy(const Texture& texture, bool isBoss, Vector2u windowSize);
-    void update(float frameTime);
-    void moveLeft(float frameTime);
-    void moveRight(float frameTime);
-    void moveUp();
+    void update(Time lastFrameTime);
     bool fireLaser();
     bool collisionDetected(const Sprite& object);
     bool spawnBoundaryClear();
@@ -45,6 +42,11 @@ private:
     void scaleEnemy(Vector2u textureSize);
     void setSpawnLocation();
     void setInitialPosition();
+
+    // move enemy
+    void moveLeft(Time lastFrameTime);
+    void moveRight(Time lastFrameTime);
+    void moveUp();
 
     // Private member variables
     float enemySpeed;

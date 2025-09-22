@@ -84,7 +84,7 @@ void ECE_LaserBlast::scaleLaser(Vector2u textureSize)
     float scaleX = (float) screenBoundary.x / textureSize.x;
     float scaleY = (float) screenBoundary.y / textureSize.y;
 
-    this->setScale(scaleX / 50.0f, scaleY / 20.0f); // Scale down: width by 1/100, height by 1/20
+    this->setScale(scaleX / 100.0f, scaleY / 20.0f); // Scale down: width by 1/100, height by 1/20
 }
 
 /*
@@ -117,22 +117,22 @@ This function updates the position of the laser. Calls one of two helper functio
 on if the shooter is an enemy or Buzzy.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_LaserBlast::update(float frameTime)
+void ECE_LaserBlast::update(Time lastFrameTime)
 {
     if (isEnemy)
     {
         // Move laser blast upwards
-        moveUp(frameTime);
+        moveUp(lastFrameTime);
     }
     else
     {
         // Move laser blast downwards
-        moveDown(frameTime);
+        moveDown(lastFrameTime);
     }
 
     // Update sprite position
@@ -146,28 +146,28 @@ void ECE_LaserBlast::update(float frameTime)
 This function moves the laser up.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_LaserBlast::moveUp(float frameTime)
+void ECE_LaserBlast::moveUp(Time lastFrameTime)
 {
-    laserPos.y -= laserSpeed * frameTime;
+    laserPos.y -= (laserSpeed * lastFrameTime.asSeconds());
 }
 
 /*
 This function moves the laser down.
 
 Arguments:
-    frameTime - used to scale the distance the object is moved each time based on an assumed frame time
+    lastFrameTime - used to scale the distance the object is moved each time based time since last frame update
 
 Return Values:
     void
 */
-void ECE_LaserBlast::moveDown(float frameTime)
+void ECE_LaserBlast::moveDown(Time lastFrameTime)
 {
-    laserPos.y += laserSpeed * frameTime;
+    laserPos.y += (laserSpeed * lastFrameTime.asSeconds());
 }
 
 /*
