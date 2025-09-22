@@ -33,7 +33,7 @@ Return Values:
 */
 ECE_Defender::ECE_Defender()
 {
-    vm = VideoMode(1920, 1080); // Set window size
+    vm = VideoMode(1280, 720); // Set window size
     this->create(vm, "Buzzy Defender", Style::Default); // Create the window
 
     windowSize = this->getSize(); // Get the actual window size

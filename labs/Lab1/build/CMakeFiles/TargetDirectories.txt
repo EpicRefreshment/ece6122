@@ -58,7 +58,7 @@
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/SFML/src/SFML/Graphics/CMakeFiles/install.dir
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/SFML/src/SFML/Graphics/CMakeFiles/install/local.dir
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/SFML/src/SFML/Graphics/CMakeFiles/install/strip.dir
-/home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1/CMakeFiles/Lab1.exe.dir
+/home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1/CMakeFiles/Lab1.dir
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1/CMakeFiles/package.dir
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1/CMakeFiles/package_source.dir
 /home/hice1/jwolford6/ece6122/labs/Lab1/build/Lab1/CMakeFiles/edit_cache.dir

@@ -16,15 +16,15 @@ file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
                   ${PROJECT_SOURCE_DIR}/code/ECE_LaserBlast.cpp)
 
 # Add the executable
-add_executable(Lab1.exe ${SOURCES})
-target_include_directories(Lab1.exe PUBLIC ${PROJECT_SOURCE_DIR}/code/include)
+add_executable(Lab1 ${SOURCES})
+target_include_directories(Lab1 PUBLIC ${PROJECT_SOURCE_DIR}/code/include)
 
 include_directories(${PROJECT_SOURCE_DIR}/../SFML/include)
 
 link_directories(${PROJECT_SOURCE_DIR}/../SFML/lib)
 
 # Link the executable to the libraries in the lib directory
-target_link_libraries(Lab1.exe PUBLIC sfml-graphics sfml-system sfml-window)
+target_link_libraries(Lab1 PUBLIC sfml-graphics sfml-system sfml-window)
 
 file(COPY "${PROJECT_SOURCE_DIR}/graphics" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
 

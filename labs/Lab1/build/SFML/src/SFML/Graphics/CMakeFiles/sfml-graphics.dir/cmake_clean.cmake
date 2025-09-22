@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "../../../../output/lib/.2.6"
   "../../../../output/lib/libsfml-graphics.pdb"
   "../../../../output/lib/libsfml-graphics.so"
   "../../../../output/lib/libsfml-graphics.so.2.6"
