@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Project name and version
-project(Lab1 VERSION 1.0)
+project(Labs VERSION 1.0)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -17,7 +17,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${COMMON_OUTPUT_DIR}/lib")  # For shared lib
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${COMMON_OUTPUT_DIR}/lib")  # For static libraries
 
 add_subdirectory(SFML)
-add_subdirectory(Lab1)
+add_subdirectory(Lab2)
 
 # Include header files
 include_directories(${PROJECT_SOURCE_DIR}/include)
