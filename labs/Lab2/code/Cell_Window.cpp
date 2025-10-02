@@ -1,12 +1,12 @@
 /*
 Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 09/02/2025
+Date Created: 09/28/2025
 Date Last Modified: 09/21/2025
 
 Description:
 
-Lab 1
+Lab 2
 
 This is the source file for the ECE_Defender class and implements all functions
 and maintains all variables defined in ECE_Defender.h.
@@ -68,9 +68,16 @@ void Cell_Window::refreshDisplay()
     {
         for (int j = 0; j < cells[i].size(); j++)
         {
+            // draw live cells
+            // also, update table now that all cells have been set
             if (cells[i][j].isAlive())
             {
                 this->draw(cells[i][j]);
+                cellStateTable[i][j] = true;
+            }
+            else
+            {
+                cellStateTable[i][j] = false;
             }
         }
     }
@@ -95,7 +102,7 @@ void Cell_Window::updateScene()
     {
         for (int j = 0; j < cells[i].size(); j++)
         {
-            updateCell(cells[i][j]);
+            updateCell(cells[i][j], i, j);
         }
     }
 }
@@ -123,34 +130,132 @@ void Cell_Window::initGridLimits()
 
 void Cell_Window::initCells()
 {
+    // iterate through cell rows
     for (int i = 0; i < numCellsRow; i++)
     {
-        vector<Cell> cellRow;
+        vector<Cell> cellRow; // row for cell table
+        vector<bool> cellStateRow; // row for cell state table
+
+        // iterate through cell columns in current row
         for (int j = 0; j < numCellsCol; j++)
         {
-            int x = i * cellSize;
-            int y = j * cellSize;
-            cellRow.emplace_back(cellSize, x, y);
+            cellRow.emplace_back(cellSize, i, j);
 
             uniform_int_distribution<int> distribution(0, 1);
             bool aliveOrDead = distribution(generator);
             if (aliveOrDead)
             {
                 cellRow.back().setAlive();
+                cellStateRow.emplace_back(true);
+            }
+            else
+            {
+                cellRow.back().setDead();
+                cellStateRow.emplace_back(false);
             }
         }
         cells.push_back(cellRow);
+        cellStateTable.push_back(cellStateRow);
     }
 }
 
-void Cell_Window::updateCell(Cell& cell)
+void Cell_Window::updateCell(Cell& cell, int row, int column)
 {
+    // Count live neighbors
+    int liveNeighbors = checkNeighbors(row, column);
+    // Apply Conway's game of life ruleset
     if (cell.isAlive())
     {
-        cell.setDead();
+        if (liveNeighbors < 2 || liveNeighbors > 3)
+        {
+            cell.setDead();
+        }
     }
     else
     {
-        cell.setAlive();
+        if (liveNeighbors == 3)
+        {
+            cell.setAlive();
+        }
     }
+}
+
+int Cell_Window::checkNeighbors(int row, int column)
+{
+    int liveNeighbors = 0;
+    liveNeighbors += checkNeighborsAbove(row, column); // as above
+    liveNeighbors += checkNeighborsBelow(row, column); // so below
+    liveNeighbors += checkNeighborsSide(row, column); // and check the sides, too
+    return liveNeighbors;
+}
+
+int Cell_Window::checkNeighborsAbove(int row, int column)
+{
+    int liveNeighbors = 0;
+    // All dead if we're at the top of the grid
+    if (row == 0)
+    {
+        return 0;
+    }
+    // Check top left
+    if (column != 0 && cellStateTable[row-1][column-1])
+    {
+        liveNeighbors += 1;
+    }
+    // Check top middle
+    if (cellStateTable[row-1][column])
+    {
+        liveNeighbors += 1;
+    }
+    // Check top right
+    if (column != gridWidth && cellStateTable[row-1][column+1])
+    {
+        liveNeighbors += 1;
+    }
+
+    return liveNeighbors;
+}
+
+int Cell_Window::checkNeighborsBelow(int row, int column)
+{
+    int liveNeighbors = 0;
+    // All dead if we're at the bottom of the grid
+    if (row == gridHeight)
+    {
+        return 0;
+    }
+    // Check bottom left
+    if (column != 0 && cellStateTable[row+1][column-1])
+    {
+        liveNeighbors += 1;
+    }
+    // Check bottom middle
+    if (cellStateTable[row+1][column])
+    {
+        liveNeighbors += 1;
+    }
+    // Check bottom right
+    if (column != gridWidth && cellStateTable[row+1][column+1])
+    {
+        liveNeighbors += 1;
+    }
+    
+    return liveNeighbors;
+}
+
+int Cell_Window::checkNeighborsSide(int row, int column)
+{
+    int liveNeighbors = 0;
+    // Check left
+    if (column != 0 && cellStateTable[row][column-1])
+    {
+        liveNeighbors += 1;
+    }
+    // Check right
+    if (column != gridWidth && cellStateTable[row][column+1])
+    {
+        liveNeighbors += 1;
+    }
+    
+    return liveNeighbors;
 }

@@ -1,3 +1,18 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/28/2025
+Date Last Modified: 09/21/2025
+
+Description:
+
+Lab 2
+
+This is the main file for the conway's game of life simulation.
+This handles simple overview of handling window 
+
+*/
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -31,6 +46,7 @@ int main()
 		cellularAutomata.updateScene();
 		// Clear and redraw the window with updated scene
 		cellularAutomata.refreshDisplay();
+		// sleep so display doesn't refresh too fast
 		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 

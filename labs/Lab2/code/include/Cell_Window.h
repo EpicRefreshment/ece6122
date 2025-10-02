@@ -50,7 +50,11 @@ private:
       Private member functions
     ****************************/
 
-    void updateCell(Cell& cell);
+    void updateCell(Cell& cell, int row, int column);
+    int checkNeighbors(int row, int column);
+    int checkNeighborsAbove(int row, int column);
+    int checkNeighborsBelow(int row, int column);
+    int checkNeighborsSide(int row, int column);
 
     void initGridLimits();
     void initCells();
@@ -83,6 +87,7 @@ private:
     int numCellsCol;
 
     vector<vector<Cell>> cells;
+    vector<vector<bool>> cellStateTable;
 
     default_random_engine generator;
 };

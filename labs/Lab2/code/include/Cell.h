@@ -45,6 +45,9 @@ private:
     ****************************/
     bool alive;
 
+    int row;
+    int column;
+
     /***************************
       Private member variables
     ****************************/

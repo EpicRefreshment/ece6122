@@ -1,7 +1,7 @@
 /*
 Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 09/02/2025
+Date Created: 09/28/2025
 Date Last Modified: 09/21/2025
 
 Description:
@@ -31,11 +31,14 @@ Arguments:
 Return Values:
     ECE_Defender
 */
-Cell::Cell(float size, int x, int y)
+Cell::Cell(float size, int row, int column)
 {
     this->setSize({size, size});
     this->setFillColor(Color::White);
-    this->setPosition(x, y);
+
+    this->row = row;
+    this->column = column;
+    this->setPosition(row * size, column * size);
 
     alive = false;
 }
