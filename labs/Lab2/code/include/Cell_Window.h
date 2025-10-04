@@ -16,9 +16,10 @@ ECE_Defender manages all game objects, state, and logic.
 
 #pragma once
 
-#include <list>
-#include <random>
 #include <iostream>
+#include <chrono>
+#include <random>
+#include <list>
 
 // Include SFML libraries here
 #include <SFML/Graphics.hpp>
@@ -82,12 +83,12 @@ private:
     int gridHeight;
     int processType;
 
-    int numCells;
-    int numCellsRow;
-    int numCellsCol;
-
     vector<vector<Cell>> cells;
-    vector<vector<bool>> cellStateTable;
+    vector<vector<bool>> cellStateTable1;
+    vector<vector<bool>> cellStateTable2;
 
-    default_random_engine generator;
+    Clock generationClock;
+    Time generationTime;
+
+    int generationCount;
 };

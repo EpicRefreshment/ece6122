@@ -47,7 +47,7 @@ int main()
 		// Clear and redraw the window with updated scene
 		cellularAutomata.refreshDisplay();
 		// sleep so display doesn't refresh too fast
-		this_thread::sleep_for(chrono::milliseconds(100));
+		//this_thread::sleep_for(chrono::milliseconds(20));
 	}
 
 	return 0;

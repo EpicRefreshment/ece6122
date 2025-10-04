@@ -38,7 +38,7 @@ Cell::Cell(float size, int row, int column)
 
     this->row = row;
     this->column = column;
-    this->setPosition(row * size, column * size);
+    this->setPosition(column * size, row * size);
 
     alive = false;
 }
