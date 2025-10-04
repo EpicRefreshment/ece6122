@@ -39,21 +39,4 @@ Cell::Cell(float size, int row, int column)
     this->row = row;
     this->column = column;
     this->setPosition(column * size, row * size);
-
-    alive = false;
-}
-
-void Cell::setDead()
-{
-    alive = false;
-}
-
-void Cell::setAlive()
-{
-    alive = true;
-}
-
-bool Cell::isAlive()
-{
-    return alive;
 }

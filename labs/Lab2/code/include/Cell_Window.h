@@ -50,13 +50,6 @@ private:
     /***************************
       Private member functions
     ****************************/
-
-    void updateCell(Cell& cell, int row, int column);
-    int checkNeighbors(int row, int column);
-    int checkNeighborsAbove(int row, int column);
-    int checkNeighborsBelow(int row, int column);
-    int checkNeighborsSide(int row, int column);
-
     void initGridLimits();
     void initCells();
 
@@ -84,11 +77,14 @@ private:
     int processType;
 
     vector<vector<Cell>> cells;
-    vector<vector<bool>> cellStateTable1;
-    vector<vector<bool>> cellStateTable2;
+    vector<vector<int>> cellStateTable;
+    vector<vector<int>> cellStateTableUpdated;
+    vector<vector<int>> cellStateChanged;
 
     Clock generationClock;
     Time generationTime;
 
+    int liveNeighbors;
+    int changedNeighbors;
     int generationCount;
 };

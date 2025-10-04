@@ -33,7 +33,7 @@ Return Values:
 */
 Cell_Window::Cell_Window()
 {
-    vm = VideoMode(800, 600); // Set window size
+    vm = VideoMode(1200, 800); // Set window size
     this->create(vm, "Cellular Automata", Style::Default); // Create the window
 
     windowSize = this->getSize(); // Get the actual window size
@@ -65,20 +65,14 @@ void Cell_Window::refreshDisplay()
     this->clear();
 
     // Draw cells
-    for (int i = 0; i < cells.size(); i++)
+    for (int i = 1; i <= gridHeight; i++)
     {
-        for (int j = 0; j < cells[i].size(); j++)
+        for (int j = 1; j <= gridWidth; j++)
         {
             // draw live cells
-            // also, update table now that all cells have been set
-            if (cells[i][j].isAlive())
+            if (cellStateTable[i][j] == 1)
             {
-                this->draw(cells[i][j]);
-                cellStateTable1[i][j] = true;
-            }
-            else
-            {
-                cellStateTable1[i][j] = false;
+                this->draw(cells[i-1][j-1]);
             }
         }
     }
@@ -99,17 +93,38 @@ Return Values:
 */
 void Cell_Window::updateScene()
 {
-    generationCount += 1;
+    generationCount++;
     generationClock.restart();
 
-    for (int i = 0; i < cells.size(); i++)
+    for (int i = 1; i <= gridHeight; i++)
     {
-        for (int j = 0; j < cells[i].size(); j++)
+        for (int j = 1; j <= gridWidth; j++)
         {
-            //if (i > 0 && i < (gridHeight - 1) && j > 0)
-            //updateCell(cells[i][j], i, j);
+            liveNeighbors = 0; // reset
+            // Check neighbors above
+            liveNeighbors += cellStateTable[i-1][j-1] +
+                             cellStateTable[i-1][j] +
+                             cellStateTable[i-1][j+1]; // as above
+            // Check neighbors below
+            liveNeighbors += cellStateTable[i+1][j-1] +
+                             cellStateTable[i+1][j] +
+                             cellStateTable[i+1][j+1]; // so below
+            // Check neighbors to the side
+            liveNeighbors += cellStateTable[i][j-1] +
+                             cellStateTable[i][j+1];
+
+            if (cellStateTableUpdated[i][j] == 1 && (liveNeighbors < 2 || liveNeighbors > 3))
+            {
+                cellStateTableUpdated[i][j] = 0;
+            }
+            else if (cellStateTableUpdated[i][j] == 0 && liveNeighbors == 3)
+            {
+                cellStateTableUpdated[i][j] = 1;
+            }
         }
     }
+
+    cellStateTable = cellStateTableUpdated;
 
     generationTime += generationClock.getElapsedTime();
 
@@ -139,8 +154,8 @@ void Cell_Window::initGridLimits()
 {
     gridWidth = static_cast<int>(windowSize.x / cellSize);
     gridHeight = static_cast<int>(windowSize.y / cellSize);
-    cout << "Window Resolution: " << windowSize.x << "x" << windowSize.y << endl;
-    cout << "Grid Size: " << gridWidth << "x" << gridHeight << endl;
+    //cout << "Window Resolution: " << windowSize.x << "x" << windowSize.y << endl;
+    //cout << "Grid Size: " << gridWidth << "x" << gridHeight << endl;
 }
 
 void Cell_Window::initCells()
@@ -150,217 +165,38 @@ void Cell_Window::initCells()
 
     uniform_int_distribution<int> distribution(0, 1);
     // iterate through cell rows
-    for (int i = 0; i < gridHeight; i++)
+    for (int i = 0; i <= (gridHeight + 1); i++)
     {
         vector<Cell> cellRow; // row for cell table
-        vector<bool> cellStateRow; // row for cell state table
+        vector<int> cellStateRow; // row for cell state table
 
         // iterate through cell columns in current row
-        for (int j = 0; j < gridWidth; j++)
+        for (int j = 0; j <= (gridWidth + 1); j++)
         {
-            cellRow.emplace_back(cellSize, i, j);
-
-            bool aliveOrDead = distribution(generator);
-            if (aliveOrDead)
+            if (i > 0 && i <= gridHeight && j > 0 && j <= gridWidth)
             {
-                cellRow.back().setAlive();
-                cellStateRow.emplace_back(true);
+                cellRow.emplace_back(cellSize, i-1, j-1);
+
+                bool aliveOrDead = distribution(generator);
+                if (aliveOrDead)
+                {
+                    cellStateRow.emplace_back(1);
+                }
+                else
+                {
+                    cellStateRow.emplace_back(0);
+                }
             }
             else
             {
-                cellRow.back().setDead();
-                cellStateRow.emplace_back(false);
+                cellStateRow.emplace_back(0);
             }
         }
-        cells.push_back(cellRow);
-        cellStateTable1.push_back(cellStateRow);
-    }
-}
-
-void Cell_Window::updateCell(Cell& cell, int row, int column)
-{
-    // Count live neighbors
-    int liveNeighbors = checkNeighbors(row, column);
-    // Apply Conway's game of life ruleset
-    if (cell.isAlive())
-    {
-        if (liveNeighbors < 2 || liveNeighbors > 3)
+        if (i > 0 && i <= gridHeight)
         {
-            cell.setDead();
+            cells.push_back(cellRow);
         }
+        cellStateTable.push_back(cellStateRow);
     }
-    else
-    {
-        if (liveNeighbors == 3)
-        {
-            cell.setAlive();
-        }
-    }
-}
-
-int Cell_Window::checkNeighbors(int row, int column)
-{
-    //cout << "Checking neighbors: " << endl;
-    int liveNeighbors = 0;
-
-     // All dead if we're at the top of the grid
-    if (row == 0 || row == (gridHeight - 1))
-    {
-        return 0;
-    }
-    // Check above
-    if (row != 0) // as above
-    {
-        // top center
-        if (cellStateTable1[row-1][column])
-        {
-            liveNeighbors += 1;
-        }
-        // top left
-        if (column != 0 && cellStateTable1[row-1][column-1])
-        {
-            liveNeighbors += 1;
-        }
-        // top right
-        if (column != (gridWidth - 1) && cellStateTable1[row-1][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // Check below
-    if (row != (gridHeight - 1)) // so below
-    {
-        // bottom center
-        if (cellStateTable1[row+1][column])
-        {
-            liveNeighbors += 1;
-        }
-        // bottom left
-        if (column != 0 && cellStateTable1[row+1][column-1])
-        {
-            liveNeighbors += 1;
-        }
-        // bottom right
-        if (column != (gridWidth - 1) && cellStateTable1[row+1][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // check to the left then check to the right
-    if (column != 0)
-    {
-        if (cellStateTable1[row][column-1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // Check right
-    if (column < (gridWidth - 1))
-    {
-        if (cellStateTable1[row][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    //liveNeighbors += checkNeighborsAbove(row, column); // as above
-    //liveNeighbors += checkNeighborsBelow(row, column); // so below
-    //liveNeighbors += checkNeighborsSide(row, column); // and check the sides, too
-    return liveNeighbors;
-}
-
-int Cell_Window::checkNeighborsAbove(int row, int column)
-{
-    int liveNeighbors = 0;
-    // All dead if we're at the top of the grid
-    if (row == 0)
-    {
-        return 0;
-    }
-    // Check top left
-    if (column != 0)
-    {
-        //cout << "1";
-        if (cellStateTable1[row-1][column-1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // Check top middle
-    //cout << "2";
-    if (cellStateTable1[row-1][column])
-    {
-        liveNeighbors += 1;
-    }
-    // Check top right
-    if (column < (gridWidth - 1))
-    {
-        //cout << "3";
-        if (cellStateTable1[row-1][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-
-    return liveNeighbors;
-}
-
-int Cell_Window::checkNeighborsBelow(int row, int column)
-{
-    int liveNeighbors = 0;
-    // All dead if we're at the bottom of the grid
-    if (row == (gridHeight - 1))
-    {
-        return 0;
-    }
-    // Check bottom left
-    if (column != 0)
-    {
-        //cout << "4";
-        if (cellStateTable1[row+1][column-1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // Check bottom middle
-    //cout << "5";
-    if (cellStateTable1[row+1][column])
-    {
-        liveNeighbors += 1;
-    }
-    // Check bottom right
-    if (column < (gridWidth - 1))
-    {
-        //cout << "6";
-        if (cellStateTable1[row+1][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    
-    return liveNeighbors;
-}
-
-int Cell_Window::checkNeighborsSide(int row, int column)
-{
-    int liveNeighbors = 0;
-    // Check left
-    if (column != 0)
-    {
-        //cout << "7";
-        if (cellStateTable1[row][column-1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    // Check right
-    if (column < (gridWidth - 1))
-    {
-        //cout << "8";
-        if (cellStateTable1[row][column+1])
-        {
-            liveNeighbors += 1;
-        }
-    }
-    //cout << endl;
-    return liveNeighbors;
+    cellStateTableUpdated = cellStateTable;
 }

@@ -34,21 +34,14 @@ public:
     // Constructor
     Cell(float size, int x, int y);
 
-    void setDead();
-    void setAlive();
-
-    bool isAlive();
-
 private:
     /***************************
       Private member functions
     ****************************/
-    bool alive;
-
-    int row;
-    int column;
 
     /***************************
       Private member variables
     ****************************/
+    int row;
+    int column;
 };
