@@ -17,9 +17,15 @@ ECE_Defender manages all game objects, state, and logic.
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <chrono>
 #include <random>
-#include <list>
+#include <thread>
+#include <queue>
+#include <functional>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 // Include SFML libraries here
 #include <SFML/Graphics.hpp>
@@ -50,8 +56,19 @@ private:
     /***************************
       Private member functions
     ****************************/
+    void parseArguments();
     void initGridLimits();
     void initCells();
+    void initThreads();
+
+    void updateSequential();
+    void updateThreading();
+    void updateMultiprocessing();
+
+    void updateRow(int row);
+    void updateRows(int start, int end);
+
+    void outputTiming();
 
     /***************************
       Private member variables
@@ -70,21 +87,23 @@ private:
     // Texture Size
     Vector2u backgroundSize;
 
+    int processType;
     int numThreads;
+    int perThreadRows;
+    int remainingRows;
+    function<void()> updateFunction;
+
     float cellSize;
     int gridWidth;
     int gridHeight;
-    int processType;
 
     vector<vector<Cell>> cells;
     vector<vector<int>> cellStateTable;
     vector<vector<int>> cellStateTableUpdated;
-    vector<vector<int>> cellStateChanged;
+    vector<thread> cellThreads;
+    vector<tuple<int, int>> workThreadRows;
 
     Clock generationClock;
     Time generationTime;
-
-    int liveNeighbors;
-    int changedNeighbors;
     int generationCount;
 };

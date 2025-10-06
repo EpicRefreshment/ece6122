@@ -28,7 +28,7 @@ This handles simple overview of handling window
 using namespace std;
 using namespace sf;
 
-int main()
+int main(int argc, char* argv[])
 {
 	// Create object to manage the game window and overall game state
 	// This object exists mainly to keep 'main' clean
@@ -37,7 +37,17 @@ int main()
 
 	while (cellularAutomata.isOpen())
 	{
-		// Close the game
+		Event event;
+		while (cellularAutomata.pollEvent(event)) // Handle mouse events
+		{
+			// Close if user clicks the close button
+			if (event.type == Event::Closed)
+			{
+				cellularAutomata.close();
+			}
+		}
+
+		// Close simulation if Escape is pressed
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			cellularAutomata.close();
