@@ -95,6 +95,11 @@ int main(int argc, char* argv[])
 				cout << "Invalid process type." << endl;
 				return 0;
 			}
+			else if (processType == 3)
+			{
+				cout << "invalid number of threads." << endl;
+				return 0;
+			}
 		}
 		else
 		{

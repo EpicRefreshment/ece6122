@@ -181,7 +181,7 @@ int validateNumThreads(string value)
     if (valueStream.eof() && !valueStream.fail())
     {
         // if input is a valid integer, check it's valid
-        if (tempInt < 2 || tempInt > 16)
+        if (tempInt < 2 || tempInt > 200)
         {
             return -1; // Out of range
         }
