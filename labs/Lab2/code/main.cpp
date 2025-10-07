@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 				cout << "Invalid process type." << endl;
 				return 0;
 			}
-			else if (processType == 3)
+			else if (processType == 3 && numThreads > 16)
 			{
 				cout << "invalid number of threads." << endl;
 				return 0;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
 	// Create object to manage the game window and overall game state
 	// This object exists mainly to keep 'main' clean
-	Cell_Window cellularAutomata(width, height, cellSize, numThreads, static_cast<int>(processType));
+	Cell_Window cellularAutomata(width, height, cellSize, numThreads, processType);
 	cellularAutomata.refreshDisplay();
 
 	while (cellularAutomata.isOpen())

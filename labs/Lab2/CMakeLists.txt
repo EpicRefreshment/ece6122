@@ -18,10 +18,13 @@ file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
 add_executable(Lab2 ${SOURCES})
 target_include_directories(Lab2 PUBLIC ${PROJECT_SOURCE_DIR}/code/include)
 
+# Find and configure OpenMP
+find_package(OpenMP REQUIRED)
+
 include_directories(${PROJECT_SOURCE_DIR}/../SFML/include)
 
 link_directories(${PROJECT_SOURCE_DIR}/../SFML/lib)
 
 # Link the executable to the libraries in the lib directory
-target_link_libraries(Lab2 PUBLIC sfml-graphics sfml-system sfml-window)
+target_link_libraries(Lab2 PUBLIC sfml-graphics sfml-system sfml-window OpenMP::OpenMP_CXX)
 

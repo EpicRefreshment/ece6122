@@ -74,11 +74,11 @@ int parseProcessType(string value)
         {
             processType = static_cast<int>(ProcessType::SEQ);
         }
-        else if (value == "")
+        else if (value == "THRD")
         {
             processType = static_cast<int>(ProcessType::THRD);
         }
-        else if (value == "")
+        else if (value == "OMP")
         {
             processType = static_cast<int>(ProcessType::OMP);
         }

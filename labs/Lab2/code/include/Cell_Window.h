@@ -26,6 +26,9 @@ ECE_Defender manages all game objects, state, and logic.
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include <utility>
+
+#include <omp.h>
 
 // Include SFML libraries here
 #include <SFML/Graphics.hpp>
@@ -101,7 +104,7 @@ private:
     vector<vector<int>> cellStateTable;
     vector<vector<int>> cellStateTableUpdated;
     vector<thread> cellThreads;
-    vector<tuple<int, int>> workThreadRows;
+    vector<pair<int, int>> workThreadRows;
 
     Clock generationClock;
     Time generationTime;

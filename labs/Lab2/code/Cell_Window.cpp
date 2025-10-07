@@ -65,7 +65,7 @@ Cell_Window::Cell_Window(int width, int height, int cellSize, int numThreads, in
     initGridLimits();
     initCells();
 
-    if (processType == 1 || processType == 2)
+    if (processType == 2 || processType == 3)
     {
         initThreads();
     }
@@ -166,7 +166,8 @@ void Cell_Window::updateThreading()
 
     for (const auto& workRows : workThreadRows)
     {
-        const auto [startRow, endRow] = workRows;
+        int startRow = workRows.first;
+        int endRow = workRows.second;
         cellThreads.emplace_back([this, startRow, endRow] { this->updateRows(startRow, endRow); });
     }
 
@@ -181,7 +182,16 @@ void Cell_Window::updateThreading()
 
 void Cell_Window::updateMultiprocessing()
 {
-    cout << "Placeholder!";
+    // This directive creates a team of threads and distributes the loop iterations.
+    // Each thread will process one of the pre-calculated work chunks from the vector.
+    #pragma omp parallel for num_threads(numThreads)
+    for (int i = 0; i < workThreadRows.size(); ++i)
+    {
+        // Use .first and .second for direct access, avoiding template issues
+        int startRow = workThreadRows[i].first;
+        int endRow = workThreadRows[i].second;
+        updateRows(startRow, endRow);
+    }
 }
 
 void Cell_Window::updateRow(int row)
