@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add source files
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
                   ${PROJECT_SOURCE_DIR}/code/Cell.cpp
-                  ${PROJECT_SOURCE_DIR}/code/Cell_Window.cpp)
+                  ${PROJECT_SOURCE_DIR}/code/Cell_Window.cpp
+                  ${PROJECT_SOURCE_DIR}/code/Command_Parser.cpp)
 
 # Add the executable
 add_executable(Lab2 ${SOURCES})
@@ -23,7 +24,4 @@ link_directories(${PROJECT_SOURCE_DIR}/../SFML/lib)
 
 # Link the executable to the libraries in the lib directory
 target_link_libraries(Lab2 PUBLIC sfml-graphics sfml-system sfml-window)
-
-#file(COPY "${PROJECT_SOURCE_DIR}/graphics" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
-#file(COPY "${PROJECT_SOURCE_DIR}/fonts" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
 

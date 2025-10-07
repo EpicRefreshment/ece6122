@@ -362,6 +362,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\Lab2\code\Cell.cpp" />
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\Lab2\code\Cell_Window.cpp" />
+    <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\Lab2\code\Command_Parser.cpp" />
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\Lab2\code\main.cpp" />
   </ItemGroup>
   <ItemGroup />

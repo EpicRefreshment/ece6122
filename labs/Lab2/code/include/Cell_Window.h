@@ -45,7 +45,7 @@ public:
     ****************************/
 
     // Constructor
-    Cell_Window();
+    Cell_Window(int width, int height, int cellSize, int numThreads, int processType);
 
     // Manage window and objects
     void refreshDisplay(); // Clears and redraws all appropriate game objects

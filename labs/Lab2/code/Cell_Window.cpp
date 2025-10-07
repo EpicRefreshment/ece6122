@@ -31,30 +31,30 @@ Arguments:
 Return Values:
     ECE_Defender
 */
-Cell_Window::Cell_Window()
+Cell_Window::Cell_Window(int width, int height, int cellSize, int numThreads, int processType)
 {
-    vm = VideoMode(800, 600); // Set window size
+    vm = VideoMode(width, height); // Set window size
     this->create(vm, "Cellular Automata", Style::Default); // Create the window
 
     windowSize = this->getSize(); // Get the actual window size
 
-    numThreads = 5;
+    this->numThreads = numThreads;
 
-    cellSize = 5.0f;
+    this->cellSize = static_cast<float>(cellSize);
 
     generationCount = 0;
     generationTime = microseconds(0);
 
-    processType = 1;
+    this->processType = processType;
     switch (processType)
     {
-        case 0:
+        case 1:
             updateFunction = bind(&Cell_Window::updateSequential, this);
             break;
-        case 1:
+        case 2:
             updateFunction = bind(&Cell_Window::updateThreading, this);
             break;
-        case 2:
+        case 3:
             updateFunction = bind(&Cell_Window::updateMultiprocessing, this);
             break;
         default: // good habit to keep a default statement despite validating input
@@ -136,13 +136,13 @@ void Cell_Window::outputTiming()
 {
     switch (processType)
     {
-        case 0:
+        case 1:
             cout << "100 generations took " << generationTime.asMicroseconds() << " microseconds with single thread." << endl;
             break;
-        case 1:
+        case 2:
             cout << "100 generations took " << generationTime.asMicroseconds() << " microseconds with " << numThreads << " std::threads." << endl;
             break;
-        case 2:
+        case 3:
             cout << "100 generations took " << generationTime.asMicroseconds() << " microseconds with " << numThreads << " OMP threads." << endl;
             break;
         default: // good habit to keep a default statement despite validating input
