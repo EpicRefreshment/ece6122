@@ -45,6 +45,9 @@ Cell_Window::Cell_Window(int width, int height, int cellSize, int numThreads, in
     generationCount = 0;
     generationTime = microseconds(0);
 
+    initGridLimits();
+    initCells();
+
     this->processType = processType;
     switch (processType)
     {
@@ -53,21 +56,29 @@ Cell_Window::Cell_Window(int width, int height, int cellSize, int numThreads, in
             break;
         case 2:
             updateFunction = bind(&Cell_Window::updateThreading, this);
+            initThreads();
+            assignWork();
             break;
         case 3:
             updateFunction = bind(&Cell_Window::updateMultiprocessing, this);
+            assignWork();
             break;
         default: // good habit to keep a default statement despite validating input
             updateFunction = bind(&Cell_Window::updateSequential, this);
             break;
     }
+}
 
-    initGridLimits();
-    initCells();
-
-    if (processType == 2 || processType == 3)
+Cell_Window::~Cell_Window()
+{
+    stop_threads = true;
+    condition.notify_all(); // Wake up all threads so they can check the stop flag and exit
+    for (thread& t : cellThreads)
     {
-        initThreads();
+        if (t.joinable())
+        {
+            t.join();
+        }
     }
 }
 
@@ -161,7 +172,7 @@ void Cell_Window::updateSequential()
 
 void Cell_Window::updateThreading()
 {
-    cellThreads.clear();
+    /*cellThreads.clear();
     cellThreads.reserve(numThreads);
 
     for (const auto& workRows : workThreadRows)
@@ -177,6 +188,30 @@ void Cell_Window::updateThreading()
         {
             cellThread.join();
         }
+    }*/
+   { // Use a scoped lock to safely add tasks to the queue
+        unique_lock<mutex> lock(queueMutex);
+
+        // Set the counter for how many tasks need to complete this frame
+        active_tasks = static_cast<int>(workThreadRows.size());
+
+        // Add a task for each work chunk to the queue
+        for (const auto& workRows : workThreadRows)
+        {
+            tasks.push([this, workRows] {
+                const auto [startRow, endRow] = workRows;
+                this->updateRows(startRow, endRow);
+            });
+        }
+    } // Lock is released here
+
+    // Wake up all sleeping worker threads to start processing tasks
+    condition.notify_all();
+
+    // Wait until all tasks for this frame are complete
+    while (active_tasks > 0)
+    {
+        this_thread::yield(); // Yield to prevent the main thread from busy-waiting
     }
 }
 
@@ -185,7 +220,7 @@ void Cell_Window::updateMultiprocessing()
     // This directive creates a team of threads and distributes the loop iterations.
     // Each thread will process one of the pre-calculated work chunks from the vector.
     #pragma omp parallel for num_threads(numThreads)
-    for (int i = 0; i < workThreadRows.size(); ++i)
+    for (int i = 0; i < workThreadRows.size(); i++)
     {
         // Use .first and .second for direct access, avoiding template issues
         int startRow = workThreadRows[i].first;
@@ -311,6 +346,42 @@ void Cell_Window::initCells()
 }
 
 void Cell_Window::initThreads()
+{
+    for (int i = 0; i < numThreads; i++)
+    {
+        cellThreads.emplace_back(&Cell_Window::cellWorker, this);
+    }
+}
+
+// The main loop for each worker thread.
+// It waits for tasks, executes them, and goes back to waiting.
+void Cell_Window::cellWorker()
+{
+    while (true)
+    {
+        Task task;
+        {   // Lock the queue to safely grab a task
+            unique_lock<mutex> lock(queueMutex);
+
+            // Wait until there's a task or the pool is stopping
+            condition.wait(lock, [this] { 
+                return !tasks.empty() || stop_threads; 
+            });
+
+            if (stop_threads && tasks.empty()) {
+                return; // Exit loop if stopped and no tasks left
+            }
+
+            task = move(tasks.front());
+            tasks.pop();
+        } // Lock is released here
+
+        task(); // Execute the task
+        active_tasks--; // Decrement the task counter to signal completion
+    }
+}
+
+void Cell_Window::assignWork()
 {
     if (numThreads > gridHeight)
     {

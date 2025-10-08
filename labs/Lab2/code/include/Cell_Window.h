@@ -49,6 +49,8 @@ public:
 
     // Constructor
     Cell_Window(int width, int height, int cellSize, int numThreads, int processType);
+    //Destructor
+    ~Cell_Window();
 
     // Manage window and objects
     void refreshDisplay(); // Clears and redraws all appropriate game objects
@@ -71,6 +73,9 @@ private:
     void updateRow(int row);
     void updateRows(int start, int end);
 
+    void cellWorker();
+    void assignWork();
+
     void outputTiming();
 
     /***************************
@@ -90,22 +95,38 @@ private:
     // Texture Size
     Vector2u backgroundSize;
 
-    int processType;
-    int numThreads;
-    int perThreadRows;
-    int remainingRows;
-    function<void()> updateFunction;
-
-    float cellSize;
+    // cellular automata parameters
+    // can be set using command line arguments
     int gridWidth;
     int gridHeight;
+    float cellSize;
+    int numThreads;
+    int processType;
 
+    // function pointer for appropriate update function
+    // depending on processType
+    function<void()> updateFunction;
+
+    // cell/cell state vectors
     vector<vector<Cell>> cells;
     vector<vector<int>> cellStateTable;
     vector<vector<int>> cellStateTableUpdated;
+
+    // threading variables
     vector<thread> cellThreads;
     vector<pair<int, int>> workThreadRows;
+    int perThreadRows;
+    int remainingRows;
 
+    // Thread pool variables
+    using Task = function<void()>;
+    queue<Task> tasks;
+    mutex queueMutex;
+    condition_variable condition;
+    atomic<bool> stop_threads{false};
+    atomic<int> active_tasks{0};
+
+    // for tracking cell generation processing time
     Clock generationClock;
     Time generationTime;
     int generationCount;
