@@ -564,6 +564,7 @@ void Cell_Window::assignWork()
 
         // add pair to vector of start and end rows
         workThreadRows.emplace_back(rowStart, rowEnd);
+        
         if (debug)
         {
             cout << "Thread " << (i + 1) << ": Start: " << rowStart << ", End: " << rowEnd << ", Total rows: " << (rowEnd - rowStart) << endl;

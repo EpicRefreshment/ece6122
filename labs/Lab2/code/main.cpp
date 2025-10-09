@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 					invalidInput = 8;
 					break;
 				}
-				else if (argRecv[0])
+				else if (argRecv[0]) // check for duplicate command
 				{
 					invalidInput = 9;
 				}
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 					invalidInput = 1;
 				}
 
-				argRecv[0] = 1;
+				argRecv[0] = 1; // command received. Used to check for duplicate commands.
 			}
 			else if (command == "-y") // window height
 			{
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 					invalidInput = 8;
 					break;
 				}
-				else if (argRecv[1])
+				else if (argRecv[1]) // check for duplicate command
 				{
 					invalidInput = 9;
 				}
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 					invalidInput = 2;
 				}
 
-				argRecv[1] = 1;
+				argRecv[1] = 1; // command received. Used to check for duplicate commands.
 			}
 			else if (command == "-c") // cell size
 			{
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 					invalidInput = 8;
 					break;
 				}
-				else if (argRecv[2])
+				else if (argRecv[2]) // check for duplicate command
 				{
 					invalidInput = 9;
 				}
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 					invalidInput = 3;
 				}
 				
-				argRecv[2] = 1;
+				argRecv[2] = 1; // command received. Used to check for duplicate commands.
 			}
 			else if (command == "-n") // number of threads
 			{
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 					invalidInput = 8;
 					break;
 				}
-				else if (argRecv[3])
+				else if (argRecv[3]) // check for duplicate command
 				{
 					invalidInput = 9;
 				}
@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 					invalidInput = 4;
 				}
 
-				argRecv[3] = 1;
+				argRecv[3] = 1; // command received. Used to check for duplicate commands.
 			}
 			else if (command == "-t") // processing type
 			{
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 					invalidInput = 8;
 					break;
 				}
-				else if (argRecv[4])
+				else if (argRecv[4]) // check for duplicate command
 				{
 					invalidInput = 9;
 				}
@@ -173,15 +173,17 @@ int main(int argc, char* argv[])
 					invalidInput = 5;
 				}
 
-				argRecv[4] = 1;
+				argRecv[4] = 1; // command received. Used to check for duplicate commands.
 			}
 			else if (command == "--debug" || command == "-d") // enable debug message output
 			{
 				if (i != argc) // must be last flag
 				{
 					invalidInput = 10;
+					// debug should be enabled even if it's not in the last position. 
+					// Otherwise, you would never know that was the issue.
 				}
-				debug = 1;
+				debug = 1; 
 				cout << "Debug output enabled." << endl;
 				break;
 			}

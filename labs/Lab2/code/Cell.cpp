@@ -30,6 +30,8 @@ Arguments:
     size - size of rectangle
     row - given row of cell, multiplied by size to get X display position
     column - given column of cell, multiplied by size to get Y display position
+    offsetX - provides offset to center cell grid on x-axis in case there is empty space in display
+    offsetY - provides offset to center cell grid on y-axis in case there is empty space in display
 
 Return Values:
     Cell
@@ -39,7 +41,7 @@ Cell::Cell(float size, int row, int column, int offsetX, int offsetY)
     this->setSize({size, size});
     this->setFillColor(Color::White);
 
-    float positionX = (column * size) + (offsetX / 2); // center grid on x axis
-    float positionY = (row * size) + (offsetY / 2); // center grid on y axis
+    float positionX = (column * size) + (offsetX / 2); // center grid on x axis using offset
+    float positionY = (row * size) + (offsetY / 2); // center grid on y axis using offset
     this->setPosition(positionX, positionY);
 }
