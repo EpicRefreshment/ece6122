@@ -1,18 +1,17 @@
 /*
 Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 09/02/2025
-Date Last Modified: 09/21/2025
+Date Created: 09/28/2025
+Date Last Modified: 10/08/2025
 
 Description:
 
-Lab 1
+Lab 2
 
-This is the header file for the ECE_Buzzy class.
-This class is derived from the SFML Sprite class.
-ECE_Buzzy manages details for Buzzy, initiatilizes the object,
-maintains position, manages spawn location, moves Buzzy, and detects collisions with other objects
-and fires laser.
+This is the header file for the Cell class.
+This class is derived from the SFML RectangleShape class.
+This class primarily exists to provide an object with the necessary
+information to draw the cell on the grid.
 
 */
 
@@ -32,7 +31,7 @@ public:
     ****************************/
 
     // Constructor
-    Cell(float size, int x, int y);
+    Cell(float size, int row, int column, int offsetX, int offsetY);
 
 private:
     /***************************
@@ -42,6 +41,4 @@ private:
     /***************************
       Private member variables
     ****************************/
-    int row;
-    int column;
 };

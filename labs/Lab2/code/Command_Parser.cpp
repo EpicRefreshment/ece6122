@@ -1,13 +1,38 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 09/28/2025
+Date Last Modified: 10/08/2025
+
+Description:
+
+Lab 2
+
+This is the source file for a helper library that parses command line arguments
+for the conway's game of life simulation.
+
+*/
+
 #include "Command_Parser.h"
 
 using namespace std;
 
+/*
+This function parses the width argument from the command line.
+It calls a helper function to validate input then returns an integer
+for the width parameter
+
+Arguments:
+    value - string taken from command line associated with -x flag
+
+Return Values:
+    int - width
+*/
 int parseWidth(string value)
 {
     int width = validateWidth(value);
     if (width < 0)
     {
-        cout << "Invalid input!" << endl;
         return -1;
     }
     else
@@ -16,12 +41,23 @@ int parseWidth(string value)
     }
 }
 
+
+/*
+This function parses the height argument from the command line.
+It calls a helper function to validate input then returns an integer
+for the height parameter
+
+Arguments:
+    value - string taken from command line associated with -y flag
+
+Return Values:
+    int - height
+*/
 int parseHeight(string value)
 {
     int height = validateHeight(value);
     if (height < 0)
     {
-        cout << "Invalid input!" << endl;
         return -1;
     }
     else
@@ -30,12 +66,22 @@ int parseHeight(string value)
     }
 }
 
+/*
+This function parses the cell size argument from the command line.
+It calls a helper function to validate input then returns an integer
+for the cell size parameter
+
+Arguments:
+    value - string taken from command line associated with -c flag
+
+Return Values:
+    int - cell size
+*/
 int parseCellSize(string value, int width, int height)
 {
     int cellSize = validateCellSize(value, width, height);
     if (cellSize < 0)
     {
-        cout << "Invalid input!" << endl;
         return -1;
     }
     else
@@ -44,12 +90,22 @@ int parseCellSize(string value, int width, int height)
     }
 }
 
+/*
+This function parses the number of threads argument from the command line.
+It calls a helper function to validate input then returns an integer
+for the number of threads parameter
+
+Arguments:
+    value - string taken from command line associated with -n flag
+
+Return Values:
+    int - number of threads
+*/
 int parseNumThreads(string value)
 {
     int numThreads = validateNumThreads(value);
     if (numThreads < 0)
     {
-        cout << "Invalid input!" << endl;
         return -1;
     }
     else
@@ -59,12 +115,22 @@ int parseNumThreads(string value)
 
 }
 
+/*
+This function parses the process type argument from the command line.
+It calls a helper function to validate input then returns an integer
+for the process type parameter
+
+Arguments:
+    value - string taken from command line associated with -t flag
+
+Return Values:
+    int - process type
+*/
 int parseProcessType(string value)
 {
     int valid = validateProcessType(value);
     if (valid < 0)
     {
-        cout << "Invalid input!" << endl;
         return -1;
     }
     else
@@ -86,6 +152,15 @@ int parseProcessType(string value)
     }
 }
 
+/*
+This function validates the width argument from the command line.
+
+Arguments:
+    value - string taken from command line associated with -x flag
+
+Return Values:
+    int - 0 if invalid, 1 if valid
+*/
 int validateWidth(string value)
 {
     // Check if input is an integer.
@@ -113,6 +188,15 @@ int validateWidth(string value)
     }
 }
 
+/*
+This function validates the height argument from the command line.
+
+Arguments:
+    value - string taken from command line associated with -y flag
+
+Return Values:
+    int - 0 if invalid, 1 if valid
+*/
 int validateHeight(string value)
 {
     // Check if input is an integer.
@@ -139,6 +223,16 @@ int validateHeight(string value)
         return -1; // valid
     }
 }
+
+/*
+This function validates the cell size argument from the command line.
+
+Arguments:
+    value - string taken from command line associated with -c flag
+
+Return Values:
+    int - 0 if invalid, 1 if valid
+*/
 int validateCellSize(string value, int width, int height)
 {
     // Check if input is an integer.
@@ -169,6 +263,15 @@ int validateCellSize(string value, int width, int height)
     }
 }
 
+/*
+This function validates the number of threads argument from the command line.
+
+Arguments:
+    value - string taken from command line associated with -n flag
+
+Return Values:
+    int - 0 if invalid, 1 if valid
+*/
 int validateNumThreads(string value)
 {
     // Check if input is an integer.
@@ -196,6 +299,15 @@ int validateNumThreads(string value)
     }
 }
 
+/*
+This function validates the process type argument from the command line.
+
+Arguments:
+    value - string taken from command line associated with -t flag
+
+Return Values:
+    int - 0 if invalid, 1 if valid
+*/
 int validateProcessType(string value)
 {
     if (value == "SEQ" || value == "THRD" || value == "OMP")

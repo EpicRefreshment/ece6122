@@ -2,16 +2,17 @@
 Author: Jonathan Wolford
 Class: ECE6122Q
 Date Created: 09/28/2025
-Date Last Modified: 09/21/2025
+Date Last Modified: 10/08/2025
 
 Description:
 
-Lab 1
+Lab 2
 
-This is the source file for the ECE_Defender class and implements all functions
-and maintains all variables defined in ECE_Defender.h.
-This class is derived from the SFML Window class.
-ECE_Defender manages all game objects, state, and logic. 
+This is the source file for the Cell class and implements all functions
+and maintains all variables defined in Cell.h.
+This class is derived from the SFML RectangleShape class.
+This class primarily exists to provide an object with the necessary
+information to draw the cell on the grid.
 
 */
 
@@ -21,22 +22,24 @@ using namespace sf;
 using namespace std;
 
 /*
-This is the constructor for ECE_Defender. This function initializes the window
-and initializes all game logic variables. Calls other helper functions to initialize
-different aspects of the game.
+This is the constructor for Cell.
+It sets the size, color, and position of the rectangle.
+Calculates position based on given row and column.
 
 Arguments:
-    N/A
+    size - size of rectangle
+    row - given row of cell, multiplied by size to get X display position
+    column - given column of cell, multiplied by size to get Y display position
 
 Return Values:
-    ECE_Defender
+    Cell
 */
-Cell::Cell(float size, int row, int column)
+Cell::Cell(float size, int row, int column, int offsetX, int offsetY)
 {
     this->setSize({size, size});
     this->setFillColor(Color::White);
 
-    this->row = row;
-    this->column = column;
-    this->setPosition(column * size, row * size);
+    float positionX = (column * size) + (offsetX / 2); // center grid on x axis
+    float positionY = (row * size) + (offsetY / 2); // center grid on y axis
+    this->setPosition(positionX, positionY);
 }

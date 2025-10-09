@@ -1,16 +1,19 @@
 /*
 Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 09/02/2025
-Date Last Modified: 09/21/2025
+Date Created: 09/28/2025
+Date Last Modified: 10/08/2025
 
 Description:
 
-Lab 1
+Lab 2
 
-This is the header file for the ECE_Defender class.
+This is the header file for the Cell_Window class
 This class is derived from the SFML Window class.
-ECE_Defender manages all game objects, state, and logic. 
+Cell_Window handles all logic to simulate Conway's Game of Life and 
+displaying visual results and timing results to console. It has three separate
+update functions for cells to support three methods of calculating each new generation:
+sequential (single thread), multithreading, and multiprocessing.
 
 */
 
@@ -48,7 +51,7 @@ public:
     ****************************/
 
     // Constructor
-    Cell_Window(int width, int height, int cellSize, int numThreads, int processType);
+    Cell_Window(int width, int height, int cellSize, int numThreads, int processType, int debug);
     //Destructor
     ~Cell_Window();
 
@@ -61,26 +64,33 @@ private:
     /***************************
       Private member functions
     ****************************/
-    void parseArguments();
-    void initGridLimits();
-    void initCells();
-    void initThreads();
 
-    void updateSequential();
-    void updateThreading();
-    void updateMultiprocessing();
+    // functions to initialize simulation
+    void initGridLimits(); // initializes grid size
+    void initCells(); // initializes cells in grid
+    void initThreads(); // initializes thread objects for multithreading
 
-    void updateRow(int row);
-    void updateRows(int start, int end);
+    // functions to update cells using various processing methods
+    void updateSequential(); // single threaded
+    void updateThreading(); // multithreading
+    void updateMultiprocessing(); // multiprocessing
 
-    void cellWorker();
-    void assignWork();
+    // functions to update rows of cells in the grid
+    void updateRow(int row); // updates one row
+    void updateRows(int start, int end); // updates a range of rows
 
-    void outputTiming();
+    // helper functions multithreading/processing
+    void cellWorker(); // monitors for tasks to complete. bound by a thread
+    void assignWork(); // divides the processing tasks evenly between all threads/cores
+
+    // misc helper functions
+    void outputTiming(); // outputs timing results to console
 
     /***************************
       Private member variables
     ****************************/
+    
+    int debug; // controls output meant for debugging project
 
     // Variables for main game window
     VideoMode vm;
@@ -102,6 +112,10 @@ private:
     float cellSize;
     int numThreads;
     int processType;
+
+    // remaining pixels if grid size is not evenly divided by cell size
+    int remainingPixelsWidth;
+    int remainingPixelsHeight;
 
     // function pointer for appropriate update function
     // depending on processType
