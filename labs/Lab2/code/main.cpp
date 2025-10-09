@@ -177,8 +177,13 @@ int main(int argc, char* argv[])
 			}
 			else if (command == "--debug" || command == "-d") // enable debug message output
 			{
+				if (i != argc) // must be last flag
+				{
+					invalidInput = 10;
+				}
 				debug = 1;
 				cout << "Debug output enabled." << endl;
+				break;
 			}
 			else // not a valid flag
 			{
@@ -186,11 +191,6 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-
-	/*if (processType == 3 && numThreads > 16) // expected max cores is 16
-	{
-		invalidInput = 10;
-	}*/
 
 	if (invalidInput != 0) // invalid input close program.
 	{
@@ -226,7 +226,8 @@ int main(int argc, char* argv[])
 					cout << "Duplicate argument." << endl;
 					break;
 				case 10:
-					cout << "Too many hardware threads requested." << endl;
+					cout << "Debug flag goes at end of command arguments." << endl;
+					break;
 				default:
 					cout << "Invalid command." << endl;
 					break;

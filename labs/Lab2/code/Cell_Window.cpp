@@ -566,7 +566,7 @@ void Cell_Window::assignWork()
         workThreadRows.emplace_back(rowStart, rowEnd);
         if (debug)
         {
-            cout << "Thread " << (i + 1) << ": Start: " << rowStart << " End: " << rowEnd << " Rows: " << (rowEnd - rowStart) << endl;
+            cout << "Thread " << (i + 1) << ": Start: " << rowStart << ", End: " << rowEnd << ", Total rows: " << (rowEnd - rowStart) << endl;
         }
     }
 }
