@@ -42,20 +42,27 @@ using namespace sf;
 
 int main(int argc, char* argv[])
 {
-	// parse arguments
+	// default arguments
 	int width = 800;
 	int height = 600;
 	int cellSize = 5;
 	int numThreads = 8;
 	int processType = 2;
+
+	// debug flag for extra output not specifically required by project description.
+	// Don't want to lose points for all my extra debug statements!
 	int debug = 0;
-	int invalidInput = 0;
+	// indicates to program an invalid input was detected.
+	// If debug is on, the value determines the message output with more specific error description
+	int invalidInput = 0; // indicates to program an invalid input was detected.
+
+	vector<int> argRecv = {0, 0, 0, 0, 0}; // to prevent duplicate arguments
 
 	// make sure there aren't too many arguments
 	// any number <= 12 is valid
 	if (argc > 12)
 	{
-		invalidInput = 8;
+		invalidInput = 7;
 	}
 
 	if (invalidInput == 0) // don/t bother checking arguments if wrong amount is present
@@ -67,8 +74,12 @@ int main(int argc, char* argv[])
 			{
 				if (i == argc) // if there are no further arguments
 				{
-					invalidInput = 9;
+					invalidInput = 8;
 					break;
+				}
+				else if (argRecv[0])
+				{
+					invalidInput = 9;
 				}
 
 				width = parseWidth(argv[i]);
@@ -77,13 +88,19 @@ int main(int argc, char* argv[])
 				{
 					invalidInput = 1;
 				}
+
+				argRecv[0] = 1;
 			}
 			else if (command == "-y") // window height
 			{
 				if (i == argc) // if there are no further arguments
 				{
-					invalidInput = 9;
+					invalidInput = 8;
 					break;
+				}
+				else if (argRecv[1])
+				{
+					invalidInput = 9;
 				}
 
 				height = parseHeight(argv[i]);
@@ -92,13 +109,19 @@ int main(int argc, char* argv[])
 				{
 					invalidInput = 2;
 				}
+
+				argRecv[1] = 1;
 			}
 			else if (command == "-c") // cell size
 			{
 				if (i == argc) // if there are no further arguments
 				{
-					invalidInput = 9;
+					invalidInput = 8;
 					break;
+				}
+				else if (argRecv[2])
+				{
+					invalidInput = 9;
 				}
 
 				cellSize = parseCellSize(argv[i], width, height);
@@ -107,13 +130,19 @@ int main(int argc, char* argv[])
 				{
 					invalidInput = 3;
 				}
+				
+				argRecv[2] = 1;
 			}
 			else if (command == "-n") // number of threads
 			{
 				if (i == argc) // if there are no further arguments
 				{
-					invalidInput = 9;
+					invalidInput = 8;
 					break;
+				}
+				else if (argRecv[3])
+				{
+					invalidInput = 9;
 				}
 
 				numThreads = parseNumThreads(argv[i]);
@@ -122,13 +151,19 @@ int main(int argc, char* argv[])
 				{
 					invalidInput = 4;
 				}
+
+				argRecv[3] = 1;
 			}
 			else if (command == "-t") // processing type
 			{
 				if (i == argc) // if there are no further arguments
 				{
-					invalidInput = 9;
+					invalidInput = 8;
 					break;
+				}
+				else if (argRecv[4])
+				{
+					invalidInput = 9;
 				}
 
 				processType = parseProcessType(argv[i]);
@@ -137,10 +172,8 @@ int main(int argc, char* argv[])
 				{
 					invalidInput = 5;
 				}
-				else if (processType == 3 && numThreads > 16) // expected max cores is 16
-				{
-					invalidInput = 6;
-				}
+
+				argRecv[4] = 1;
 			}
 			else if (command == "--debug" || command == "-d") // enable debug message output
 			{
@@ -149,10 +182,15 @@ int main(int argc, char* argv[])
 			}
 			else // not a valid flag
 			{
-				invalidInput = 7;
+				invalidInput = 6;
 			}
 		}
 	}
+
+	/*if (processType == 3 && numThreads > 16) // expected max cores is 16
+	{
+		invalidInput = 10;
+	}*/
 
 	if (invalidInput != 0) // invalid input close program.
 	{
@@ -176,17 +214,19 @@ int main(int argc, char* argv[])
 					cout << "Invalid process type." << endl;
 					break;
 				case 6:
-					cout << "invalid number of threads." << endl;
-					break;
-				case 7:
 					cout << "Invalid command." << endl;
 					break;
-				case 8:
+				case 7:
 					cout << "Too many arguments." << endl;
 					break;
-				case 9:
+				case 8:
 					cout << "Missing value." << endl;
 					break;
+				case 9:
+					cout << "Duplicate argument." << endl;
+					break;
+				case 10:
+					cout << "Too many hardware threads requested." << endl;
 				default:
 					cout << "Invalid command." << endl;
 					break;

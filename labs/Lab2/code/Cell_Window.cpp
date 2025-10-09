@@ -75,10 +75,11 @@ Cell_Window::Cell_Window(int width, int height, int cellSize, int numThreads, in
             break;
         case 3: // OMP, multiprocessing
             // check we're not going over hardware limit
-            if (numThreads > maxHWThreads)
+            if (this->numThreads > maxHWThreads)
             {
-                numThreads = maxHWThreads; // just use max available if so.
+                this->numThreads = maxHWThreads; // just use max available if so.
                 cout << "Max Hardware Threads Exceeded. Limit: " << maxHWThreads << endl;
+                cout << "Using max available threads instead." << endl;
             }
             updateFunction = bind(&Cell_Window::updateMultiprocessing, this);
             assignWork();
