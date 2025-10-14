@@ -7,3 +7,6 @@
 [submodule "labs/Lab1/SFML"]
 	path = labs/Lab1/SFML
 	url = https://github.com/EpicRefreshment/SFML.git
+[submodule "ogl"]
+	path = ogl
+	url = https://github.com/opengl-tutorials/ogl.git
