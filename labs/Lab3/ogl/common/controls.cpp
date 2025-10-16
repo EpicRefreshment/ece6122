@@ -19,9 +19,9 @@ glm::mat4 getProjectionMatrix(){
 	return ProjectionMatrix;
 }
 
-
 // Initial position : on +Z
-glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f); 
+glm::vec3 position = glm::vec3(0.0f, 0.0f, 10.0f); 
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 // Initial horizontal angle : toward -Z
 float horizontalAngle = 3.14f;
 // Initial vertical angle : none
@@ -31,7 +31,12 @@ float initialFoV = 45.0f;
 
 float speed = 3.0f; // 3 units/second
 
-void computeMatricesFromInputs(){
+// flag for turning some lighting components on or off
+int lightSwitch = 1; // 1 on, 0 off
+int lKeyState = GLFW_RELEASE; // the user must press and release the L key to toggle the light switch
+
+void computeMatricesFromInputs()
+{
 
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();
@@ -40,65 +45,75 @@ void computeMatricesFromInputs(){
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
-	// Compute new orientation
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-		verticalAngle += (deltaTime * speed) / 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-		verticalAngle -= (deltaTime * speed) / 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-		horizontalAngle += (deltaTime * speed) / 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-		horizontalAngle -= (deltaTime * speed) / 2.0f;
-	}
+	// Rotate right/left around the relative Y-axis of the camera viewpoint
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+        // Create a rotation matrix
+        glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), deltaTime * (speed / 2.0f), up);
+        // Apply the rotation to the camera's position
+        position = glm::vec3(rotation * glm::vec4(position, 1.0f));
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+        glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -deltaTime * (speed / 2.0f), up);
+        position = glm::vec3(rotation * glm::vec4(position, 1.0f));
+    }
 
-	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::vec3 direction(
-		cos(verticalAngle) * sin(horizontalAngle), 
-		sin(verticalAngle),
-		cos(verticalAngle) * cos(horizontalAngle)
-	);
-	
-	// Right vector
-	glm::vec3 right = glm::vec3(
-		sin(horizontalAngle - 3.14f/2.0f), 
-		0,
-		cos(horizontalAngle - 3.14f/2.0f)
-	);
-	
-	// Up vector
-	glm::vec3 up = glm::cross(right, direction);
+	// First, calculate the camera's right vector
+    glm::vec3 direction = glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f) - position); // Direction from camera to origin
+    glm::vec3 right = glm::normalize(glm::cross(direction, up));
+
+	direction = glm::normalize(glm::vec3(0,0,0) - position);
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+        glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -deltaTime * (speed / 2.0f), right);
+        position = glm::vec3(rotation * glm::vec4(position, 1.0f));
+		up = glm::vec3(rotation * glm::vec4(up, 0.0f)); // Rotate the up vector as well
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+        glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), deltaTime * (speed / 2.0f), right);
+        position = glm::vec3(rotation * glm::vec4(position, 1.0f));
+		up = glm::vec3(rotation * glm::vec4(up, 0.0f)); // Rotate the up vector as well
+    }
 
 	// Move forward
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
 		position += direction * deltaTime * speed;
 	}
 	// Move backward
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
 		position -= direction * deltaTime * speed;
 	}
-	// Strafe right
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		position += right * deltaTime * speed;
-	}
-	// Strafe left
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		position -= right * deltaTime * speed;
-	}
 
-	float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
+	float FoV = initialFoV;
 
 	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
 	ViewMatrix       = glm::lookAt(
-								position,           // Camera is here
-								position+direction, // and looks here : at the same position, plus "direction"
-								up                  // Head is up (set to 0,-1,0 to look upside-down)
+								position,                    // Camera is here
+								glm::vec3(0.0f, 0.0f, 0.0f), // Always looks at the origin
+								up  // set camera relative to up vector
 						   );
 
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
+}
+
+int lightSwitchToggle()
+{
+	// Toggle the light switch value between 0 and 1
+	int updateKeyState = glfwGetKey(window, GLFW_KEY_L);
+	if (updateKeyState == GLFW_RELEASE && lKeyState == GLFW_PRESS)
+	{
+		// key was just released, toggle the light switch
+		lightSwitch = 1 - lightSwitch;
+	}
+
+	lKeyState = updateKeyState; // update the key state for the next iteration
+
+	return lightSwitch;
 }

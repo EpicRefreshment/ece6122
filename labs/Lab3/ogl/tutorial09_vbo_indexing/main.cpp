@@ -77,23 +77,33 @@ int main( void )
 	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
 
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+	GLuint suzannaVAO;
+	glGenVertexArrays(1, &suzannaVAO);
+
+	GLuint rectangleVAO;
+	glGenVertexArrays(1, &rectangleVAO);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders( "StandardShading.vertexshader", "StandardShading.fragmentshader" );
+	GLuint textureProgramID = LoadShaders("StandardShading.vertexshader", "StandardShading.fragmentshader");
 
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+	GLuint MatrixID = glGetUniformLocation(textureProgramID, "MVP");
+	GLuint ViewMatrixID = glGetUniformLocation(textureProgramID, "V");
+	GLuint ModelMatrixID = glGetUniformLocation(textureProgramID, "M");
 
 	// Load the texture
 	GLuint Texture = loadDDS("uvmap.DDS");
 	
 	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+	GLuint TextureID  = glGetUniformLocation(textureProgramID, "myTextureSampler");
+
+	GLuint LightID = glGetUniformLocation(textureProgramID, "LightPosition_worldspace");
+	GLuint lightSwitchID = glGetUniformLocation(textureProgramID, "lightSwitch");
+	glUniform1i(lightSwitchID, 1); // initialize the light switch value to on in the shader
+
+	// Create and compile our other shaders for simple colors for the rectangle.
+	GLuint colorProgramID = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
+	GLuint colorMatrixID = glGetUniformLocation(colorProgramID, "MVP"); // Get the handle for this one too.
 
 	// Read our .obj file
 	std::vector<unsigned short> indices;
@@ -102,22 +112,29 @@ int main( void )
 	std::vector<glm::vec3> indexed_normals;
 	bool res = loadAssImp("suzanne.obj", indices, indexed_vertices, indexed_uvs, indexed_normals);
 
-	// Load it into a VBO
+	glBindVertexArray(suzannaVAO); // Bind suzanna VAO
 
+	// Load it into a VBO
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	GLuint uvbuffer;
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	GLuint normalbuffer;
 	glGenBuffers(1, &normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// Generate a buffer for the indices as well
 	GLuint elementbuffer;
@@ -125,7 +142,7 @@ int main( void )
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
 
-	// Calculate dimensions of object so we can accurately place them.
+	// Calculate dimensions of suzanna object so we can accurately place them.
 	float minX = indexed_vertices[0].x;
 	float maxX = indexed_vertices[0].x;
 	float minY = indexed_vertices[0].y;
@@ -166,7 +183,8 @@ int main( void )
 	float height = maxY - minY;
 	float depth = maxZ - minZ;
 	std::cout << "Width: " << width << " Height: " << height << " Depth: " << depth << std::endl;
-	// initialize position variables
+
+	// initialize position variables based on octagonal dimensions
 	const int numObjects = 8;
 	float angleIncrement = 360.0f / numObjects;
 	float posX = 0.0f;
@@ -176,12 +194,12 @@ int main( void )
 	// Create green rectangle
 	// initialize array of 6 vertexes
 	static const GLfloat rect_vert_buffer_data[] = { 
-		-radius, -radius, 0.0f,
-		 radius, -radius, 0.0f,
-		 radius,  radius, 0.0f,
-		-radius, -radius, 0.0f,
-		 radius,  radius, 0.0f,
-		-radius,  radius, 0.0f
+		-radius - (depth / 2.0f), -radius - (depth / 2.0f), 0.0f,
+		 radius + (depth / 2.0f), -radius - (depth / 2.0f), 0.0f,
+		 radius + (depth / 2.0f),  radius + (depth / 2.0f), 0.0f,
+		-radius - (depth / 2.0f), -radius - (depth / 2.0f), 0.0f,
+		 radius + (depth / 2.0f),  radius + (depth / 2.0f), 0.0f,
+		-radius - (depth / 2.0f),  radius + (depth / 2.0f), 0.0f
 	};
 	// initialize array of colors for the 6 vertexes
 	static const GLfloat rect_color_buffer_data[] = { 
@@ -192,20 +210,22 @@ int main( void )
 		0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f
 	};
+
+	glBindVertexArray(rectangleVAO); // Bind the rectangle VAO
 	// create vertex buffer for rectangle
 	GLuint rect_vertexbuffer;
 	glGenBuffers(1, &rect_vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, rect_vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vert_buffer_data), rect_vert_buffer_data, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0); // attribute buffer: vertices
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	// create color buffer for rectangle
 	GLuint rect_colorbuffer;
 	glGenBuffers(1, &rect_colorbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, rect_colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect_color_buffer_data), rect_color_buffer_data, GL_STATIC_DRAW);
-
-	// Get a handle for our "LightPosition" uniform
-	glUseProgram(programID);
-	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	glEnableVertexAttribArray(1); // attribute buffer: colors
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// For speed computation
 	double lastTime = glfwGetTime();
@@ -219,7 +239,7 @@ int main( void )
 		// Measure speed
 		double currentTime = glfwGetTime();
 		nbFrames++;
-		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
+		if (currentTime - lastTime >= 1.0){ // If last printf() was more than 1sec ago
 			// printf and reset
 			printf("%f ms/frame\n", 1000.0/double(nbFrames));
 			nbFrames = 0;
@@ -230,15 +250,20 @@ int main( void )
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader
-		glUseProgram(programID);
+		glUseProgram(textureProgramID);
 
 		// Compute the MVP matrix from keyboard and mouse input
 		computeMatricesFromInputs();
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
-		glm::vec3 lightPos = glm::vec3(4,4,4);
+		// check if light switch toggled
+		int lightSwitch = lightSwitchToggle();
+		glUniform1i(lightSwitchID, lightSwitch); // send the light switch value to
+		// Send our light position to the currently bound shader,
+		glm::vec3 lightPos = glm::vec3(6.0f, 6.0f, 4.0f);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
 
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
@@ -249,17 +274,22 @@ int main( void )
 		glUniform1i(TextureID, 0);
 
 		// ------------------- DRAW EACH SUSANNA OBJECT --------------------
+		glBindVertexArray(suzannaVAO);
 		for (int i = 0; i < numObjects; i++)
 		{
 			// Send our transformation to the currently bound shader, 
 			// in the "MVP" uniform
 			glm::mat4 ModelMatrix = glm::mat4(1.0);
 
+			// Calculate position around octagon
 			float angle = radians(angleIncrement * i);
 			posX = radius * cos(angle + radians(90.0f));
 			posY = radius * sin(angle + radians(90.0f));
 
-			ModelMatrix = glm::translate(ModelMatrix, glm::vec3(posX, posY, (height / 2.0f) + 1.0f));
+			// translate current object to proper spot around the "octagon"
+			// offset suzanna so the bottom barely grazes the z = 0 plane
+			ModelMatrix = glm::translate(ModelMatrix, glm::vec3(posX, posY, ((height / 2.0f) + height/16.0f)));
+			// rotate so that it is upright relative to z = 0 plane and faces outward
 			ModelMatrix = glm::rotate(ModelMatrix, angle, glm::vec3(0.0f,0.0f,1.0f));
 			ModelMatrix = glm::rotate(ModelMatrix, radians(90.0f), glm::vec3(1.0f,0.0f,0.0f));
 			ModelMatrix = glm::rotate(ModelMatrix, radians(180.0f), glm::vec3(0.0f,1.0f,0.0f));
@@ -276,24 +306,6 @@ int main( void )
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 
-			// 1st attribute buffer : vertices
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-			// 2nd attribute buffer : UVs
-			glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-			// 3rd attribute buffer : normals
-			glEnableVertexAttribArray(2);
-			glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-			// Index buffer
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
 			// Draw the triangles !
 			glDrawElements(
 				GL_TRIANGLES,      // mode
@@ -304,28 +316,28 @@ int main( void )
 		}
 
 		// ------------------- DRAW RECTANGLE --------------------
-		glm::mat4 ModelMatrix = glm::mat4(1.0);
+		glDisable(GL_CULL_FACE); // Disable culling so we can see the rectangle from both sides
 
+		// Use shader for solid color
+		glUseProgram(colorProgramID);
+
+		glBindVertexArray(rectangleVAO); // bind rectangle VAO
+
+		// determine position
+		glm::mat4 ModelMatrix = glm::mat4(1.0);
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, rect_vertexbuffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, rect_colorbuffer);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glUniformMatrix4fv(colorMatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glEnable(GL_CULL_FACE); // Re-enable culling for next frame
 		
 		// ------------------- DO ONCE PER FRAME ---------------------
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
+		//glDisableVertexAttribArray(0);
+		//glDisableVertexAttribArray(1);
+		//glDisableVertexAttribArray(2);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -340,9 +352,13 @@ int main( void )
 	glDeleteBuffers(1, &uvbuffer);
 	glDeleteBuffers(1, &normalbuffer);
 	glDeleteBuffers(1, &elementbuffer);
-	glDeleteProgram(programID);
+	glDeleteProgram(textureProgramID);
+	glDeleteProgram(colorProgramID);
+	glDeleteBuffers(1, &rect_vertexbuffer);
+	glDeleteBuffers(1, &rect_colorbuffer);
 	glDeleteTextures(1, &Texture);
-	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteVertexArrays(1, &suzannaVAO);
+	glDeleteVertexArrays(1, &rectangleVAO);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
