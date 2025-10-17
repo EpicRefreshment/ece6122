@@ -59,11 +59,10 @@ void computeMatricesFromInputs()
         position = glm::vec3(rotation * glm::vec4(position, 1.0f));
     }
 
-	// First, calculate the camera's right vector
     glm::vec3 direction = glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f) - position); // Direction from camera to origin
-    glm::vec3 right = glm::normalize(glm::cross(direction, up));
+    glm::vec3 right = glm::normalize(glm::cross(direction, up)); // Direction to the right of the camera
 
-	direction = glm::normalize(glm::vec3(0,0,0) - position);
+	// Rotate up/down around the relative X-axis of the camera viewpoint
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
         glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -deltaTime * (speed / 2.0f), right);
@@ -77,12 +76,12 @@ void computeMatricesFromInputs()
 		up = glm::vec3(rotation * glm::vec4(up, 0.0f)); // Rotate the up vector as well
     }
 
-	// Move forward
+	// Move forward / zoom in
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		position += direction * deltaTime * speed;
 	}
-	// Move backward
+	// Move backward / zoom out
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		position -= direction * deltaTime * speed;

@@ -40,7 +40,8 @@ int main( void )
 
 	// Open a window and create its OpenGL context
 	window = glfwCreateWindow( 1024, 768, "Tutorial 09 - Loading with AssImp", NULL, NULL);
-	if( window == NULL ){
+	if( window == NULL )
+	{
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
 		glfwTerminate();
@@ -50,7 +51,8 @@ int main( void )
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
+	if (glewInit() != GLEW_OK)
+	{
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		getchar();
 		glfwTerminate();
@@ -193,7 +195,8 @@ int main( void )
 
 	// Create green rectangle
 	// initialize array of 6 vertexes
-	static const GLfloat rect_vert_buffer_data[] = { 
+	static const GLfloat rect_vert_buffer_data[] = 
+	{ 
 		-radius - (depth / 2.0f), -radius - (depth / 2.0f), 0.0f,
 		 radius + (depth / 2.0f), -radius - (depth / 2.0f), 0.0f,
 		 radius + (depth / 2.0f),  radius + (depth / 2.0f), 0.0f,
@@ -202,7 +205,8 @@ int main( void )
 		-radius - (depth / 2.0f),  radius + (depth / 2.0f), 0.0f
 	};
 	// initialize array of colors for the 6 vertexes
-	static const GLfloat rect_color_buffer_data[] = { 
+	static const GLfloat rect_color_buffer_data[] = 
+	{ 
 		0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
@@ -231,15 +235,13 @@ int main( void )
 	double lastTime = glfwGetTime();
 	int nbFrames = 0;
 
-	// These variables keep us from outputting the position every frame
-	int objsShown = 0;
-
 	do{
 		// ------------------- DO ONCE PER FRAME ---------------------
 		// Measure speed
 		double currentTime = glfwGetTime();
 		nbFrames++;
-		if (currentTime - lastTime >= 1.0){ // If last printf() was more than 1sec ago
+		if (currentTime - lastTime >= 1.0) // If last printf() was more than 1sec ago
+		{ 
 			// printf and reset
 			printf("%f ms/frame\n", 1000.0/double(nbFrames));
 			nbFrames = 0;
@@ -294,13 +296,6 @@ int main( void )
 			ModelMatrix = glm::rotate(ModelMatrix, radians(90.0f), glm::vec3(1.0f,0.0f,0.0f));
 			ModelMatrix = glm::rotate(ModelMatrix, radians(180.0f), glm::vec3(0.0f,1.0f,0.0f));
 
-			glm::vec3 positionObj = glm::vec3(ModelMatrix[3]);
-			if (objsShown < 8)
-			{
-				std::cout << "Object " << i << " at Position: (X: " << positionObj.x << ", Y: " << positionObj.y << ", Z: " << positionObj.z << ")" << std::endl;
-				objsShown++;
-			}
-
 			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -329,7 +324,7 @@ int main( void )
 
 		glUniformMatrix4fv(colorMatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, 6); // Draw!
 
 		glEnable(GL_CULL_FACE); // Re-enable culling for next frame
 		
