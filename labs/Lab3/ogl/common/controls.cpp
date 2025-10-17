@@ -1,3 +1,21 @@
+
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 10/7/2025
+Date Last Modified: 10/17/2025
+
+Description:
+
+Lab 3
+
+This is a modified version of the controls.cpp file found from the ogl tutorials repo.
+This file contains the code for computing the camera view and projection matrices
+based on user input. The camera orbits around the origin where all objects are located and maintains 
+its position such that it is always aimed at the origin. This all implements the light switch toggle feature
+
+*/
+
 // Include GLFW
 #include <GLFW/glfw3.h>
 extern GLFWwindow* window; // The "extern" keyword here is to access the variable "window" declared in tutorialXXX.cpp. This is a hack to keep the tutorials simple. Please avoid this.
@@ -35,6 +53,17 @@ float speed = 3.0f; // 3 units/second
 int lightSwitch = 1; // 1 on, 0 off
 int lKeyState = GLFW_RELEASE; // the user must press and release the L key to toggle the light switch
 
+/*
+This function computes the camera view and projection matrices which are used by main to
+compute the orientation of all displayed objects. It handles rotation in each cardinal direction
+as well as zooming in and out. The camera always points toward the origin where all objects are located.
+
+Arguments:
+    N/A
+
+Return Values:
+    N/A
+*/
 void computeMatricesFromInputs()
 {
 
@@ -102,6 +131,16 @@ void computeMatricesFromInputs()
 	lastTime = currentTime;
 }
 
+/*
+This function implements the light switch toggle feature.
+When the user presses and releases the L key, the light switch value is toggled between 0 and 1.
+
+Arguments:
+    N/A
+
+Return Values:
+    lightSwitch - the current state of the light switch (1 for on, 0 for off)
+*/
 int lightSwitchToggle()
 {
 	// Toggle the light switch value between 0 and 1

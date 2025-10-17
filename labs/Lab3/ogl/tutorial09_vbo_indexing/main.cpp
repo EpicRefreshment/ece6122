@@ -1,3 +1,21 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 10/7/2025
+Date Last Modified: 10/17/2025
+
+Description:
+
+Lab 3
+
+This is the main file for Lab 3. This is based on the tutorial09_ass_imp.cpp
+originally found in the ogl tutorials repo. This file contains the code for initializing and 
+drawing all objects (8 suzannas and 1 bright green rectangle). 
+After determining initial position based on dimensions of suzanna,
+it computes the orientation of all objects and camera by calling helper functions in controls.cpp.
+
+*/
+
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +39,17 @@ using namespace glm;
 #include <common/controls.hpp>
 #include <common/objloader.hpp>
 #include <common/vboindexer.hpp>
+
+/*
+This is the main function where all main OpenGL calls and object initialization and drawing takes place.
+Closes application when program exit detected.
+
+Arguments:
+    N/A
+
+Return Values:
+    N/A
+*/
 
 int main( void )
 {
@@ -235,6 +264,7 @@ int main( void )
 	double lastTime = glfwGetTime();
 	int nbFrames = 0;
 
+	// draw until program exit
 	do{
 		// ------------------- DO ONCE PER FRAME ---------------------
 		// Measure speed
@@ -261,11 +291,10 @@ int main( void )
 
 		// check if light switch toggled
 		int lightSwitch = lightSwitchToggle();
-		glUniform1i(lightSwitchID, lightSwitch); // send the light switch value to
+		glUniform1i(lightSwitchID, lightSwitch);
 		// Send our light position to the currently bound shader,
 		glm::vec3 lightPos = glm::vec3(6.0f, 6.0f, 4.0f);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-
 
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
@@ -329,10 +358,6 @@ int main( void )
 		glEnable(GL_CULL_FACE); // Re-enable culling for next frame
 		
 		// ------------------- DO ONCE PER FRAME ---------------------
-
-		//glDisableVertexAttribArray(0);
-		//glDisableVertexAttribArray(1);
-		//glDisableVertexAttribArray(2);
 
 		// Swap buffers
 		glfwSwapBuffers(window);

@@ -1,3 +1,18 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 10/7/2025
+Date Last Modified: 10/17/2025
+
+Description:
+
+Lab 3
+
+This is the standard fragment shader for drawing suzanna instances. Added
+ability to toggle lighting components.
+
+*/
+
 #version 330 core
 
 // Interpolated values from the vertex shaders

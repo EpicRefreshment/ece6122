@@ -1,3 +1,18 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 10/7/2025
+Date Last Modified: 10/17/2025
+
+Description:
+
+Lab 3
+
+This is the fragment shader for drawing the solid color rectangle. 
+This file was obtained from Tutorial 4. No modifications made.
+
+*/
+
 #version 330 core
 
 // Interpolated values from the vertex shaders
