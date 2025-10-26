@@ -1,0 +1,10 @@
+^C:\USERS\JRWOL\REPOS\ECE6122\LABS\FINALPROJECT\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/jrwol/repos/ece6122/labs -BC:/Users/jrwol/repos/ece6122/labs/build --check-stamp-file C:/Users/jrwol/repos/ece6122/labs/build/FinalProject/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
