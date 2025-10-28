@@ -154,25 +154,6 @@ void initInsulatedPlate(int rowSize, double* tempTable)
 __global__
 void updateTemperature(int rowSize, double* tableG, double* tableH)
 {
-    int index = blockIdx.x * blockDim.x + threadIdx.x;
-    int stride = blockDim.x * gridDim.x;
-    for (int i = index + 1; i < (rowSize - 1); i += stride)
-    {
-        for (int j = 1; j < (rowSize - 1); j++)
-        {
-            int rowIndex = i * rowSize + j;
-            tableG[rowIndex] = 0.25 * (tableH[(i - 1) * rowSize + j] +
-                                       tableH[(i + 1) * rowSize + j] +
-                                       tableH[rowIndex - 1] +
-                                       tableH[rowIndex + 1]);
-        }
-    }
-}
-
-
-__global__
-void updateTemperatureAlt(int rowSize, double* tableG, double* tableH)
-{
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
     
@@ -278,8 +259,6 @@ int main(int argc, char* argv[])
 
         initInsulatedPlate(rowSize, tableH);
 
-        //int numThreads = 256;
-        //int numBlocks = (rowSize - 2 + numThreads - 1) / numThreads;
         dim3 numThreads(16, 16);
         dim3 numBlocks((rowSize - 2 + numThreads.x - 1) / numThreads.x,
                        (rowSize - 2 + numThreads.y - 1) / numThreads.y);
@@ -291,7 +270,6 @@ int main(int argc, char* argv[])
         float milliseconds = 0;
 
         cudaEventRecord(start);
-
 
         for (int iter = 0; iter < numIterations; iter++)
         {
