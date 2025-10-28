@@ -3,7 +3,9 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <chrono>
 #include <cuda_runtime.h>
+#include <device_launch_parameters.h>
 
 using namespace std;
 
@@ -150,7 +152,7 @@ void initInsulatedPlate(int rowSize, double* tempTable)
 }
 
 __global__
-void updateTemperature(int rowSize, double* tempTableG, double* tempTableH)
+void updateTemperature(int rowSize, double* tableG, double* tableH)
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
@@ -159,27 +161,28 @@ void updateTemperature(int rowSize, double* tempTableG, double* tempTableH)
         for (int j = 1; j < (rowSize - 1); j++)
         {
             int rowIndex = i * rowSize + j;
-            tempTableG[rowIndex] = 0.25 * (tempTableH[(i - 1) * rowSize + j] +
-                                           tempTableH[(i + 1) * rowSize + j] +
-                                           tempTableH[rowIndex - 1] +
-                                           tempTableH[rowIndex + 1]);
+            tableG[rowIndex] = 0.25 * (tableH[(i - 1) * rowSize + j] +
+                                       tableH[(i + 1) * rowSize + j] +
+                                       tableH[rowIndex - 1] +
+                                       tableH[rowIndex + 1]);
         }
     }
 }
 
 
-void updateTemperatureSeq(int rowSize, double* tempTableG, double* tempTableH)
+__global__
+void updateTemperatureAlt(int rowSize, double* tableG, double* tableH)
 {
-    for (int i = 1; i < (rowSize - 1); i++)
+    int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
+    int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
+    
+    if (i < (rowSize - 1) && j < (rowSize - 1))
     {
-        for (int j = 1; j < (rowSize - 1); j++)
-        {
-            int index = i * rowSize + j;
-            tempTableG[index] = 0.25 * (tempTableH[(i - 1) * rowSize + j] +
-                                        tempTableH[(i + 1) * rowSize + j] +
-                                        tempTableH[index - 1] +
-                                        tempTableH[index + 1]);
-        }
+        int rowIndex = i * rowSize + j;
+        tableG[rowIndex] = 0.25 * (tableH[(i - 1) * rowSize + j] +
+                                   tableH[(i + 1) * rowSize + j] +
+                                   tableH[rowIndex - 1] +
+                                   tableH[rowIndex + 1]);
     }
 }
 
@@ -267,32 +270,52 @@ int main(int argc, char* argv[])
         int rowSize = size + 2;
         int gridSize = rowSize * rowSize;
 
-        double* tempTableG;
-        double* tempTableH;
+        double* tableG;
+        double* tableH;
 
-        cudaMallocManaged(&tempTableG, gridSize * sizeof(double));
-        cudaMallocManaged(&tempTableH, gridSize * sizeof(double));
+        cudaMallocManaged(&tableG, gridSize * sizeof(double));
+        cudaMallocManaged(&tableH, gridSize * sizeof(double));
 
-        initInsulatedPlate(rowSize, tempTableH);
+        initInsulatedPlate(rowSize, tableH);
 
-        int numThreads = 256;
-        int numBlocks = (rowSize - 2 + numThreads - 1) / numThreads;
+        //int numThreads = 256;
+        //int numBlocks = (rowSize - 2 + numThreads - 1) / numThreads;
+        dim3 numThreads(16, 16);
+        dim3 numBlocks((rowSize - 2 + numThreads.x - 1) / numThreads.x,
+                       (rowSize - 2 + numThreads.y - 1) / numThreads.y);
+
+        cudaEvent_t start, stop;
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
+
+        float milliseconds = 0;
+
+        cudaEventRecord(start);
+
 
         for (int iter = 0; iter < numIterations; iter++)
         {
-            updateTemperature<<<numBlocks, numThreads>>>(rowSize, tempTableG, tempTableH);
-            double* temp = tempTableG;
-            tempTableG = tempTableH;
-            tempTableH = temp;
+            updateTemperature<<<numBlocks, numThreads>>>(rowSize, tableG, tableH);
+
+            double* temp = tableG;
+            tableG = tableH;
+            tableH = temp;
         }
 
-        cudaDeviceSynchronize();
+        cudaEventRecord(stop);
+
+        //cudaDeviceSynchronize();
+        cudaEventSynchronize(stop);
+
+        cudaEventElapsedTime(&milliseconds, start, stop);
+        cout << "A plate with " << (rowSize - 2) << "x" << (rowSize - 2) << " interior points" << endl;
+        cout << "and " << numIterations << " iterations took " << milliseconds << "ms." << endl;
 
         string filename = "tempTable" + to_string(i) + ".csv";
-        writeDataToFile(rowSize, tempTableH, filename);
+        writeDataToFile(rowSize, tableH, filename);
 
-        cudaFree(tempTableG);
-        cudaFree(tempTableH);
+        cudaFree(tableG);
+        cudaFree(tableH);
 
         i++;
 
@@ -304,7 +327,8 @@ int main(int argc, char* argv[])
 
         // Prompt user for input.
         cout << "Please enter '-q' to quit or specify a new grid size and number of iterations in the cmd line format." << endl;
-        cout << "-N <grid_size> -I <num_iterations> [-q]" << endl;
+        cout << "If an argument is not specified, the last value will be used again." << endl;
+        cout << "Example: -N <grid_size> -I <num_iterations> [-q]" << endl;
 
         getline(cin, userInput); // get input
 
@@ -326,8 +350,6 @@ int main(int argc, char* argv[])
 
         if (invalidInput == 0) // don/t bother checking arguments if wrong amount is present
         {
-            size = 256;
-            numIterations = 10000;
             for (size_t k = 0; k < words.size(); k++)
             {
                 string command = words[k];
