@@ -1,3 +1,24 @@
+/*
+Author: Jonathan Wolford
+Class: ECE6122Q
+Date Created: 10/24/2025
+Date Last Modified: 10/24/2025
+
+Description:
+
+Lab 4
+
+This is the main file for the conway's game of life simulation.
+This handles simple overview of handling window and parses all optional command
+line arguments.
+
+Arguments:
+-N: size of grid (N x N)
+-I: number of iterations to run simulation
+-q: quits application
+
+*/
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -129,16 +150,27 @@ int parseNumIterations(string value)
     }
 }
 
+/*
+This function initializes the temperature table for the insulated plate simulation.
+
+Arguments:
+    rowSize - size of one row of the temperature table
+    tempTable - pointer to temperature table to initialize
+
+Return Values:
+    void
+*/
 void initInsulatedPlate(int rowSize, double* tempTable)
 {
     for (int i = 0; i < rowSize; i++)
     {
         for (int j = 0; j < rowSize; j++)
         {
+            // set our 100 degree segment at the top center of the plate
             int hotSegment = (j >= rowSize / 3) &&
                              (j <= 2 * (rowSize / 3)) &&
                              (i == 0);
-            int index = i * rowSize + j;
+            int index = i * rowSize + j; // calculate 1D index
             if (hotSegment)
             {
                 tempTable[index] = 100.0; // hot segment
@@ -151,12 +183,25 @@ void initInsulatedPlate(int rowSize, double* tempTable)
     }
 }
 
+/*
+This function (CUDA kernel) updates the temperature table for the insulated plate simulation.
+
+Arguments:
+    rowSize - size of one row of the temperature table
+    tableG - pointer to temperature table to update
+    tableH - pointer to temperature table to use during updating
+
+Return Values:
+    void
+*/
 __global__
 void updateTemperature(int rowSize, double* tableG, double* tableH)
 {
+    // index for CUDA threads
     int i = blockIdx.x * blockDim.x + threadIdx.x + 1;
     int j = blockIdx.y * blockDim.y + threadIdx.y + 1;
     
+    // update interior points
     if (i < (rowSize - 1) && j < (rowSize - 1))
     {
         int rowIndex = i * rowSize + j;
@@ -167,17 +212,29 @@ void updateTemperature(int rowSize, double* tableG, double* tableH)
     }
 }
 
+/*
+This function writes the temperature table to a CSV file.
+
+Arguments:
+    rowSize - size of one row of the temperature table
+    tempTable - pointer to temperature table to update
+    fileName - file name!
+
+Return Values:
+    void
+*/
 void writeDataToFile(int rowSize, double* tempTable, string fileName)
 {
     ofstream outFile;
     outFile.open(fileName);
 
+    // write data as a table
     for (int i = 0; i < rowSize; i++)
     {
         for (int j = 0; j < rowSize; j++)
         {
             int index = i * rowSize + j;
-            outFile << tempTable[index] << ",";
+            outFile << tempTable[index] << ","; // comma for csv format
         }
         outFile << endl;
     }
@@ -185,13 +242,19 @@ void writeDataToFile(int rowSize, double* tempTable, string fileName)
     outFile.close();
 }
 
+/*
+This is the main function. It handles command line arguments, user input
+CUDA initialization, runs simulation, and writes data to file until user quits
+or invalid input is detected.
+*/
 int main(int argc, char* argv[])
 {
+    //----- Get Initial Parameters -----//
     // Set values for first calculation
     int size = 256; // default value
     int numIterations = 10000; // default value
-    int quitApplication = 0;
-    int invalidInput = 0;
+    int quitApplication = 0; // flag to quit application
+    int invalidInput = 0; // flag for invalid input
 
     // Make sure there aren't too many arguments
     if (argc > 6)
@@ -245,9 +308,12 @@ int main(int argc, char* argv[])
         }
     }
 
-    int i = 0;
+    // this loop runs indefinitely until the user quits or inputs invalid data
+    // It will repeatedly ask for new grid sizes and iteration counts
+    // and run the simulation again. It will reuse the last valid inputs if not given.
     while (invalidInput == 0 && quitApplication == 0)
     {
+        // initialize parameters for simulation
         int rowSize = size + 2;
         int gridSize = rowSize * rowSize;
 
@@ -257,20 +323,23 @@ int main(int argc, char* argv[])
         cudaMallocManaged(&tableG, gridSize * sizeof(double));
         cudaMallocManaged(&tableH, gridSize * sizeof(double));
 
-        initInsulatedPlate(rowSize, tableH);
+        initInsulatedPlate(rowSize, tableH); // initialize temperature table
 
+        // CUDA kernel launch parameters
         dim3 numThreads(16, 16);
         dim3 numBlocks((rowSize - 2 + numThreads.x - 1) / numThreads.x,
                        (rowSize - 2 + numThreads.y - 1) / numThreads.y);
 
+        // Variables for timing calculations
         cudaEvent_t start, stop;
         cudaEventCreate(&start);
         cudaEventCreate(&stop);
 
         float milliseconds = 0;
 
-        cudaEventRecord(start);
-
+        cudaEventRecord(start); // start timer
+        
+        // Calculate values for specified number of iterations
         for (int iter = 0; iter < numIterations; iter++)
         {
             updateTemperature<<<numBlocks, numThreads>>>(rowSize, tableG, tableH);
@@ -282,20 +351,21 @@ int main(int argc, char* argv[])
 
         cudaEventRecord(stop);
 
-        //cudaDeviceSynchronize();
+        // Wait for all CUDA threads to converge.
         cudaEventSynchronize(stop);
 
-        cudaEventElapsedTime(&milliseconds, start, stop);
+        // output timing results to 
+        cudaEventElapsedTime(&milliseconds, start, stop);  // elapsed time in milliseconds
         cout << "A plate with " << (rowSize - 2) << "x" << (rowSize - 2) << " interior points" << endl;
         cout << "and " << numIterations << " iterations took " << milliseconds << "ms." << endl;
 
-        string filename = "tempTable" + to_string(i) + ".csv";
+        // output data to file
+        string filename = "tempTable.csv";
         writeDataToFile(rowSize, tableH, filename);
 
+        // free cuda memory
         cudaFree(tableG);
         cudaFree(tableH);
-
-        i++;
 
         // initialize this string to reset any error flags.
         string userInput; // User input as string for validation.
@@ -367,9 +437,9 @@ int main(int argc, char* argv[])
                         break;
                     }
 
-                    argRecv[1] = 1; // command received. Used to check for duplicate commands.
+                    argRecv[1] = 1;  // command received. Used to check for duplicate commands.
                 }
-                else if (command == "-q") // cell size
+                else if (command == "-q")
                 {
                     quitApplication = 1;
                     break;
@@ -383,12 +453,12 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (quitApplication == 1)
+    if (quitApplication == 1) // user quit application
     {
         cout << "User quit application. Exiting..." << endl;
     }
 
-    if (invalidInput == 1)
+    if (invalidInput == 1) // invalid input detected
     {
         cout << "Invalid input!" << endl;
     }
