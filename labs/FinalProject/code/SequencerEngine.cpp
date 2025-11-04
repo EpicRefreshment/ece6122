@@ -1,66 +1,149 @@
+/*
+Author: [Your Name/Gemini]
+Class: ECE6122Q
+Date Created: 11/03/2025
+Date Last Modified: 11/04/2025
+
+Description:
+
+Multimode Sequencer Project
+
+This is the source file for the SequencerEngine class.
+It implements all functions defined in SequencerEngine.h.
+This class handles the core timing and transport for the sequencer.
+It does NOT hold any step data, only the clock and play state.
+*/
+
 #include "SequencerEngine.h"
-#include <iostream>
 
 using namespace std;
+using namespace sf;
 
+/*
+This is the constructor for SequencerEngine.
+Initializes transport variables and sets the default BPM.
+
+Arguments:
+    N/A
+Return Values:
+    SequencerEngine
+*/
 SequencerEngine::SequencerEngine()
 {
     playing = false;
-    currentStep = -1;
     bpm = 120.0f;
-    grid = vector<bool>(16 * 8, false);
-    // Calculate the time for each 16th note step based on the BPM.
-    // (60 seconds / BPM) = duration of one beat.
-    // We have 4 steps per beat (16th notes).
-    stepTime = sf::seconds(60.0f / bpm / 4.0f);
-}
-
-void SequencerEngine::play() {
-    playing = true;
-    currentStep = -1; // Set to -1 so the first step is 0
-    clock.restart();
-}
-
-void SequencerEngine::stop() {
-    playing = false;
     currentStep = -1;
+
+    setBpm(bpm); // Calculate initial stepTime
 }
 
-void SequencerEngine::update() {
-    if (!playing) {
-        return;
-    }
+/*
+Starts the sequencer playback from the beginning.
+Restarts the internal clock.
 
-    // Check if enough time has passed to advance to the next step
-    if (clock.getElapsedTime() >= stepTime) {
-        currentStep = (currentStep + 1) % 16;
-        clock.restart(); // Reset the clock for the next step
-
-        // If the current step is active, "play a note"
-        // For now, this just prints to the console.
-        // This is where you would send a MIDI message.
-        if (grid[currentStep]) {
-            std::cout << "Note On: Step " << currentStep << std::endl;
-        }
-    }
+Arguments:
+    N/A
+Return Values:
+    void
+*/
+void SequencerEngine::play()
+{
+    playing = true;
+    clock.restart(); // Always play from the start
 }
 
-void SequencerEngine::toggleStep(int step) {
-    if (step >= 0 && step < 16) {
-        grid[step] = !grid[step];
-    }
+/*
+Stops the sequencer playback.
+
+Arguments:
+    N/A
+Return Values:
+    void
+*/
+void SequencerEngine::stop()
+{
+    playing = false;
+    currentStep = -1; // reset playhead
 }
 
-// --- Getter Implementations ---
+/*
+Pauses the sequencer playback. (Currently same as stop).
 
-bool SequencerEngine::isPlaying() const {
+Arguments:
+    N/A
+Return Values:
+    void
+*/
+void SequencerEngine::pause()
+{
+    playing = false; // stop playhead at current position
+}
+
+/*
+Updates the engine's internal clock.
+Checks if enough time has passed to signal a 16th note tick.
+
+Arguments:
+    N/A
+Return Values:
+    bool - true if a new 16th note tick has occurred, false otherwise.
+*/
+bool SequencerEngine::update()
+{
+    if (!playing)
+    {
+        return false;
+    }
+
+    // Check if enough time has passed to signal a tick
+    if (clock.getElapsedTime() >= stepTime)
+    {
+        currentStep = (currentStep + 1) % 16; // Advance step 
+        clock.restart(); // Reset the clock for the *next* tick
+        return true; // Signify that a tick has occurred
+    }
+
+    return false; // No tick this frame
+}
+
+/*
+Sets the BPM and recalculates the stepTime.
+
+Arguments:
+    newBpm - The new beats-per-minute value.
+Return Values:
+    void
+*/
+void SequencerEngine::setBpm(float newBpm)
+{
+    bpm = newBpm;
+    // (60 seconds / BPM) = duration of one beat (quarter note).
+    // We have 4 steps per beat (16th notes).
+    stepTime = sf::seconds((60.0f / bpm) / 4.0f);
+}
+
+/*
+Checks if the sequencer is currently playing.
+
+Arguments:
+    N/A
+Return Values:
+    bool - true if playing, false if stopped/paused.
+*/
+bool SequencerEngine::isPlaying()
+{
     return playing;
 }
 
-int SequencerEngine::getCurrentStep() const {
-    return currentStep;
-}
+/*
+Gets the current active step index.
 
-const std::vector<bool>& SequencerEngine::getGridState() const {
-    return grid;
+Arguments:
+    N/A
+Return Values:
+    int - The current step (0-15), or -1 if stopped.
+*/
+int SequencerEngine::getCurrentStep()
+{
+    return currentStep;
 }

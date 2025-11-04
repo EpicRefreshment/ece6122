@@ -1,79 +1,177 @@
-#include <SFML/Graphics.hpp>
-#include "SequencerEngine.h"
+/*
+Author: [Your Name/Gemini]
+Class: ECE6122Q
+Date Created: 11/03/2025
+Date Last Modified: 11/04/2025
 
-int main() 
+Description:
+
+Multimode Sequencer Project
+
+This is the main file for the step sequencer application.
+It handles window creation, GUI setup, and the main application loop.
+It owns the SequencerEngine (transport) and all SeqTrack (data) objects.
+It is responsible for handling all input and drawing all GUI elements.
+*/
+
+#include <iostream>
+#include <vector>
+
+// Include SFML libraries here
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
+// Include custom C++ libraries here
+#include "SequencerEngine.h"
+#include "SeqTrack.h"
+
+// Make code easier to type with "using namespace"
+using namespace std;
+using namespace sf;
+
+int main()
 {
+    // --- Application Constants ---
+    int windowWidth = 800;
+    int windowHeight = 600;
+    int numTracks = 8;
+    int numSteps = 16;
+    float defaultBpm = 120.0f;
+
     // --- Window and GUI Setup ---
-    const int windowWidth = 800;
-    const int windowHeight = 600;
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Multimode Sequencer");
+    RenderWindow window(VideoMode(windowWidth, windowHeight), "8-Track Step Sequencer");
     window.setFramerateLimit(60);
 
-    const int numTracks = 8;
-    const int numSteps = 16;
-    const float padding = 10.f;
-    const float stepWidth = (windowWidth - (padding * (numSteps + 1))) / numSteps;
-    const float stepHeight = (windowHeight / numTracks) - (padding * 2);
+    float padding = 5.f;
+    float stepHeight = (windowHeight - (padding * (numTracks + 1))) / numTracks;
+    float stepWidth = (windowWidth - (padding * (numSteps + 1))) / numSteps;
 
-    std::vector<sf::RectangleShape> stepShapes(numSteps * numTracks);
-    for (int i = 0; i < (numSteps * numTracks); i++) {
-        stepShapes[i].setSize(sf::Vector2f(stepWidth, stepHeight));
-        stepShapes[i].setPosition(padding + i * (stepWidth + padding), padding + (stepHeight * (i / numSteps)));
-        stepShapes[i].setOutlineThickness(2.f);
-        stepShapes[i].setOutlineColor(sf::Color(80, 80, 80));
+    // We need one shape for every step on every track
+    vector<RectangleShape> stepShapes(numTracks * numSteps);
+
+    // Initialize all the GUI shapes
+    for (int trk = 0; trk < numTracks; ++trk)
+    {
+        for (int stp = 0; stp < numSteps; ++stp)
+        {
+            int index = trk * numSteps + stp;
+            float posX = padding + stp * (stepWidth + padding);
+            float posY = padding + trk * (stepHeight + padding);
+
+            stepShapes[index].setSize(Vector2f(stepWidth, stepHeight));
+            stepShapes[index].setPosition(posX, posY);
+            stepShapes[index].setOutlineThickness(2.f);
+            stepShapes[index].setOutlineColor(Color(80, 80, 80));
+            stepShapes[index].setFillColor(Color::Black); // Default off
+        }
     }
 
     // --- Sequencer Initialization ---
     SequencerEngine engine;
 
+    vector<SeqTrack> tracks(numTracks);
+
     // --- Main Application Loop ---
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
         // --- Event Handling ---
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed)
+            {
                 window.close();
             }
 
             // Start/Stop with the space bar
-            if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-                if (engine.isPlaying()) {
+            if (event.type == Event::KeyReleased)
+            {
+                if (event.key.code == Keyboard::Space)
+                {
+                    if (engine.isPlaying())
+                    {
+                        engine.pause();
+                    }
+                    else
+                    {
+                        engine.play();
+                    }
+                }
+                else if (event.key.code == Keyboard::Enter)
+                {
                     engine.stop();
-                } else {
-                    engine.play();
+                }
+                else if (event.key.code == Keyboard::Escape)
+                {
+                    window.close();
                 }
             }
             
             // Toggle steps with mouse click
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                for (int i = 0; i < numSteps; ++i) {
-                    if (stepShapes[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        engine.toggleStep(i);
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                Vector2i mousePos = Mouse::getPosition(window);
+                // Find which shape was clicked
+                for (int i = 0; i < stepShapes.size(); i++)
+                {
+                    if (stepShapes[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
+                    {
+                        int track = i / numSteps;
+                        int step = i % numSteps;
+                        tracks[track].toggleStep(step);
+                        cout << "Toggled Track: " << track << " Step: " << step << endl;
+                        break; // Found the shape
                     }
                 }
             }
         }
 
         // --- Logic Update ---
-        engine.update();
+        // engine.update() returns true ONCE per 16th note "tick"
+        if (engine.update())
+        {
+            // A tick has occurred, so we advance the playhead
+            int currentStep = engine.getCurrentStep();
+
+            // Trigger all tracks for this new step
+            for (int i = 0; i < numTracks; ++i)
+            {
+                tracks[i].trigger(currentStep, i);
+            }
+        }
 
         // --- Drawing ---
-        window.clear(sf::Color(30, 30, 30)); // Dark grey background
+        window.clear(Color(30, 30, 30)); // Dark grey background
 
-        const std::vector<bool>& gridState = engine.getGridState();
-        int currentStep = engine.getCurrentStep();
+        // Get the active step from the engine
+        int activeStep = engine.getCurrentStep();
 
-        for (int i = 0; i < (numSteps * numTracks); i++) {
-            // Set color based on state
-            if (i == currentStep) {
-                stepShapes[i].setFillColor(sf::Color::Yellow);
-            } else if (gridState[i]) {
-                stepShapes[i].setFillColor(sf::Color::Cyan);
-            } else {
-                stepShapes[i].setFillColor(sf::Color::Black);
+        // Redraw all shapes based on the current state
+        for (int trk = 0; trk < numTracks; trk++)
+        {
+            for (int stp = 0; stp < numSteps; stp++)
+            {
+                int index = trk * numSteps + stp;
+
+                // Set color based on state
+                if (stp == activeStep)
+                {
+                    // Active playhead: Use Yellow
+                    stepShapes[index].setFillColor(Color::Yellow); 
+                }
+                else if (tracks[trk].isStepActive(stp))
+                {
+                    // Step is ON: Use Cyan
+                    stepShapes[index].setFillColor(Color::Cyan); 
+                }
+                else
+                {
+                    // Step is OFF: Use Black
+                    stepShapes[index].setFillColor(Color::Black); 
+                }
+                
+                window.draw(stepShapes[index]);
             }
-            window.draw(stepShapes[i]);
         }
         
         window.display();

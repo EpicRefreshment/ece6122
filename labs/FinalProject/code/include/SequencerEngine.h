@@ -1,33 +1,40 @@
+/*
+Author: [Your Name/Gemini]
+Class: ECE6122Q
+Date Created: 11/03/2025
+Date Last Modified: 11/04/2025
+
+Description:
+
+Multimode sequencer project
+
+This is the header file for the SequencerEngine class.
+This class manages the core timing and transport controls (play, stop, pause).
+It functions as a metronome, providing a "tick" via its update() method
+based on the BPM. It does not manage step state.
+*/
+
 #pragma once
 
 #include <SFML/System/Clock.hpp>
-#include <vector>
+#include <SFML/System/Time.hpp>
 
-class SequencerEngine {
+class SequencerEngine
+{
 public:
-    // Constructor: Initializes the sequencer with a default state.
     SequencerEngine();
-
-    // Starts or stops the playback.
     void play();
     void stop();
-
-    // The main update function, called on every frame to advance the sequence.
-    void update();
-
-    // Toggles the state of a specific step in the sequence (on/off).
-    void toggleStep(int step);
-
-    // --- Getters for the GUI ---
-    bool isPlaying() const;
-    int getCurrentStep() const;
-    const std::vector<bool>& getGridState() const;
-
+    void pause();
+    bool update();
+    void setBpm(float newBpm);
+    bool isPlaying();
+    int getCurrentStep();
 private:
     bool playing;
-    int currentStep;
     float bpm;
-    sf::Time stepTime;
+    int currentStep;
+
     sf::Clock clock;
-    std::vector<bool> grid; // 16 steps for the sequence
+    sf::Time stepTime; // Duration of one 16th note step
 };

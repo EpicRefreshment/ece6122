@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add source files
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
-                  ${PROJECT_SOURCE_DIR}/code/SequencerEngine.cpp)
+                  ${PROJECT_SOURCE_DIR}/code/SequencerEngine.cpp
+                  ${PROJECT_SOURCE_DIR}/code/SeqTrack.cpp)
 
 # Add the executable
 add_executable(MultimodeSequencer ${SOURCES})
