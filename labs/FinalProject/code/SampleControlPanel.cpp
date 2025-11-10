@@ -137,13 +137,13 @@ void SampleControlPanel::initShapes()
 
         // Track Label ("Track 1", "Track 2", etc.)
         Text label;
-        setupText(label, "Track " + to_string(i + 1), {panelBackground.getPosition().x + 5, trackY + 5});
+        setupText(label, "Track " + to_string(i + 1), {panelBackground.getPosition().x + 2, trackY + 5});
         trackLabels.push_back(label);
 
         // Dropdown Button
         RectangleShape button;
-        button.setSize({panelBackground.getSize().x, trackHeight / 5.0f});
-        button.setPosition(panelBackground.getPosition().x + 5, trackY + 30);
+        button.setSize({panelBackground.getSize().x - 10, trackHeight / 5.0f});
+        button.setPosition(panelBackground.getPosition().x + 2, trackY + 30);
         button.setFillColor(Color::Black);
         button.setOutlineColor(Color(80, 80, 80));
         button.setOutlineThickness(1.0f);
