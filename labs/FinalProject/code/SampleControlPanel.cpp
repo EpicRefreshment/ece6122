@@ -79,8 +79,16 @@ void SampleControlPanel::update()
     {
         const auto& button = dropdownButtons[activeDropdown];
         float dropdownHeight = dropdownItems.size() * 20.0f;
+        float boundaryY = panelBackground.getPosition().y + panelBackground.getSize().y;
         dropdownBackground.setSize({button.getSize().x, dropdownHeight});
-        dropdownBackground.setPosition(button.getPosition().x, button.getPosition().y + button.getSize().y);
+        if ((button.getPosition().y + button.getSize().y + dropdownHeight) < boundaryY)
+        {
+            dropdownBackground.setPosition(button.getPosition().x, button.getPosition().y + button.getSize().y);
+        }
+        else
+        {
+            dropdownBackground.setPosition(button.getPosition().x, button.getPosition().y -dropdownHeight);
+        }
 
         for (size_t i = 0; i < dropdownItems.size(); i++)
         {
