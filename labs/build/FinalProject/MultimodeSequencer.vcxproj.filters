@@ -16,6 +16,9 @@
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\StepGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\ThreadPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

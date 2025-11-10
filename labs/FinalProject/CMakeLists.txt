@@ -14,7 +14,8 @@ file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
                   ${PROJECT_SOURCE_DIR}/code/SeqTrack.cpp
                   ${PROJECT_SOURCE_DIR}/code/GlobalControlPanel.cpp
                   ${PROJECT_SOURCE_DIR}/code/StepGrid.cpp
-                  ${PROJECT_SOURCE_DIR}/code/SampleControlPanel.cpp)
+                  ${PROJECT_SOURCE_DIR}/code/SampleControlPanel.cpp
+                  ${PROJECT_SOURCE_DIR}/code/ThreadPool.cpp)
 
 # Add the executable
 add_executable(MultimodeSequencer ${SOURCES})

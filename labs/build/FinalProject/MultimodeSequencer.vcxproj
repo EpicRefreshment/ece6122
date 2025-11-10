@@ -369,6 +369,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\SeqTrack.cpp" />
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\SequencerEngine.cpp" />
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\StepGrid.cpp" />
+    <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\ThreadPool.cpp" />
     <ClCompile Include="C:\Users\jrwol\repos\ece6122\labs\FinalProject\code\main.cpp" />
   </ItemGroup>
   <ItemGroup />

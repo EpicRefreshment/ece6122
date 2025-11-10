@@ -16,6 +16,12 @@ It is responsible for handling all input and drawing all GUI elements.
 
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <queue>
+#include <functional>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 // Include SFML libraries here
 #include <SFML/Graphics.hpp>
@@ -27,6 +33,7 @@ It is responsible for handling all input and drawing all GUI elements.
 #include "GlobalControlPanel.h"
 #include "StepGrid.h"
 #include "SampleControlPanel.h"
+#include "ThreadPool.h"
 
 // Make code easier to type with "using namespace"
 using namespace std;
@@ -34,6 +41,10 @@ using namespace sf;
 
 int main()
 {
+    // Number of threads in the thread pool
+    const size_t threadCount = 16;
+    ThreadPool pool(threadCount);
+
     const float panelRatio = 1.0f / 5.0f;
     const float ratioDivisor = 5.0f;
 
