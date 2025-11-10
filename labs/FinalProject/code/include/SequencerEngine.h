@@ -1,12 +1,12 @@
 /*
-Author: [Your Name/Gemini]
+Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 11/03/2025
+Date Created: 10/15/2025
 Date Last Modified: 11/04/2025
 
 Description:
 
-Multimode sequencer project
+Final Project
 
 This is the header file for the SequencerEngine class.
 This class manages the core timing and transport controls (play, stop, pause).
@@ -19,22 +19,36 @@ based on the BPM. It does not manage step state.
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
+// Make code easier to type with "using namespace"
+using namespace std;
+using namespace sf;
+
 class SequencerEngine
 {
 public:
     SequencerEngine();
+
     void play();
     void stop();
     void pause();
     bool update();
-    void setBpm(float newBpm);
-    bool isPlaying();
+
+    int isPlaying();
+    int isPaused();
+    int isStopped();
+
+    void setBpm(int bpm);
+
+    int getBPM();
     int getCurrentStep();
 private:
-    bool playing;
-    float bpm;
+    int playing;
+    int paused;
+    int stopped;
+
+    int bpm;
     int currentStep;
 
-    sf::Clock clock;
-    sf::Time stepTime; // Duration of one 16th note step
+    Clock clock;
+    Time stepTime; // Duration of one 16th note step
 };

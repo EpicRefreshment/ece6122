@@ -1,12 +1,12 @@
 /*
-Author: [Your Name/Gemini]
+Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 11/03/2025
+Date Created: 10/15/2025
 Date Last Modified: 11/04/2025
 
 Description:
 
-Multimode Sequencer Project
+Final Project
 
 This is the source file for the SequencerEngine class.
 It implements all functions defined in SequencerEngine.h.
@@ -30,11 +30,14 @@ Return Values:
 */
 SequencerEngine::SequencerEngine()
 {
-    playing = false;
-    bpm = 120.0f;
+    playing = 0;
+    paused = 0;
+    stopped = 1;
+
     currentStep = -1;
 
-    setBpm(bpm); // Calculate initial stepTime
+    bpm = 120;
+    stepTime = sf::seconds((60.0f / bpm) / 4.0f);
 }
 
 /*
@@ -48,7 +51,9 @@ Return Values:
 */
 void SequencerEngine::play()
 {
-    playing = true;
+    playing = 1;
+    paused = 0;
+    stopped = 0;
     clock.restart(); // Always play from the start
 }
 
@@ -62,8 +67,11 @@ Return Values:
 */
 void SequencerEngine::stop()
 {
-    playing = false;
-    currentStep = -1; // reset playhead
+    // reset playhead
+    playing = 0;
+    paused = 0;
+    stopped = 1;
+    currentStep = -1;
 }
 
 /*
@@ -76,7 +84,10 @@ Return Values:
 */
 void SequencerEngine::pause()
 {
-    playing = false; // stop playhead at current position
+    // stop playhead at current position
+    playing = 0;
+    paused = 1;
+    stopped = 0;
 }
 
 /*
@@ -114,12 +125,17 @@ Arguments:
 Return Values:
     void
 */
-void SequencerEngine::setBpm(float newBpm)
+void SequencerEngine::setBpm(int bpm)
 {
-    bpm = newBpm;
+    this->bpm = bpm;
     // (60 seconds / BPM) = duration of one beat (quarter note).
     // We have 4 steps per beat (16th notes).
     stepTime = sf::seconds((60.0f / bpm) / 4.0f);
+}
+
+int SequencerEngine::getBPM()
+{
+    return bpm;
 }
 
 /*
@@ -130,9 +146,19 @@ Arguments:
 Return Values:
     bool - true if playing, false if stopped/paused.
 */
-bool SequencerEngine::isPlaying()
+int SequencerEngine::isPlaying()
 {
     return playing;
+}
+
+int SequencerEngine::isPaused()
+{
+    return paused;
+}
+
+int SequencerEngine::isStopped()
+{
+    return stopped;
 }
 
 /*

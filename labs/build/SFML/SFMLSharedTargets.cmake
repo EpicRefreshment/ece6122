@@ -19,7 +19,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_cmake_targets_defined "")
 set(_cmake_targets_not_defined "")
 set(_cmake_expected_targets "")
-foreach(_cmake_expected_target IN ITEMS sfml-system sfml-main sfml-window OpenGL sfml-network sfml-graphics Freetype)
+foreach(_cmake_expected_target IN ITEMS sfml-system sfml-main sfml-window OpenGL sfml-network sfml-graphics Freetype VORBIS FLAC sfml-audio)
   list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
   if(TARGET "${_cmake_expected_target}")
     list(APPEND _cmake_targets_defined "${_cmake_expected_target}")
@@ -99,6 +99,32 @@ set_target_properties(Freetype PROPERTIES
   INTERFACE_LINK_LIBRARIES "C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/freetype.lib"
 )
 
+# Create imported target VORBIS
+add_library(VORBIS INTERFACE IMPORTED)
+
+set_target_properties(VORBIS PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "OV_EXCLUDE_STATIC_CALLBACKS"
+  INTERFACE_INCLUDE_DIRECTORIES "C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/headers;C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/headers"
+  INTERFACE_LINK_LIBRARIES "C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/vorbisenc.lib;C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/vorbisfile.lib;C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/vorbis.lib;C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/ogg.lib"
+)
+
+# Create imported target FLAC
+add_library(FLAC INTERFACE IMPORTED)
+
+set_target_properties(FLAC PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "FLAC__NO_DLL"
+  INTERFACE_INCLUDE_DIRECTORIES "C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/headers"
+  INTERFACE_LINK_LIBRARIES "C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/flac.lib"
+)
+
+# Create imported target sfml-audio
+add_library(sfml-audio SHARED IMPORTED)
+
+set_target_properties(sfml-audio PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "C:/Users/jrwol/repos/ece6122/labs/SFML/include"
+  INTERFACE_LINK_LIBRARIES "sfml-system"
+)
+
 # Import target "sfml-system" for configuration "Debug"
 set_property(TARGET sfml-system APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(sfml-system PROPERTIES
@@ -132,6 +158,14 @@ set_property(TARGET sfml-graphics APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(sfml-graphics PROPERTIES
   IMPORTED_IMPLIB_DEBUG "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/Debug/sfml-graphics-d.lib"
   IMPORTED_LOCATION_DEBUG "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/Debug/sfml-graphics-d-2.dll"
+  )
+
+# Import target "sfml-audio" for configuration "Debug"
+set_property(TARGET sfml-audio APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+set_target_properties(sfml-audio PROPERTIES
+  IMPORTED_IMPLIB_DEBUG "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/Debug/sfml-audio-d.lib"
+  IMPORTED_LINK_DEPENDENT_LIBRARIES_DEBUG "OpenAL::OpenAL"
+  IMPORTED_LOCATION_DEBUG "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/Debug/sfml-audio-d-2.dll"
   )
 
 # Import target "sfml-system" for configuration "Release"
@@ -169,6 +203,14 @@ set_target_properties(sfml-graphics PROPERTIES
   IMPORTED_LOCATION_RELEASE "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/Release/sfml-graphics-2.dll"
   )
 
+# Import target "sfml-audio" for configuration "Release"
+set_property(TARGET sfml-audio APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(sfml-audio PROPERTIES
+  IMPORTED_IMPLIB_RELEASE "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/Release/sfml-audio.lib"
+  IMPORTED_LINK_DEPENDENT_LIBRARIES_RELEASE "OpenAL::OpenAL"
+  IMPORTED_LOCATION_RELEASE "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/Release/sfml-audio-2.dll"
+  )
+
 # Import target "sfml-system" for configuration "MinSizeRel"
 set_property(TARGET sfml-system APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(sfml-system PROPERTIES
@@ -204,6 +246,14 @@ set_target_properties(sfml-graphics PROPERTIES
   IMPORTED_LOCATION_MINSIZEREL "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/MinSizeRel/sfml-graphics-2.dll"
   )
 
+# Import target "sfml-audio" for configuration "MinSizeRel"
+set_property(TARGET sfml-audio APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
+set_target_properties(sfml-audio PROPERTIES
+  IMPORTED_IMPLIB_MINSIZEREL "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/MinSizeRel/sfml-audio.lib"
+  IMPORTED_LINK_DEPENDENT_LIBRARIES_MINSIZEREL "OpenAL::OpenAL"
+  IMPORTED_LOCATION_MINSIZEREL "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/MinSizeRel/sfml-audio-2.dll"
+  )
+
 # Import target "sfml-system" for configuration "RelWithDebInfo"
 set_property(TARGET sfml-system APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(sfml-system PROPERTIES
@@ -237,6 +287,14 @@ set_property(TARGET sfml-graphics APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWIT
 set_target_properties(sfml-graphics PROPERTIES
   IMPORTED_IMPLIB_RELWITHDEBINFO "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/RelWithDebInfo/sfml-graphics.lib"
   IMPORTED_LOCATION_RELWITHDEBINFO "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/RelWithDebInfo/sfml-graphics-2.dll"
+  )
+
+# Import target "sfml-audio" for configuration "RelWithDebInfo"
+set_property(TARGET sfml-audio APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
+set_target_properties(sfml-audio PROPERTIES
+  IMPORTED_IMPLIB_RELWITHDEBINFO "C:/Users/jrwol/repos/ece6122/labs/build/output/lib/RelWithDebInfo/sfml-audio.lib"
+  IMPORTED_LINK_DEPENDENT_LIBRARIES_RELWITHDEBINFO "OpenAL::OpenAL"
+  IMPORTED_LOCATION_RELWITHDEBINFO "C:/Users/jrwol/repos/ece6122/labs/build/output/bin/RelWithDebInfo/sfml-audio-2.dll"
   )
 
 # This file does not depend on other imported targets which have

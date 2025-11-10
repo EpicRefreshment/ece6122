@@ -1,12 +1,12 @@
 /*
-Author: [Your Name/Gemini]
+Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 11/03/2025
+Date Created: 10/11/2025
 Date Last Modified: 11/04/2025
 
 Description:
 
-Multimode Sequencer Project
+Final Project
 
 This is the main file for the step sequencer application.
 It handles window creation, GUI setup, and the main application loop.
@@ -24,6 +24,9 @@ It is responsible for handling all input and drawing all GUI elements.
 // Include custom C++ libraries here
 #include "SequencerEngine.h"
 #include "SeqTrack.h"
+#include "GlobalControlPanel.h"
+#include "StepGrid.h"
+#include "SampleControlPanel.h"
 
 // Make code easier to type with "using namespace"
 using namespace std;
@@ -31,45 +34,51 @@ using namespace sf;
 
 int main()
 {
-    // --- Application Constants ---
-    int windowWidth = 800;
-    int windowHeight = 600;
-    int numTracks = 8;
-    int numSteps = 16;
-    float defaultBpm = 120.0f;
+    const float panelRatio = 1.0f / 5.0f;
+    const float ratioDivisor = 5.0f;
 
-    // --- Window and GUI Setup ---
-    RenderWindow window(VideoMode(windowWidth, windowHeight), "8-Track Step Sequencer");
+    // GUI Configuration
+    VideoMode vm(1920, 1080);
+    RenderWindow window(vm, "Multimode Step Sequencer");
     window.setFramerateLimit(60);
 
-    float padding = 5.f;
-    float stepHeight = (windowHeight - (padding * (numTracks + 1))) / numTracks;
-    float stepWidth = (windowWidth - (padding * (numSteps + 1))) / numSteps;
+    Vector2u windowSize = window.getSize();
+    float windowWidth = static_cast<float>(windowSize.x); // for readability
+    float windowHeight = static_cast<float>(windowSize.y); // for readability
 
-    // We need one shape for every step on every track
-    vector<RectangleShape> stepShapes(numTracks * numSteps);
+    Vector2f globalPanelSize(windowWidth, windowHeight / 10.0f);
+    Vector2f stepGridSize(windowWidth * panelRatio * (ratioDivisor - 2), windowHeight - globalPanelSize.y);
+    Vector2f sampleCtrlSize(windowWidth * panelRatio, windowHeight - globalPanelSize.y);
 
-    // Initialize all the GUI shapes
-    for (int trk = 0; trk < numTracks; ++trk)
-    {
-        for (int stp = 0; stp < numSteps; ++stp)
-        {
-            int index = trk * numSteps + stp;
-            float posX = padding + stp * (stepWidth + padding);
-            float posY = padding + trk * (stepHeight + padding);
+    Vector2f globalPanelPos(0, 0);
+    Vector2f stepGridPos(windowWidth * panelRatio, globalPanelSize.y);
+    Vector2f sampleCtrlPos(stepGridSize.x + stepGridPos.x, globalPanelSize.y);
 
-            stepShapes[index].setSize(Vector2f(stepWidth, stepHeight));
-            stepShapes[index].setPosition(posX, posY);
-            stepShapes[index].setOutlineThickness(2.f);
-            stepShapes[index].setOutlineColor(Color(80, 80, 80));
-            stepShapes[index].setFillColor(Color::Black); // Default off
-        }
+    // --- Font Loading ---
+    Font font;
+    // Make sure to provide a valid path to a font file.
+    // For example, create a "fonts" folder in your project.
+    if (!font.loadFromFile("fonts/KOMIKAP_.ttf")) {
+        cerr << "Error loading font" << endl;
+        return -1;
     }
 
     // --- Sequencer Initialization ---
     SequencerEngine engine;
 
-    vector<SeqTrack> tracks(numTracks);
+    // --- Panel Initialization ---
+    // Initialize all the tracks
+    int numTracks = 8;
+    int numSteps = 16;
+    vector<SeqTrack> tracks;
+    for (int i = 0; i < numTracks; i++)
+    {
+        tracks.push_back(SeqTrack(i, numSteps));
+    }
+    
+    GlobalControlPanel globalPanel(window, engine, font, globalPanelSize, globalPanelPos);
+    SampleControlPanel sampleCtrlPanel(window, font, tracks, sampleCtrlSize, sampleCtrlPos);
+    StepGrid stepGrid(window, engine, font, tracks, sampleCtrlPanel, stepGridSize, stepGridPos);
 
     // --- Main Application Loop ---
     while (window.isOpen())
@@ -83,97 +92,59 @@ int main()
                 window.close();
             }
 
-            // Start/Stop with the space bar
+            // Transport keyboard shortcuts
             if (event.type == Event::KeyReleased)
             {
-                if (event.key.code == Keyboard::Space)
-                {
-                    if (engine.isPlaying())
-                    {
-                        engine.pause();
-                    }
-                    else
-                    {
-                        engine.play();
-                    }
-                }
-                else if (event.key.code == Keyboard::Enter)
-                {
-                    engine.stop();
-                }
-                else if (event.key.code == Keyboard::Escape)
-                {
-                    window.close();
-                }
+                globalPanel.handleKeyboard(event);
             }
             
-            // Toggle steps with mouse click
+            // Handle mouse events
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
                 Vector2i mousePos = Mouse::getPosition(window);
-                // Find which shape was clicked
-                for (int i = 0; i < stepShapes.size(); i++)
+                float mousePosX = static_cast<float>(mousePos.x);
+                float mousePosY = static_cast<float>(mousePos.y);
+
+                if (globalPanel.getGlobalBounds().contains(mousePosX, mousePosY))
                 {
-                    if (stepShapes[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
-                    {
-                        int track = i / numSteps;
-                        int step = i % numSteps;
-                        tracks[track].toggleStep(step);
-                        cout << "Toggled Track: " << track << " Step: " << step << endl;
-                        break; // Found the shape
-                    }
+                    globalPanel.handleMouse(event, mousePosX, mousePosY);
+                }
+                else if (stepGrid.getGlobalBounds().contains(mousePosX, mousePosY))
+                {
+                    stepGrid.handleMouse(event, mousePosX, mousePosY);
+                }
+                else if (sampleCtrlPanel.getGlobalBounds().contains(mousePosX, mousePosY))
+                {
+                    sampleCtrlPanel.handleMouse(event, mousePosX, mousePosY);
                 }
             }
+
+            // Handle text events
+            if (event.type == Event::TextEntered)
+            {
+                globalPanel.handleText(event);
+            }
         }
+
+        // Update sequencer
+        globalPanel.update();
+        sampleCtrlPanel.update();
 
         // --- Logic Update ---
         // engine.update() returns true ONCE per 16th note "tick"
         if (engine.update())
         {
-            // A tick has occurred, so we advance the playhead
-            int currentStep = engine.getCurrentStep();
-
-            // Trigger all tracks for this new step
-            for (int i = 0; i < numTracks; ++i)
-            {
-                tracks[i].trigger(currentStep, i);
-            }
+            stepGrid.update();
         }
 
         // --- Drawing ---
         window.clear(Color(30, 30, 30)); // Dark grey background
-
-        // Get the active step from the engine
-        int activeStep = engine.getCurrentStep();
-
-        // Redraw all shapes based on the current state
-        for (int trk = 0; trk < numTracks; trk++)
-        {
-            for (int stp = 0; stp < numSteps; stp++)
-            {
-                int index = trk * numSteps + stp;
-
-                // Set color based on state
-                if (stp == activeStep)
-                {
-                    // Active playhead: Use Yellow
-                    stepShapes[index].setFillColor(Color::Yellow); 
-                }
-                else if (tracks[trk].isStepActive(stp))
-                {
-                    // Step is ON: Use Cyan
-                    stepShapes[index].setFillColor(Color::Cyan); 
-                }
-                else
-                {
-                    // Step is OFF: Use Black
-                    stepShapes[index].setFillColor(Color::Black); 
-                }
-                
-                window.draw(stepShapes[index]);
-            }
-        }
         
+        // Draw panels
+        globalPanel.draw();
+        stepGrid.draw();
+        sampleCtrlPanel.draw();
+
         window.display();
     }
 

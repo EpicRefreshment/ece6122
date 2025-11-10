@@ -22,6 +22,9 @@ C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Network/CMakeFiles/INSTALL
 C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir
 C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Graphics/CMakeFiles/PACKAGE.dir
 C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Graphics/CMakeFiles/INSTALL.dir
+C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Audio/CMakeFiles/sfml-audio.dir
+C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Audio/CMakeFiles/PACKAGE.dir
+C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Audio/CMakeFiles/INSTALL.dir
 C:/Users/jrwol/repos/ece6122/labs/build/FinalProject/CMakeFiles/MultimodeSequencer.dir
 C:/Users/jrwol/repos/ece6122/labs/build/FinalProject/CMakeFiles/PACKAGE.dir
 C:/Users/jrwol/repos/ece6122/labs/build/FinalProject/CMakeFiles/INSTALL.dir

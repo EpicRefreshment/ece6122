@@ -39,6 +39,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Window/cmake_install.cmake")
   include("C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Network/cmake_install.cmake")
   include("C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Graphics/cmake_install.cmake")
+  include("C:/Users/jrwol/repos/ece6122/labs/build/SFML/src/SFML/Audio/cmake_install.cmake")
 
 endif()
 

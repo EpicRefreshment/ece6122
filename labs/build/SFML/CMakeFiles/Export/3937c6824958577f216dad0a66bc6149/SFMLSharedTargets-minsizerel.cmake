@@ -55,5 +55,16 @@ set_target_properties(sfml-graphics PROPERTIES
 list(APPEND _cmake_import_check_targets sfml-graphics )
 list(APPEND _cmake_import_check_files_for_sfml-graphics "${_IMPORT_PREFIX}/lib/sfml-graphics.lib" "${_IMPORT_PREFIX}/bin/sfml-graphics-2.dll" )
 
+# Import target "sfml-audio" for configuration "MinSizeRel"
+set_property(TARGET sfml-audio APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
+set_target_properties(sfml-audio PROPERTIES
+  IMPORTED_IMPLIB_MINSIZEREL "${_IMPORT_PREFIX}/lib/sfml-audio.lib"
+  IMPORTED_LINK_DEPENDENT_LIBRARIES_MINSIZEREL "OpenAL::OpenAL"
+  IMPORTED_LOCATION_MINSIZEREL "${_IMPORT_PREFIX}/bin/sfml-audio-2.dll"
+  )
+
+list(APPEND _cmake_import_check_targets sfml-audio )
+list(APPEND _cmake_import_check_files_for_sfml-audio "${_IMPORT_PREFIX}/lib/sfml-audio.lib" "${_IMPORT_PREFIX}/bin/sfml-audio-2.dll" )
+
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

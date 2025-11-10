@@ -1,12 +1,12 @@
 /*
-Author: [Your Name/Gemini]
+Author: Jonathan Wolford
 Class: ECE6122Q
-Date Created: 11/03/2025
+Date Created: 10/15/2025
 Date Last Modified: 11/04/2025
 
 Description:
 
-Multimode Sequencer Project
+Final Project
 
 This is the source file for the SeqTrack class.
 It implements all functions defined in SeqTrack.h.
@@ -14,8 +14,6 @@ This class manages the 16-step state for one sequencer track.
 */
 
 #include "SeqTrack.h"
-#include <iostream>
-#include <algorithm> // For std::fill
 
 using namespace std;
 
@@ -28,10 +26,13 @@ Arguments:
 Return Values:
     SeqTrack
 */
-SeqTrack::SeqTrack()
+SeqTrack::SeqTrack(int trackIndex, int numSteps)
 {
+    this->trackIndex = trackIndex;
+    this->numSteps = numSteps;
     // Initialize the vector with 16 steps, all set to false (off)
-    this->steps.resize(16, false);
+    this->steps.resize(numSteps, false);
+
 }
 
 /*
@@ -44,7 +45,7 @@ Return Values:
 */
 void SeqTrack::toggleStep(int step)
 {
-    if (step >= 0 && step < 16)
+    if (step >= 0 && step < numSteps)
     {
         this->steps[step] = !this->steps[step];
     }
@@ -58,13 +59,18 @@ Arguments:
 Return Values:
     bool - true if the step is active, false otherwise.
 */
-bool SeqTrack::isStepActive(int step) const
+bool SeqTrack::isStepActive(int step)
 {
-    if (step >= 0 && step < 16)
+    if (step >= 0 && step < numSteps)
     {
         return this->steps[step];
     }
     return false;
+}
+
+void SeqTrack::setSample(SoundBuffer& sampleBuffer)
+{
+    sample.setBuffer(sampleBuffer);
 }
 
 /*
@@ -77,14 +83,9 @@ Arguments:
 Return Values:
     void
 */
-void SeqTrack::trigger(int step, int trackIndex)
+void SeqTrack::trigger()
 {
-    // If the step is active, print a message to the console
-    if (this->isStepActive(step))
-    {
-        // Add a tab for better alignment in the console
-        cout << "Track: " << trackIndex << "\tStep: " << step << " ON" << endl;
-    }
+    sample.play();
 }
 
 /*

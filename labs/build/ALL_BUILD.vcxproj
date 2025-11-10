@@ -178,6 +178,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{522667EA-40E8-35F4-A211-1BBDB4A76FEE}</Project>
       <Name>MultimodeSequencer</Name>
     </ProjectReference>
+    <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\SFML\src\SFML\Audio\sfml-audio.vcxproj">
+      <Project>{82D0D3CF-82E7-3475-B25B-DF52DB143E77}</Project>
+      <Name>sfml-audio</Name>
+    </ProjectReference>
     <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\SFML\src\SFML\Graphics\sfml-graphics.vcxproj">
       <Project>{23E7B028-58FD-36A7-B59A-190637D13674}</Project>
       <Name>sfml-graphics</Name>
