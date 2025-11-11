@@ -1,0 +1,40 @@
+Client connected: 127.0.0.1:53480
+127.0.0.1: Sup dawg(8 bytes)
+127.0.0.1: My dude give me a T@C0(22 bytes)
+Client disconnected: 127.0.0.1:53480
+Client connected: 127.0.0.1:58868
+127.0.0.1(5 bytes): bsdfg
+127.0.0.1(7 bytes): slkjdbg
+127.0.0.1(14 bytes): sdkjbgs;kjdbgs
+127.0.0.1(26 bytes): skjdbga;sdikgbha;owubgagfd
+127.0.0.1(17 bytes): ;lkajdfbg;kdsjfbg
+Client connected: 127.0.0.1:58958
+127.0.0.1(9 bytes): lskjdfgbn
+127.0.0.1(9 bytes): sdfgsdfhs
+127.0.0.1(12 bytes): sdgfhsfgjsaf
+127.0.0.1(11 bytes): sfghjsfjgsf
+127.0.0.1(4 bytes): sfgj
+127.0.0.1(4 bytes): sfgj
+127.0.0.1(4 bytes): sfgj
+Client disconnected: 127.0.0.1:58958
+Client disconnected: 127.0.0.1:58868
+Client connected: 127.0.0.1:59207
+127.0.0.1:59207: (3 bytes): sup
+127.0.0.1:59207: (4 bytes): boop
+127.0.0.1:59207: (10 bytes): l;akjdsfhg
+127.0.0.1:59207: (9 bytes): dingdondg
+Client disconnected: 127.0.0.1:59207
+Client connected: 127.0.0.1:59607
+127.0.0.1:59607(8 bytes): ;lskdfjg
+127.0.0.1:59607(7 bytes): sd;fghn
+127.0.0.1:59607(10 bytes): sdfg;lkjhn
+127.0.0.1:59607(16 bytes): sdfgh;sdfghsdf;g
+127.0.0.1:59607(13 bytes): sdfg;lkjhsdfg
+127.0.0.1:59607(13 bytes): sdfglk;jhsdfg
+127.0.0.1:59607(13 bytes): sdfg;lskjdhfg
+Client disconnected: 127.0.0.1:59607
+Client connected: 127.0.0.1:59765
+127.0.0.1:59765"hello" (5 bytes)
+127.0.0.1:59765"boop" (4 bytes)
+127.0.0.1:59765"dingdong" (8 bytes)
+Client disconnected: 127.0.0.1:59765

@@ -8,6 +8,15 @@
       <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\sfml-system-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
+      <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\sfml-network-d-2.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\SocketClient.exe</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\SocketServer.exe</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
       <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\sfml-audio-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
@@ -15,12 +24,6 @@
     </ProjectOutput>
     <ProjectOutput>
       <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\sfml-graphics-d-2.dll</FullPath>
-    </ProjectOutput>
-    <ProjectOutput>
-      <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\MultimodeSequencer.exe</FullPath>
-    </ProjectOutput>
-    <ProjectOutput>
-      <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\output\bin\Debug\sfml-network-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
       <FullPath>C:\Users\jrwol\repos\ece6122\labs\build\x64\Debug\ALL_BUILD</FullPath>

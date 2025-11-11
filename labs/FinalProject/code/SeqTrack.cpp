@@ -75,11 +75,9 @@ void SeqTrack::setSample(SoundBuffer& sampleBuffer)
 
 /*
 Triggers the step, "playing" it if it's active.
-For now, this prints to the console.
 
 Arguments:
-    step - The current step index (0-15) being triggered.
-    trackIndex - The index of this track (for console output).
+    N/A
 Return Values:
     void
 */

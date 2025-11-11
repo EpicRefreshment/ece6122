@@ -174,9 +174,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\FinalProject\MultimodeSequencer.vcxproj">
-      <Project>{522667EA-40E8-35F4-A211-1BBDB4A76FEE}</Project>
-      <Name>MultimodeSequencer</Name>
+    <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\Lab5\SocketClient.vcxproj">
+      <Project>{C58DA248-06B9-3915-9A3D-71D51AE53C5A}</Project>
+      <Name>SocketClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\Lab5\SocketServer.vcxproj">
+      <Project>{C75560F8-8A15-3EC7-89BA-FFFFFB192CF1}</Project>
+      <Name>SocketServer</Name>
     </ProjectReference>
     <ProjectReference Include="C:\Users\jrwol\repos\ece6122\labs\build\SFML\src\SFML\Audio\sfml-audio.vcxproj">
       <Project>{82D0D3CF-82E7-3475-B25B-DF52DB143E77}</Project>

@@ -35,7 +35,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("C:/Users/jrwol/repos/ece6122/labs/build/SFML/cmake_install.cmake")
-  include("C:/Users/jrwol/repos/ece6122/labs/build/FinalProject/cmake_install.cmake")
+  include("C:/Users/jrwol/repos/ece6122/labs/build/Lab5/cmake_install.cmake")
 
 endif()
 

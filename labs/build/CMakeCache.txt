@@ -305,6 +305,15 @@ FREETYPE_INCLUDE_DIR_ft2build:PATH=C:/Users/jrwol/repos/ece6122/labs/SFML/extlib
 FREETYPE_LIBRARY:FILEPATH=C:/Users/jrwol/repos/ece6122/labs/SFML/extlibs/libs-msvc-universal/x64/freetype.lib
 
 //Value Computed by CMake
+Lab5_BINARY_DIR:STATIC=C:/Users/jrwol/repos/ece6122/labs/build/Lab5
+
+//Value Computed by CMake
+Lab5_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+Lab5_SOURCE_DIR:STATIC=C:/Users/jrwol/repos/ece6122/labs/Lab5
+
+//Value Computed by CMake
 Labs_BINARY_DIR:STATIC=C:/Users/jrwol/repos/ece6122/labs/build
 
 //Value Computed by CMake

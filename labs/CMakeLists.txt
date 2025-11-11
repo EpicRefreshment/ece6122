@@ -17,6 +17,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${COMMON_OUTPUT_DIR}/lib")  # For shared lib
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${COMMON_OUTPUT_DIR}/lib")  # For static libraries
 
 add_subdirectory(SFML)
-add_subdirectory(FinalProject)
+add_subdirectory(Lab5)
 
 link_directories(${PROJECT_SOURCE_DIR}/lib)
