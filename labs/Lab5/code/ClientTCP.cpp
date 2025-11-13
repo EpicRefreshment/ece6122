@@ -33,12 +33,10 @@ bool ClientTCP::connect(const IpAddress& address, unsigned short port)
     Socket::Status status = socket.connect(address, port, seconds(5)); // connect
     if (status != Socket::Status::Done) // connection failed
     {
-        cerr << "Failed to connect to the server at " << address.toString() << " on " << port << "." << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
         return false;
     }
 
-    cout << "Connected to server!" << endl;
+    cout << "Connected to server at " << address.toString() << " on " << port << "." << endl;
     return true;
 }
 

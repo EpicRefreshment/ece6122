@@ -32,7 +32,11 @@ int main(int argc, char* argv[])
     if (argc != 2) // invalid number of arguments
     {
         cerr << "Invalid command line argument detected: Port <None> (incorrect number of arguments)" << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
+        cerr << "Please check your values and press Enter to end the program!" << endl;
+        
+        // wait for user input before quitting.
+        string message;
+        getline(cin, message);
         return 1;
     }
 
@@ -43,7 +47,11 @@ int main(int argc, char* argv[])
         if (tempPort < 61000 || tempPort > 65535) // port number outside valid range
         {
             cerr << "Invalid command line argument detected: Port " << tempPort << " (port number out of range)" << endl;
-            cerr << "Please check your values and press any key to end the program!" << endl;
+            cerr << "Please check your values and press Enter to end the program!" << endl;
+            
+            // wait for user input before quitting.
+            string message;
+            getline(cin, message);
             return 1;
         }
         port = static_cast<unsigned short>(tempPort); // SFML Socket expects unsigned short
@@ -52,7 +60,11 @@ int main(int argc, char* argv[])
     {
         cerr << "Invalid command line argument detected: Port " << argv[1] << " (invalid port number)"
                   << e.what() << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
+        cerr << "Please check your values and press Enter to end the program!" << endl;
+        
+        // wait for user input before quitting.
+        string message;
+        getline(cin, message);
         return 1;
     }
 

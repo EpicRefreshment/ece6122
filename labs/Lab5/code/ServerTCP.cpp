@@ -110,11 +110,10 @@ void ServerTCP::handleClientData(TcpSocket* client, size_t clientIndex)
         // log message
         string message(buffer, received); 
         cout << "Received " << received << " bytes from " << client->getRemoteAddress().toString()
-             << ":" << client->getRemotePort() << ": " << endl;
+             << ":" << client->getRemotePort() << ": " << message << endl;
         if (logFile.is_open())
         {
-            logFile << client->getRemoteAddress().toString() << ":" << client->getRemotePort()
-                    << "\"" << message << "\" (" << received << " bytes)" << endl;
+            logFile << message << endl;
         }
     }
     else if (status == Socket::Status::Disconnected || status == Socket::Status::Error) // disconnected

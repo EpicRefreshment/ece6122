@@ -33,7 +33,11 @@ int main(int argc, char* argv[])
     if (argc != 3) // invalid number of arguments
     {
         cerr << "Invalid command line argument detected: Host <None>:<None> (incorrect number of arguments)" << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
+        cerr << "Please check your values and press Enter to end the program!" << endl;
+        
+        // wait for user input before quitting.
+        string message;
+        getline(cin, message);
         return 1;
     }
 
@@ -42,7 +46,11 @@ int main(int argc, char* argv[])
     {
         cerr << "Invalid command line argument detected: Host " << argv[1] << ":"
                   << argv[2] << " (invalid IP address)" << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
+        cerr << "Please check your values and press Enter to end the program!" << endl;
+        
+        // wait for user input before quitting.
+        string message;
+        getline(cin, message);
         return 1;
     }
 
@@ -54,7 +62,11 @@ int main(int argc, char* argv[])
         {
             cerr << "Invalid command line argument detected: Host " << argv[1] << ":"
                       << tempPort << " (port number out of range)" << endl;
-            cerr << "Please check your values and press any key to end the program!" << endl;
+            cerr << "Please check your values and press Enter to end the program!" << endl;
+            
+            // wait for user input before quitting.
+            string message;
+            getline(cin, message);
             return 1;
         }
         port = static_cast<unsigned short>(tempPort); // SFML Socket expects unsigned short
@@ -63,7 +75,11 @@ int main(int argc, char* argv[])
     {
         cerr << "Invalid command line argument detected: Host " << argv[1] << ":" << argv[2]
                   << " (invalid port number: " << e.what() << endl;
-        cerr << "Please check your values and press any key to end the program!" << endl;
+        cerr << "Please check your values and press Enter to end the program!" << endl;
+        
+        // wait for user input before quitting.
+        string message;
+        getline(cin, message);
         return 1;
     }
 
@@ -78,16 +94,20 @@ int main(int argc, char* argv[])
         cout << "Unable to connect to server.";
         if (reconnectAttempts < reconnectThreshold)
         {
-            cout << "Retrying." << endl;
+            cout << "Retrying..." << endl;
             reconnectAttempts++;
         }
         else // give up
         {
-            cout << "Closing program. Too many failed attempts." << endl;
+            cerr << "Failed to connect to the server at " << serverIp << " on " << port << "." << endl;
+            cerr << "Please check your values and press Enter to end the program!" << endl;
+
+            // wait for user input before quitting.
+            string message;
+            getline(cin, message);
             return 1;
         }
     }
-    cout << "Connected to server." << endl;
 
     reconnectAttempts = 0;
     string message; // take in input as string
@@ -95,7 +115,7 @@ int main(int argc, char* argv[])
     {
         cout << "Please enter a message: ";
         getline(cin, message);
-        if (message == "q") // quit if they put in a singular q
+        if (message == "q" || message.empty()) // quit if they put in a singular q
         {
             break;
         }
@@ -113,7 +133,12 @@ int main(int argc, char* argv[])
                 }
                 else // give up
                 {
-                    cout << "Closing program. Too many failed attempts." << endl;
+                    cerr << "Failed to reconnect to the server at " << serverIp << " on " << port << "." << endl;
+                    cerr << "Please check your values and press Enter to end the program!" << endl;
+
+                    // wait for user input before quitting.
+                    string message;
+                    getline(cin, message);
                     return 1;
                 }
             }
