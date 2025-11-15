@@ -33,6 +33,7 @@ It is responsible for handling all input and drawing all GUI elements.
 #include "GlobalControlPanel.h"
 #include "StepGrid.h"
 #include "SampleControlPanel.h"
+#include "TrackControlPanel.h"
 #include "ThreadPool.h"
 
 // Make code easier to type with "using namespace"
@@ -59,11 +60,13 @@ int main()
 
     Vector2f globalPanelSize(windowWidth, windowHeight / 10.0f);
     Vector2f stepGridSize(windowWidth * panelRatio * (ratioDivisor - 2), windowHeight - globalPanelSize.y);
+    Vector2f trackCtrlSize(windowWidth * panelRatio, windowHeight - globalPanelSize.y);
     Vector2f sampleCtrlSize(windowWidth * panelRatio, windowHeight - globalPanelSize.y);
 
     Vector2f globalPanelPos(0, 0);
-    Vector2f stepGridPos(windowWidth * panelRatio, globalPanelSize.y);
-    Vector2f sampleCtrlPos(stepGridSize.x + stepGridPos.x, globalPanelSize.y);
+    Vector2f trackCtrlPos(0, globalPanelSize.y);
+    Vector2f stepGridPos(trackCtrlSize.x, globalPanelSize.y);
+    Vector2f sampleCtrlPos(trackCtrlSize.x + stepGridSize.x, globalPanelSize.y);
 
     // --- Font Loading ---
     Font font;
@@ -88,6 +91,7 @@ int main()
     }
     
     GlobalControlPanel globalPanel(window, engine, font, globalPanelSize, globalPanelPos);
+    TrackControlPanel trackCtrlPanel(window, font, tracks, trackCtrlSize, trackCtrlPos);
     SampleControlPanel sampleCtrlPanel(window, font, tracks, sampleCtrlSize, sampleCtrlPos);
     StepGrid stepGrid(window, engine, font, tracks, sampleCtrlPanel, stepGridSize, stepGridPos);
 
@@ -120,6 +124,10 @@ int main()
                 {
                     globalPanel.handleMouse(event, mousePosX, mousePosY);
                 }
+                else if (trackCtrlPanel.getGlobalBounds().contains(mousePosX, mousePosY))
+                {
+                    trackCtrlPanel.handleMouse(event, mousePosX, mousePosY);
+                }
                 else if (stepGrid.getGlobalBounds().contains(mousePosX, mousePosY))
                 {
                     stepGrid.handleMouse(event, mousePosX, mousePosY);
@@ -139,20 +147,20 @@ int main()
 
         // Update sequencer
         globalPanel.update();
+        trackCtrlPanel.update();
         sampleCtrlPanel.update();
 
         // --- Logic Update ---
         // engine.update() returns true ONCE per 16th note "tick"
-        if (engine.update())
-        {
-            stepGrid.update();
-        }
+        bool tick = engine.update();
+        stepGrid.update(tick);
 
         // --- Drawing ---
         window.clear(Color(30, 30, 30)); // Dark grey background
         
         // Draw panels
         globalPanel.draw();
+        trackCtrlPanel.draw();
         stepGrid.draw();
         sampleCtrlPanel.draw();
 

@@ -37,7 +37,7 @@ public:
 
     void handleMouse(Event event, float mousePosX, float mousePosY);
 
-    void update();
+    void update(bool tick);
     void draw();
 
     FloatRect getGlobalBounds();

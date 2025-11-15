@@ -40,14 +40,15 @@ public:
     void setBpm(int bpm);
 
     int getBPM();
-    int getCurrentStep();
+    int getGlobalStep();
 private:
     int playing;
     int paused;
     int stopped;
 
     int bpm;
-    int currentStep;
+    int globalStep;
+    long long globalTick;
 
     Clock clock;
     Time stepTime; // Duration of one 16th note step

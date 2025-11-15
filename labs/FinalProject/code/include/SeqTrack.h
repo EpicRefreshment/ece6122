@@ -30,15 +30,50 @@ class SeqTrack
 {
 public:
     SeqTrack(int trackIndex, int numSteps);
-    void toggleStep(int step);
-    bool isStepActive(int step);
     void setSample(SoundBuffer& sampleBuffer);
+
     void trigger();
     void clear();
+    void reset();
+
+    bool isStepActive(int step);
+    bool muted();
+    bool soloed();
+
+    void setMode();
+
+    int getCurrentStep() const;
+    int getTrackLength() const;
+    double getTempoDivision() const;
+    int getProbability() const;
+
+    void incrementStep();
+
+    void updateParam1(int direction);
+    void updateParam2(int direction);
+    void updateParam3(int direction);
+
+    void toggleStep(int step);
+    void toggleMute();
+    void toggleSolo();
+
+    int getNumSteps() const;
 
 private:
     int trackIndex;
     int numSteps;
     vector<bool> steps; // 16 steps, true = on, false = off
     Sound sample;
+
+    int currentStep;
+    int mode;
+    int mute;
+    int solo;
+
+    int trackLength;
+    double tempoDivision; // e.g., 1.0 for normal, 2.0 for double-time, 0.5 for half-time
+    int probability;
+
+    int ticksPerStep;
+    int tickCounter;
 };

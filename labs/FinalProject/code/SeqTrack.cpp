@@ -31,8 +31,15 @@ SeqTrack::SeqTrack(int trackIndex, int numSteps)
     this->trackIndex = trackIndex;
     this->numSteps = numSteps;
     // Initialize the vector with 16 steps, all set to false (off)
-    this->steps.resize(numSteps, false);
-
+    steps.resize(numSteps, false);
+    trackLength = numSteps;
+    tempoDivision = 1.0;
+    probability = 100;
+    ticksPerStep = 1;
+    tickCounter = 0;
+    currentStep = 0;
+    mute = 0;
+    solo = 0;
 }
 
 /*
@@ -45,27 +52,10 @@ Return Values:
 */
 void SeqTrack::toggleStep(int step)
 {
-    if (step >= 0 && step < numSteps)
+    if (step >= 0 && step < trackLength)
     {
-        this->steps[step] = !this->steps[step];
+        steps[step] = !steps[step];
     }
-}
-
-/*
-Checks if a specific step is currently active (on).
-
-Arguments:
-    step - The step index (0-15) to check.
-Return Values:
-    bool - true if the step is active, false otherwise.
-*/
-bool SeqTrack::isStepActive(int step)
-{
-    if (step >= 0 && step < numSteps)
-    {
-        return this->steps[step];
-    }
-    return false;
 }
 
 void SeqTrack::setSample(SoundBuffer& sampleBuffer)
@@ -97,4 +87,137 @@ Return Values:
 void SeqTrack::clear()
 {
     std::fill(this->steps.begin(), this->steps.end(), false);
+}
+
+void SeqTrack::reset()
+{
+    currentStep = 0;
+}
+
+/*
+Checks if a specific step is currently active (on).
+
+Arguments:
+    step - The step index (0-15) to check.
+Return Values:
+    bool - true if the step is active, false otherwise.
+*/
+bool SeqTrack::isStepActive(int step)
+{
+    if (step >= 0 && step < numSteps)
+    {
+        return this->steps[step];
+    }
+    return false;
+}
+
+bool SeqTrack::muted()
+{
+    return mute;
+}
+
+bool SeqTrack::soloed()
+{
+    return solo;
+}
+
+int SeqTrack::getCurrentStep() const
+{
+    return currentStep;
+}
+
+void SeqTrack::incrementStep()
+{
+    currentStep = (currentStep + 1) % trackLength;
+}
+
+int SeqTrack::getTrackLength() const
+{
+    return trackLength;
+}
+
+double SeqTrack::getTempoDivision() const
+{
+    return tempoDivision;
+}
+
+int SeqTrack::getProbability() const
+{
+    return probability;
+}
+
+void SeqTrack::updateParam1(int direction)
+{
+    switch (mode)
+    {
+        case 0:
+            // Step Sequencer
+            if (direction && trackLength < numSteps)
+            {
+                trackLength++;
+            }
+            else if (trackLength > 0)
+            {
+                trackLength--;
+            }
+            break;
+        default:
+            break;
+    }
+
+}
+
+void SeqTrack::updateParam2(int direction)
+{
+    switch (mode)
+    {
+        case 0:
+            // Step Sequencer
+            if (direction && tempoDivision < 8.0f)
+            {
+                tempoDivision = tempoDivision * 2.0f;
+            }
+            else if (tempoDivision > (1.0f / 8.0f))
+            {
+                tempoDivision = tempoDivision / 2.0f;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void SeqTrack::updateParam3(int direction)
+{
+    switch (mode)
+    {
+        case 0:
+            // Step Sequencer
+            if (direction && probability < 100)
+            {
+                probability = probability + 5;
+            }
+            else if (probability > 0)
+            {
+                probability = probability - 5;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void SeqTrack::toggleMute()
+{
+    mute = !mute;
+}
+
+void SeqTrack::toggleSolo()
+{
+    solo = !solo;
+}
+
+int SeqTrack::getNumSteps() const
+{
+    return numSteps;
 }

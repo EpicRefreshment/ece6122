@@ -37,18 +37,36 @@ StepGrid::StepGrid(RenderWindow& window, SequencerEngine& engine, const Font& fo
     initShapes();
 }
 
-void StepGrid::update()
+void StepGrid::update(bool tick)
 {
     // A tick has occurred, so we advance the playhead
-    int currentStep = engine.getCurrentStep();
+    int currentGlobalStep = engine.getGlobalStep();
 
     // Trigger all tracks for this new step
     for (int i = 0; i < numTracks; i++)
     {
-        if (tracks[i].isStepActive(currentStep))
+        // reset track playheads if stopped
+        if (currentGlobalStep == -1)
+        {
+            tracks[i].reset();
+            continue;
+        }
+
+        // Don't play or increment if tick hasn't occurred.
+        if (!tick)
+        {
+            continue;
+        }
+
+        // get current step and play if active
+        int currentTrackStep = tracks[i].getCurrentStep();
+
+        if (tracks[i].isStepActive(currentTrackStep) && !tracks[i].muted())
         {
             tracks[i].trigger();
         }
+
+        tracks[i].incrementStep(); // Advance track playhead
     }
 }
 
@@ -56,21 +74,41 @@ void StepGrid::draw()
 {
     window.draw(panelBackground);
     
-    // Get the active step from the engine
-    int activeStep = engine.getCurrentStep();
+    // Get the global step from the engine for the playhead
+    int activeGlobalStep = engine.getGlobalStep();
 
     // Redraw all shapes based on the current state
     for (int track = 0; track < numTracks; track++)
     {
+        // current step will always be ahead by 1 when drawing
+        int currentStep = tracks[track].getCurrentStep() - 1;
+        // if current step 0 then actual current step is track length - 1
+        if (currentStep == -1)
+        {
+            currentStep = tracks[track].getTrackLength() - 1;
+        }
+
         for (int step = 0; step < numSteps; step++)
         {
             int index = track * numSteps + step;
 
-            // Set color based on state
-            if (step == activeStep)
+            bool isBeyondTrackLength = step >= tracks[track].getTrackLength();
+
+            if (step == currentStep && activeGlobalStep != -1)
             {
                 // Active playhead: Use Yellow
-                stepShapes[index].setFillColor(Color::Yellow); 
+                stepShapes[index].setOutlineColor(Color::Yellow); 
+            }
+            else
+            {
+                // Inactive playhead: Use Gray
+                stepShapes[index].setOutlineColor(Color::Black);
+            }
+            
+            if (isBeyondTrackLength)
+            {
+                // Step is beyond the track's length: Use a dim color
+                stepShapes[index].setFillColor(Color(20, 20, 20));
             }
             else if (tracks[track].isStepActive(step))
             {
@@ -125,7 +163,6 @@ void StepGrid::handleMouse(Event event, float mousePosX, float mousePosY)
             int track = i / numSteps;
             int step = i % numSteps;
             tracks[track].toggleStep(step);
-            cout << "Toggled Track: " << track << " Step: " << step << endl;
             break; // Found the shape
         }
     }

@@ -34,7 +34,8 @@ SequencerEngine::SequencerEngine()
     paused = 0;
     stopped = 1;
 
-    currentStep = -1;
+    globalStep = -1;
+    globalTick = 0;
 
     bpm = 120;
     stepTime = sf::seconds((60.0f / bpm) / 4.0f);
@@ -71,7 +72,8 @@ void SequencerEngine::stop()
     playing = 0;
     paused = 0;
     stopped = 1;
-    currentStep = -1;
+    globalStep = -1;
+    globalTick = 0;
 }
 
 /*
@@ -109,7 +111,8 @@ bool SequencerEngine::update()
     // Check if enough time has passed to signal a tick
     if (clock.getElapsedTime() >= stepTime)
     {
-        currentStep = (currentStep + 1) % 16; // Advance step 
+        globalTick++;
+        globalStep = (globalStep + 1) % 16; // Advance step for visual playhead
         clock.restart(); // Reset the clock for the *next* tick
         return true; // Signify that a tick has occurred
     }
@@ -169,7 +172,7 @@ Arguments:
 Return Values:
     int - The current step (0-15), or -1 if stopped.
 */
-int SequencerEngine::getCurrentStep()
+int SequencerEngine::getGlobalStep()
 {
-    return currentStep;
+    return globalStep;
 }
