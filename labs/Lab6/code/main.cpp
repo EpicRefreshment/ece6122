@@ -2,8 +2,9 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <random>
 #include <cstdlib>
-#include <ctime>
+#include <chrono>
 #include <mpi.h>
 
 using namespace std;
@@ -17,7 +18,7 @@ double func1(double x)
 // Function for integral 2: f(x) = e^(-x^2)
 double func2(double x)
 {
-    return std::exp(-x * x);
+    return exp(-x * x);
 }
 
 int main(int argc, char** argv)
@@ -61,13 +62,19 @@ int main(int argc, char** argv)
 
     if (problem_choice != 1 && problem_choice != 2)
     {
-        cerr << "Error: -P must be 1 or 2." << endl;
+        if (rank == 0)
+        {
+            cerr << "Error: -P must be 1 or 2." << endl;
+        }
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
     if (total_samples <= 0)
     {
-        cerr << "Error: -N must be a positive number." << endl;
+        if (rank == 0)
+        {
+            cerr << "Error: -N must be a positive number." << endl;
+        }
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
@@ -84,8 +91,11 @@ int main(int argc, char** argv)
     }
 
     // Seed the random number generator differently for each process
-    std::srand(static_cast<unsigned int>(std::time(nullptr)) + rank);
+    unsigned int seed = chrono::high_resolution_clock::now().time_since_epoch().count() + rank;
+    mt19937 generator(seed);
+    uniform_real_distribution<double> distribution(0.0, 1.0);
 
+    // Initialize variables
     long long count_inside = 0;
     double (*func)(double);
 
@@ -98,14 +108,10 @@ int main(int argc, char** argv)
         func = func2;
     }
 
-    // The bounding box for both integrals on [0,1] is a 1x1 square.
-    double x_min = 0.0, x_max = 1.0;
-    double y_min = 0.0, y_max = 1.0;
-
     for (long long i = 0; i < local_samples; i++)
     {
-        double x = x_min + static_cast<double>(rand()) / RAND_MAX * (x_max - x_min);
-        double y = y_min + static_cast<double>(rand()) / RAND_MAX * (y_max - y_min);
+        double x = distribution(generator);
+        double y = distribution(generator);
 
         if (y <= func(x))
         {
@@ -120,8 +126,7 @@ int main(int argc, char** argv)
     // --- Final Calculation and Output (on root process) ---
     if (rank == 0)
     {
-        double bounding_box_area = (x_max - x_min) * (y_max - y_min);
-        double estimate = (static_cast<double>(total_inside) / total_samples) * bounding_box_area;
+        double estimate = (static_cast<double>(total_inside) / total_samples);
 
         cout.precision(8);
         cout << "The estimate for integral " << problem_choice << " is " << fixed << estimate << endl;
