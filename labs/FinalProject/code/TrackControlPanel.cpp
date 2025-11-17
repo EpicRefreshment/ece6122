@@ -45,39 +45,51 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
     {
         if (param1UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            cout << "Param 1 Up" << endl;
-            engine.postCommand([track = tracks[i]] { track->updateParam1(1); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam1(1); 
+            });
             return;
         }
         if (param1DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            cout << "Param 1 Down" << endl;
-            engine.postCommand([track = tracks[i]] { track->updateParam1(0); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam1(0); 
+            });
             return;
         }
         if (param2UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->updateParam2(1); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam2(1); 
+            });
             return;
         }
         if (param2DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->updateParam2(0); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam2(0); 
+            });
             return;
         }
         if (param3UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->updateParam3(1); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam3(1); 
+            });
             return;
         }
         if (param3DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->updateParam3(0); });
+            engine.postCommand([track = tracks[i]] { 
+                track->updateParam3(0); 
+            });
             return;
         }
         if (muteButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->toggleMute(); });
+            engine.postCommand([track = tracks[i]] {
+                track->toggleMute(); 
+            });
             // The visual update will lag slightly, but the UI is responsive.
             // A more advanced solution would involve the engine posting state changes back to the UI.
             if (!tracks[i]->muted()) // Check the opposite state for immediate visual feedback

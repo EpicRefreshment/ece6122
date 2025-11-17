@@ -185,10 +185,21 @@ void SequencerEngine::run()
             globalStep = (currentTick / 16) % 16;
 
             // For each track, check if it should be triggered on this tick.
+            // First, determine if any track is in solo mode.
+            bool anyTrackIsSoloed = false;
+            for (const auto* track : tracks)
+            {
+                if (const_cast<SeqTrack*>(track)->soloed())
+                {
+                    anyTrackIsSoloed = true;
+                    break;
+                }
+            }
+
             for (auto* track : tracks)
             {
-                pool.enqueueTask([track, currentTick] {
-                    track->processTick(currentTick);
+                pool.enqueueTask([track, currentTick, anyTrackIsSoloed] {
+                    track->processTick(currentTick, anyTrackIsSoloed);
                 });
             }
             

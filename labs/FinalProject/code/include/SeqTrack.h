@@ -35,7 +35,7 @@ public:
     void setSample(SoundBuffer& sampleBuffer);
 
     void trigger();
-    void processTick(long long globalTick);
+    void processTick(long long globalTick, bool anyTrackIsSoloed);
     void clear();
     void reset();
 

@@ -81,16 +81,28 @@ void SeqTrack::trigger()
     }
 }
 
-void SeqTrack::processTick(long long globalTick)
+void SeqTrack::processTick(long long globalTick, bool anyTrackIsSoloed)
 {
     // This track's step only advances when the global tick aligns with its tempo division
     if (globalTick % ticksPerStep == 0)
     {
-        if (steps[currentStep] && !mute)
+        bool shouldPlay = false;
+        if (anyTrackIsSoloed)
         {
-            if ((rand() % 101) <= probability)
-                sample.play();
+            // If any track is soloed, only play this track if it is also soloed (and not muted).
+            shouldPlay = solo && !mute;
         }
+        else
+        {
+            // If no tracks are soloed, play this track as long as it's not muted.
+            shouldPlay = !mute;
+        }
+
+        if (shouldPlay && steps[currentStep])
+        {
+            trigger(); // trigger() already handles probability
+        }
+
         currentStep = (currentStep + 1) % trackLength;
     }
 }
