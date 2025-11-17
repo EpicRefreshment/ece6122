@@ -32,12 +32,11 @@ using namespace sf;
 class StepGrid
 {
 public:
-    StepGrid(RenderWindow& window, SequencerEngine& engine, const Font& font, vector<SeqTrack>& tracks,
+    StepGrid(RenderWindow& window, SequencerEngine& engine, const Font& font, const vector<SeqTrack*>& tracks,
              SampleControlPanel& sampleCtrlPanel, Vector2f panelSize, Vector2f panelPos);
 
     void handleMouse(Event event, float mousePosX, float mousePosY);
 
-    void update(bool tick);
     void draw();
 
     FloatRect getGlobalBounds();
@@ -48,7 +47,7 @@ private:
     RenderWindow& window;
     SequencerEngine& engine;
     const Font& font;
-    std::vector<SeqTrack>& tracks;
+    const std::vector<SeqTrack*>& tracks;
     SampleControlPanel& sampleCtrlPanel;
 
     float padding;

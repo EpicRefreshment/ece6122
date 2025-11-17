@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -34,3 +36,14 @@ private:
     std::condition_variable condition; // Used for thread synchronization
     std::atomic<bool> stopFlag; // Signals threads to stop execution
 };
+
+// Template implementation must be in the header file.
+template<typename Task>
+void ThreadPool::enqueueTask(Task task)
+{
+    {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        taskQueue.push(std::function<void()>(task)); // Push the task into the queue
+    }
+    condition.notify_one(); // Notify a worker thread that a task is available
+}

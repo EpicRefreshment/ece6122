@@ -18,7 +18,9 @@ providing methods to modify and query that pattern.
 
 #include <vector>
 #include <iostream>
-#include <algorithm> // For std::fill
+#include <algorithm>
+#include <random>
+#include <cstdlib>
 
 #include <SFML/Audio.hpp>
 
@@ -33,6 +35,7 @@ public:
     void setSample(SoundBuffer& sampleBuffer);
 
     void trigger();
+    void processTick(long long globalTick);
     void clear();
     void reset();
 
@@ -46,8 +49,6 @@ public:
     int getTrackLength() const;
     double getTempoDivision() const;
     int getProbability() const;
-
-    void incrementStep();
 
     void updateParam1(int direction);
     void updateParam2(int direction);
@@ -67,13 +68,12 @@ private:
 
     int currentStep;
     int mode;
-    int mute;
-    int solo;
+    bool mute;
+    bool solo;
 
     int trackLength;
     double tempoDivision; // e.g., 1.0 for normal, 2.0 for double-time, 0.5 for half-time
     int probability;
 
     int ticksPerStep;
-    int tickCounter;
 };

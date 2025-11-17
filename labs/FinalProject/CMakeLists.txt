@@ -34,3 +34,11 @@ target_link_libraries(MultimodeSequencer PUBLIC sfml-graphics sfml-system sfml-w
 
 file(COPY "${PROJECT_SOURCE_DIR}/fonts" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
 file(COPY "${PROJECT_SOURCE_DIR}/samples" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
+
+#if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
+#    file(GET_RUNTIME_DEPENDENCIES
+#        EXECUTABLE MultimodeSequencer
+#        RESOLVED_DEPENDENCIES_VAR resolved_deps
+#    )
+#    install(FILES ${resolved_deps} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#endif()

@@ -15,7 +15,7 @@ side panel used for loading and managing samples.
 
 #include "SampleControlPanel.h"
 
-SampleControlPanel::SampleControlPanel(RenderWindow& window, const Font& font, vector<SeqTrack>& tracks, Vector2f panelSize, Vector2f panelPos)
+SampleControlPanel::SampleControlPanel(RenderWindow& window, const Font& font, const vector<SeqTrack*>& tracks, Vector2f panelSize, Vector2f panelPos)
     : window(window), font(font), tracks(tracks)
 {
     // Panel Background
@@ -45,7 +45,7 @@ void SampleControlPanel::handleMouse(Event event, float mousePosX, float mousePo
         {
             if (dropdownItems[i].getGlobalBounds().contains(mousePosX, mousePosY))
             {
-                tracks[activeDropdown].setSample(sampleBuffers[i]);
+                tracks[activeDropdown]->setSample(sampleBuffers[i]);
                 sampleNameTexts[activeDropdown].setString(dropdownItems[i].getString());
                 displayWaveform(activeDropdown, static_cast<int>(i));
                 activeDropdown = -1; // Close dropdown

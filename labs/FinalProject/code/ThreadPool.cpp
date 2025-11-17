@@ -25,18 +25,6 @@ ThreadPool::~ThreadPool()
     }
 }
 
-// Adds a task to the queue
-template<typename Task>
-void ThreadPool::enqueueTask(Task task) 
-{
-    {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        // https://www.geeksforgeeks.org/std-function-in-cpp/
-        taskQueue.push(std::function<void()>(task)); // Push the task into the queue
-    }
-    condition.notify_one(); // Notify a worker thread that a task is available
-}
-
 // Function executed by worker threads
 void ThreadPool::workerThread()
 {

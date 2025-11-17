@@ -14,10 +14,9 @@ side panel used for managing individual track properties.
 */
 
 #include "TrackControlPanel.h"
-#include <iostream>
-
-TrackControlPanel::TrackControlPanel(RenderWindow& window, const Font& font, vector<SeqTrack>& tracks, Vector2f panelSize, Vector2f panelPos)
-    : window(window), font(font), tracks(tracks)
+ 
+TrackControlPanel::TrackControlPanel(RenderWindow& window, SequencerEngine& engine, const Font& font, const vector<SeqTrack*>& tracks, Vector2f panelSize, Vector2f panelPos)
+    : window(window), engine(engine), font(font), tracks(tracks)
 {
     // Panel Background
     panelBackground.setSize(panelSize);
@@ -46,44 +45,42 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
     {
         if (param1UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam1(1);
-            updateTrackText(i);
+            cout << "Param 1 Up" << endl;
+            engine.postCommand([track = tracks[i]] { track->updateParam1(1); });
             return;
         }
         if (param1DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam1(0);
-            updateTrackText(i);
+            cout << "Param 1 Down" << endl;
+            engine.postCommand([track = tracks[i]] { track->updateParam1(0); });
             return;
         }
         if (param2UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam2(1);
-            updateTrackText(i);
+            engine.postCommand([track = tracks[i]] { track->updateParam2(1); });
             return;
         }
         if (param2DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam2(0);
-            updateTrackText(i);
+            engine.postCommand([track = tracks[i]] { track->updateParam2(0); });
             return;
         }
         if (param3UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam3(1);
-            updateTrackText(i);
+            engine.postCommand([track = tracks[i]] { track->updateParam3(1); });
             return;
         }
         if (param3DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].updateParam3(0);
-            updateTrackText(i);
+            engine.postCommand([track = tracks[i]] { track->updateParam3(0); });
             return;
         }
         if (muteButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].toggleMute();
-            if (tracks[i].muted())
+            engine.postCommand([track = tracks[i]] { track->toggleMute(); });
+            // The visual update will lag slightly, but the UI is responsive.
+            // A more advanced solution would involve the engine posting state changes back to the UI.
+            if (!tracks[i]->muted()) // Check the opposite state for immediate visual feedback
             {
                 muteButtons[i].setOutlineColor(Color::Red);
                 muteText[i].setFillColor(Color::Red);
@@ -97,8 +94,8 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
         }
         if (soloButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            tracks[i].toggleSolo();
-            if (tracks[i].soloed())
+            engine.postCommand([track = tracks[i]] { track->toggleSolo(); });
+            if (!tracks[i]->soloed()) // Check the opposite state for immediate visual feedback
             {
                 soloButtons[i].setOutlineColor(Color::Cyan);
                 soloText[i].setFillColor(Color::Cyan);
@@ -150,6 +147,12 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
 
 void TrackControlPanel::update()
 {
+    // This update loop now ensures the text always reflects the current state.
+    for (int i = 0; i < numTracks; ++i)
+    {
+        updateTrackText(i);
+    }
+
     if (activeDropdown != -1)
     {
         const auto& button = dropdownButtons[activeDropdown];
@@ -348,9 +351,9 @@ void TrackControlPanel::initDropdownItems()
 
 void TrackControlPanel::updateTrackText(int trackIndex)
 {
-    param1Text[trackIndex].setString("Len: " + to_string(tracks[trackIndex].getTrackLength()));
+    param1Text[trackIndex].setString("Len: " + to_string(tracks[trackIndex]->getTrackLength()));
 
-    double div = tracks[trackIndex].getTempoDivision();
+    double div = tracks[trackIndex]->getTempoDivision();
     string divStr;
     if (div >= 1.0)
     {
@@ -362,5 +365,5 @@ void TrackControlPanel::updateTrackText(int trackIndex)
     }
     param2Text[trackIndex].setString("Div: " + divStr);
 
-    param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex].getProbability()));
+    param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()));
 }

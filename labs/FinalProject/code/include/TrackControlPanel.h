@@ -15,12 +15,14 @@ side panel that contains controls for each track (e.g., track length, tempo divi
 
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <string>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include "SequencerEngine.h" // Need engine to post commands
 #include "SeqTrack.h"
 
 using namespace std;
@@ -29,7 +31,7 @@ using namespace sf;
 class TrackControlPanel
 {
 public:
-    TrackControlPanel(RenderWindow& window, const Font& font, vector<SeqTrack>& tracks, Vector2f panelSize, Vector2f panelPos);
+    TrackControlPanel(RenderWindow& window, SequencerEngine& engine, const Font& font, const vector<SeqTrack*>& tracks, Vector2f panelSize, Vector2f panelPos);
 
     void handleMouse(Event event, float mousePosX, float mousePosY);
     void update();
@@ -45,8 +47,9 @@ private:
     void handleDropdown(Event event, float mousePosX, float mousePosY);
 
     RenderWindow& window;
+    SequencerEngine& engine;
     const Font& font;
-    vector<SeqTrack>& tracks;
+    const vector<SeqTrack*>& tracks;
 
     int numTracks;
     int numModes;

@@ -16,6 +16,15 @@ based on the BPM. It does not manage step state.
 
 #pragma once
 
+#include <thread>
+#include <mutex>
+#include <atomic>
+
+#include <vector>
+#include "SeqTrack.h"
+#include "ThreadPool.h"
+#include "ThreadSafeQueue.h"
+
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -26,12 +35,14 @@ using namespace sf;
 class SequencerEngine
 {
 public:
-    SequencerEngine();
+    SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& pool);
+    ~SequencerEngine();
 
     void play();
     void stop();
     void pause();
     bool update();
+    void run();
 
     int isPlaying();
     int isPaused();
@@ -39,17 +50,29 @@ public:
 
     void setBpm(int bpm);
 
+    // A thread-safe way for the UI to post commands to the engine
+    void postCommand(function<void()> command);
+
     int getBPM();
     int getGlobalStep();
 private:
-    int playing;
-    int paused;
-    int stopped;
+    atomic<bool> playing;
+    atomic<bool> paused;
+    atomic<bool> stopped;
+    atomic<bool> stopFlag;
 
-    int bpm;
-    int globalStep;
-    long long globalTick;
+    atomic<int> bpm;
+    atomic<int> globalStep;
+    atomic<long long> globalTick;
+
+    atomic<bool> ticked;
 
     Clock clock;
-    Time stepTime; // Duration of one 16th note step
+    Time elapsedTime; // Accumulates time for drift-free timing
+    Time stepTime; // Duration of one tick
+
+    thread seqThread;
+    const vector<SeqTrack*>& tracks;
+    ThreadPool& pool;
+    ThreadSafeQueue<function<void()>> commandQueue;
 };

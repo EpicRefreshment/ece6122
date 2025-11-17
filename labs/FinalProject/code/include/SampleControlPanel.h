@@ -34,7 +34,7 @@ namespace fs = std::filesystem;
 class SampleControlPanel
 {
 public:
-    SampleControlPanel(RenderWindow& window, const Font& font, vector<SeqTrack>& tracks, Vector2f panelSize, Vector2f panelPos);
+    SampleControlPanel(RenderWindow& window, const Font& font, const vector<SeqTrack*>& tracks, Vector2f panelSize, Vector2f panelPos);
 
     void handleMouse(Event event, float mousePosX, float mousePosY);
     void update();
@@ -53,7 +53,7 @@ private:
 
     RenderWindow& window;
     const Font& font;
-    vector<SeqTrack>& tracks;
+    const vector<SeqTrack*>& tracks;
     int numTracks;
 
     RectangleShape panelBackground;

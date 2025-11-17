@@ -149,10 +149,12 @@ void GlobalControlPanel::handleMouse(Event event, float mousePosX, float mousePo
     else if (bpmUpButton.getGlobalBounds().contains(mousePosX, mousePosY))
     {
         bpm++;
+        setBPM();
     }
     else if (bpmDownButton.getGlobalBounds().contains(mousePosX, mousePosY))
     {
         bpm--;
+        setBPM();
     }
     // --- BPM Text Box Click ---
     else if (bpmBox.getGlobalBounds().contains(mousePosX, mousePosY))
@@ -187,9 +189,6 @@ void GlobalControlPanel::update()
     playButton.setOutlineColor(engine.isPlaying() ? Color::Green : Color::White);
     pauseButton.setOutlineColor(engine.isPaused() ? Color::Yellow : Color::White);
     stopButton.setOutlineColor(engine.isStopped() ? Color::Red : Color::White);
-
-    // Update BPM
-    setBPM();
 }
 
 void GlobalControlPanel::draw()
@@ -241,6 +240,7 @@ void GlobalControlPanel::setBPM()
     }
     engine.setBpm(bpm);
     bpmString = to_string(bpm);
+    bpmInputString = bpmString;
 }
 
 void GlobalControlPanel::setBPMFromString()
@@ -252,4 +252,5 @@ void GlobalControlPanel::setBPMFromString()
     }
     bpm = stoi(bpmInputString);
     bpmString = bpmInputString;
+    setBPM();
 }

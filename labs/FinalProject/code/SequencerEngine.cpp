@@ -28,7 +28,8 @@ Arguments:
 Return Values:
     SequencerEngine
 */
-SequencerEngine::SequencerEngine()
+SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& pool)
+    : tracks(tracks), pool(pool)
 {
     playing = 0;
     paused = 0;
@@ -37,8 +38,18 @@ SequencerEngine::SequencerEngine()
     globalStep = -1;
     globalTick = 0;
 
-    bpm = 120;
-    stepTime = sf::seconds((60.0f / bpm) / 4.0f);
+    setBpm(120);
+
+    seqThread = thread(&SequencerEngine::run, this);
+}
+
+SequencerEngine::~SequencerEngine()
+{
+    stopFlag = true;
+    if (seqThread.joinable())
+    {
+        seqThread.join();
+    }
 }
 
 /*
@@ -52,10 +63,15 @@ Return Values:
 */
 void SequencerEngine::play()
 {
-    playing = 1;
-    paused = 0;
-    stopped = 0;
-    clock.restart(); // Always play from the start
+    postCommand([this]() {
+        playing = true;
+        paused = false;
+        stopped = false;
+        elapsedTime = sf::Time::Zero;
+        clock.restart(); // Always play from the start
+        globalTick = 0;
+        globalStep = 0; // Ensure visual step is also reset
+    });
 }
 
 /*
@@ -68,12 +84,21 @@ Return Values:
 */
 void SequencerEngine::stop()
 {
-    // reset playhead
-    playing = 0;
-    paused = 0;
-    stopped = 1;
-    globalStep = -1;
-    globalTick = 0;
+    postCommand([this]() {
+        // reset playhead
+        playing = false;
+        paused = false;
+        stopped = true;
+        globalStep = -1;
+        globalTick = -1; // Set to -1 so the next play() starts on tick 0
+        ticked = true; // Force a UI update to hide the playhead
+
+        // Also reset the individual playhead of each track
+        for (auto* track : tracks)
+        {
+            track->reset();
+        }
+    });
 }
 
 /*
@@ -86,10 +111,12 @@ Return Values:
 */
 void SequencerEngine::pause()
 {
-    // stop playhead at current position
-    playing = 0;
-    paused = 1;
-    stopped = 0;
+    postCommand([this]() {
+        // stop playhead at current position
+        playing = false;
+        paused = true;
+        stopped = false;
+    });
 }
 
 /*
@@ -103,21 +130,73 @@ Return Values:
 */
 bool SequencerEngine::update()
 {
-    if (!playing)
-    {
-        return false;
-    }
+    // Atomically check if a tick has occurred and reset the flag.
+    // This is a safe, non-blocking way for the UI thread to query the audio thread's state.
+    bool ticked = this->ticked.exchange(false);
+    return ticked;
+}
 
-    // Check if enough time has passed to signal a tick
-    if (clock.getElapsedTime() >= stepTime)
-    {
-        globalTick++;
-        globalStep = (globalStep + 1) % 16; // Advance step for visual playhead
-        clock.restart(); // Reset the clock for the *next* tick
-        return true; // Signify that a tick has occurred
-    }
+/*
+Updates the engine's internal clock.
+Checks if enough time has passed to signal a 16th note tick.
 
-    return false; // No tick this frame
+Arguments:
+    N/A
+Return Values:
+    N/A
+*/
+void SequencerEngine::run()
+{
+    auto processCommands = [this]() {
+        function<void()> command;
+        while (commandQueue.try_pop(command))
+        {
+            command();
+        }
+    };
+
+    while (!stopFlag)
+    {
+        processCommands();
+
+        bool isPlaying = playing.load();
+        if (!isPlaying)
+        {
+            // Not playing, so sleep for a bit to yield CPU and restart the clock
+            // to prevent accumulating a huge elapsedTime.
+            clock.restart();
+            this_thread::sleep_for(chrono::milliseconds(10));
+            continue;
+        }
+        
+        elapsedTime += clock.restart();
+
+        // Use a while loop to process all pending ticks. This is the core timing logic.
+        while (elapsedTime >= stepTime)
+        {
+            // Process commands before each tick to handle stop/pause immediately.
+            processCommands();
+            if (!playing.load()) {
+                break; // Exit tick processing if a command stopped playback.
+            }
+
+            elapsedTime -= stepTime;
+            long long currentTick = globalTick.fetch_add(1);
+            globalStep = (currentTick / 16) % 16;
+
+            // For each track, check if it should be triggered on this tick.
+            for (auto* track : tracks)
+            {
+                pool.enqueueTask([track, currentTick] {
+                    track->processTick(currentTick);
+                });
+            }
+            
+            ticked = true; // Signal to the UI thread that a tick happened.
+        }
+        // Sleep for a very short duration to be responsive but not burn 100% CPU.
+        this_thread::sleep_for(chrono::microseconds(500));
+    }
 }
 
 /*
@@ -130,15 +209,21 @@ Return Values:
 */
 void SequencerEngine::setBpm(int bpm)
 {
-    this->bpm = bpm;
+    this->bpm.store(bpm);
     // (60 seconds / BPM) = duration of one beat (quarter note).
-    // We have 4 steps per beat (16th notes).
-    stepTime = sf::seconds((60.0f / bpm) / 4.0f);
+    // 4 steps per beat (16th notes).
+    // 16 ticks per step.
+    stepTime = sf::seconds(((60.0f / bpm) / 4.0f) / 16.0f);
+}
+
+void SequencerEngine::postCommand(function<void()> command)
+{
+    commandQueue.push(move(command));
 }
 
 int SequencerEngine::getBPM()
 {
-    return bpm;
+    return bpm.load();
 }
 
 /*
@@ -151,17 +236,17 @@ Return Values:
 */
 int SequencerEngine::isPlaying()
 {
-    return playing;
+    return playing.load();
 }
 
 int SequencerEngine::isPaused()
 {
-    return paused;
+    return paused.load();
 }
 
 int SequencerEngine::isStopped()
 {
-    return stopped;
+    return stopped.load();
 }
 
 /*
@@ -174,5 +259,5 @@ Return Values:
 */
 int SequencerEngine::getGlobalStep()
 {
-    return globalStep;
+    return globalStep.load();
 }

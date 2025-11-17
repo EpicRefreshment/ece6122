@@ -52,7 +52,6 @@ int main()
     // GUI Configuration
     VideoMode vm(1920, 1080);
     RenderWindow window(vm, "Multimode Step Sequencer");
-    window.setFramerateLimit(60);
 
     Vector2u windowSize = window.getSize();
     float windowWidth = static_cast<float>(windowSize.x); // for readability
@@ -77,23 +76,32 @@ int main()
         return -1;
     }
 
-    // --- Sequencer Initialization ---
-    SequencerEngine engine;
-
     // --- Panel Initialization ---
     // Initialize all the tracks
     int numTracks = 8;
     int numSteps = 16;
-    vector<SeqTrack> tracks;
+    vector<unique_ptr<SeqTrack>> tracks;
+    tracks.reserve(numTracks);
     for (int i = 0; i < numTracks; i++)
     {
-        tracks.push_back(SeqTrack(i, numSteps));
+        tracks.push_back(make_unique<SeqTrack>(i, numSteps));
     }
+
+    // Create a vector of raw pointers for the panels that need to observe the tracks.
+    // This avoids changing all their constructors and keeps their role as observers clear.
+    vector<SeqTrack*> trackPtrs;
+    trackPtrs.reserve(numTracks);
+    for(const auto& track : tracks) {
+        trackPtrs.push_back(track.get());
+    }
+
+    // --- Sequencer Initialization ---
+    SequencerEngine engine(trackPtrs, pool);
     
     GlobalControlPanel globalPanel(window, engine, font, globalPanelSize, globalPanelPos);
-    TrackControlPanel trackCtrlPanel(window, font, tracks, trackCtrlSize, trackCtrlPos);
-    SampleControlPanel sampleCtrlPanel(window, font, tracks, sampleCtrlSize, sampleCtrlPos);
-    StepGrid stepGrid(window, engine, font, tracks, sampleCtrlPanel, stepGridSize, stepGridPos);
+    TrackControlPanel trackCtrlPanel(window, engine, font, trackPtrs, trackCtrlSize, trackCtrlPos);
+    SampleControlPanel sampleCtrlPanel(window, font, trackPtrs, sampleCtrlSize, sampleCtrlPos);
+    StepGrid stepGrid(window, engine, font, trackPtrs, sampleCtrlPanel, stepGridSize, stepGridPos);
 
     // --- Main Application Loop ---
     while (window.isOpen())
@@ -151,9 +159,9 @@ int main()
         sampleCtrlPanel.update();
 
         // --- Logic Update ---
-        // engine.update() returns true ONCE per 16th note "tick"
+        // engine.update() returns true if a tick has occurred since the last check.
+        // This is used to signal the GUI that it might need to update visuals.
         bool tick = engine.update();
-        stepGrid.update(tick);
 
         // --- Drawing ---
         window.clear(Color(30, 30, 30)); // Dark grey background
