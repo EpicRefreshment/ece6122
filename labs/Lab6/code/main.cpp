@@ -108,7 +108,7 @@ int main(int argc, char** argv)
         func = func2;
     }
 
-    for (int i = 0; i < local_samples; i++)
+    for (long long i = 0; i < local_samples; i++)
     {
         double x = distribution(generator);
         // Add the function's value at that x to our local sum
