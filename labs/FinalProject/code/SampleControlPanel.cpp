@@ -101,6 +101,12 @@ void SampleControlPanel::draw()
 {
     window.draw(panelBackground);
 
+    // Draw the background shading first
+    for (const auto& bg : trackBackgrounds)
+    {
+        window.draw(bg);
+    }
+
     for (int i = 0; i < numTracks; i++)
     {
         window.draw(trackLabels[i]);
@@ -139,6 +145,27 @@ void SampleControlPanel::initShapes()
 {
     // Setup UI elements for each of the 8 tracks
     float trackHeight = panelBackground.getSize().y / static_cast<float>(numTracks);
+
+    // Initialize all the GUI shapes
+    trackBackgrounds.reserve(numTracks / 2);
+    for (int i = 0; i < numTracks; i++)
+    {
+        RectangleShape bg;
+        bg.setSize({panelBackground.getSize().x, trackHeight});
+        bg.setPosition(panelBackground.getPosition().x, panelBackground.getPosition().y + i * trackHeight);
+        bg.setOutlineColor(Color::Black);
+        bg.setOutlineThickness(2.0f);
+        if (i % 2 == 1) // Shade odd rows
+        {
+            bg.setFillColor(Color(50, 50, 50));
+        }
+        else
+        {
+            bg.setFillColor(Color(40, 40, 40));
+        }
+        trackBackgrounds.push_back(bg);
+    }
+
     for (int i = 0; i < numTracks; i++)
     {
         float trackY = panelBackground.getPosition().y + i * trackHeight;
@@ -240,7 +267,7 @@ void SampleControlPanel::displayWaveform(int trackIndex, int bufferIndex)
     targetDisplay.setPrimitiveType(LineStrip);
 
     float waveformYOffset = dropdownButtons[trackIndex].getPosition().y + 15; // Position below other controls
-    for (size_t i = 0; i < sourceWaveform.getVertexCount(); ++i) {
+    for (size_t i = 0; i < sourceWaveform.getVertexCount(); i++) {
         Vertex v = sourceWaveform[i];
         v.position.y += waveformYOffset;
         targetDisplay.append(v);

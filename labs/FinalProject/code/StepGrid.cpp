@@ -30,7 +30,7 @@ StepGrid::StepGrid(RenderWindow& window, SequencerEngine& engine, const Font& fo
     this->numTracks = static_cast<int>(tracks.size());
     numSteps = 16;
 
-    padding = 5.0f;
+    padding = 15.0f;
     stepWidth = (panelBackground.getSize().x - (padding * (numSteps + 1))) / numSteps;
     stepHeight = (panelBackground.getSize().y - (padding * (numTracks + 1))) / numTracks;
 
@@ -40,6 +40,12 @@ StepGrid::StepGrid(RenderWindow& window, SequencerEngine& engine, const Font& fo
 void StepGrid::draw()
 {
     window.draw(panelBackground);
+
+    // Draw the background shading first
+    for (const auto& bg : stepGroupBackgrounds)
+    {
+        window.draw(bg);
+    }
     
     // Get the global step from the engine for the playhead
     int activeGlobalStep = engine.getGlobalStep();
@@ -111,12 +117,33 @@ void StepGrid::initShapes()
             stepShapes.push_back(stepShape);
         }
     }
+
+    // Add background shading for groups of 4 steps
+    for (int stepGroup = 0; stepGroup < numSteps / 4; stepGroup++)
+    {
+        RectangleShape bg;
+        float bgX = panelBackground.getPosition().x + (padding / 2.0f) + (stepGroup * 4) * (stepWidth + padding);
+        float bgWidth = 4 * (stepWidth + padding);
+        bg.setSize({bgWidth, panelBackground.getSize().y});
+        bg.setPosition({bgX, panelBackground.getPosition().y});
+        bg.setOutlineColor(Color::Black);
+        bg.setOutlineThickness(2.0f);
+        if (stepGroup % 2 == 1) // Shade the 2nd and 4th groups of four
+        {
+            bg.setFillColor(Color(50, 50, 50));
+        }
+        else
+        {
+            bg.setFillColor(Color(40, 40, 40));
+        }
+        stepGroupBackgrounds.push_back(bg);
+    }
 }
 
 void StepGrid::handleMouse(Event event, float mousePosX, float mousePosY)
 {
     // Find which shape was clicked
-    for (int i = 0; i < stepShapes.size(); i++)
+    for (int i = 0; i < static_cast<int>(stepShapes.size()); i++)
     {
         if (stepShapes[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {

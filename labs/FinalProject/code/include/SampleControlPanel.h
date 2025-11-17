@@ -70,4 +70,6 @@ private:
     vector<RectangleShape> dropdownButtons;
     vector<Text> dropdownItems;
     RectangleShape dropdownBackground;
+
+    vector<RectangleShape> trackBackgrounds;
 };

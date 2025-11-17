@@ -60,4 +60,6 @@ private:
     std::vector<RectangleShape> stepShapes;
 
     RectangleShape panelBackground;
+
+    vector<RectangleShape> stepGroupBackgrounds;
 };

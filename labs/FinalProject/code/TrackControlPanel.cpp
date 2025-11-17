@@ -41,7 +41,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
     // check dropdowns first
     this->handleDropdown(event, mousePosX, mousePosY);
 
-    for (int i = 0; i < numTracks; ++i)
+    for (int i = 0; i < numTracks; i++)
     {
         if (param1UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
@@ -160,7 +160,7 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
 void TrackControlPanel::update()
 {
     // This update loop now ensures the text always reflects the current state.
-    for (int i = 0; i < numTracks; ++i)
+    for (int i = 0; i < numTracks; i++)
     {
         updateTrackText(i);
     }
@@ -190,7 +190,13 @@ void TrackControlPanel::update()
 void TrackControlPanel::draw()
 {
     window.draw(panelBackground);
-    for (int i = 0; i < numTracks; ++i)
+
+    for (const auto& bg : trackBackgrounds)
+    {
+        window.draw(bg);
+    }
+
+    for (int i = 0; i < numTracks; i++)
     {
         window.draw(trackLabels[i]);
         window.draw(dropdownButtons[i]);
@@ -274,8 +280,26 @@ void TrackControlPanel::initShapes()
     soloText.resize(numTracks);
 
     // Initialize all the GUI shapes
+    trackBackgrounds.reserve(numTracks / 2);
+    for (int i = 0; i < numTracks; i++)
+    {
+        RectangleShape bg;
+        bg.setSize({panelBackground.getSize().x, trackHeight});
+        bg.setPosition(panelBackground.getPosition().x, panelBackground.getPosition().y + i * trackHeight);
+        bg.setOutlineColor(Color::Black);
+        bg.setOutlineThickness(2.0f);
+        if (i % 2 == 1) // Shade odd rows
+        {
+            bg.setFillColor(Color(50, 50, 50));
+        }
+        else
+        {
+            bg.setFillColor(Color(40, 40, 40));
+        }
+        trackBackgrounds.push_back(bg);
+    }
 
-    for (int i = 0; i < numTracks; ++i)
+    for (int i = 0; i < numTracks; i++)
     {
         float trackY = panelBackground.getPosition().y + i * trackHeight;
         setupText(trackLabels[i], "Track " + to_string(i + 1), {panelBackground.getPosition().x + 5, trackY + 5}, 16);

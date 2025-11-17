@@ -71,4 +71,6 @@ private:
     vector<RectangleShape> param2UpButtons, param2DownButtons;
     vector<RectangleShape> param3UpButtons, param3DownButtons;
     vector<RectangleShape> muteButtons, soloButtons;
+
+    vector<RectangleShape> trackBackgrounds;
 };
