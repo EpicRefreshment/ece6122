@@ -1,3 +1,10 @@
 .vscode/
 labs/Lab4/tempTable.csv
 labs/build/
+ogl
+Learn-CUDE-Programming
+Beginning-Cpp-Game-Programming-Second-Edition
+labs/Lab6/code/Lab6
+*.exe
+*.o
+*.obj
