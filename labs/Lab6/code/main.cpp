@@ -24,8 +24,6 @@ int main(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    
-
     int problem_choice = 0;
     long long total_samples = 0;
 
