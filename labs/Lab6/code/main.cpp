@@ -96,7 +96,7 @@ int main(int argc, char** argv)
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
     // Initialize variables
-    long long count_inside = 0;
+    double local_sum = 0.0;
     double (*func)(double);
 
     if (problem_choice == 1)
@@ -108,25 +108,22 @@ int main(int argc, char** argv)
         func = func2;
     }
 
-    for (long long i = 0; i < local_samples; i++)
+    for (int i = 0; i < local_samples; i++)
     {
         double x = distribution(generator);
-        double y = distribution(generator);
-
-        if (y <= func(x))
-        {
-            count_inside++;
-        }
+        // Add the function's value at that x to our local sum
+        local_sum += func(x);
     }
 
     // --- Gather results ---
-    long long total_inside = 0;
-    MPI_Reduce(&count_inside, &total_inside, 1, MPI_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
+    double total_sum = 0.0;
+    MPI_Reduce(&local_sum, &total_sum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     // --- Final Calculation and Output (on root process) ---
     if (rank == 0)
     {
-        double estimate = (static_cast<double>(total_inside) / total_samples);
+        // The integral is the average value of the function times the interval width
+        double estimate = total_sum / total_samples;
 
         cout.precision(8);
         cout << "The estimate for integral " << problem_choice << " is " << fixed << estimate << endl;
