@@ -53,23 +53,23 @@ int main(int argc, char** argv)
                 total_samples = stoll(argv[++i]);
             }
         }
-
-        if (problem_choice != 1 && problem_choice != 2)
-        {
-            cerr << "Error: -P must be 1 or 2." << endl;
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-
-        if (total_samples <= 0)
-        {
-            cerr << "Error: -N must be a positive number." << endl;
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
     }
 
     // --- Distribute parameters using collective communication ---
     MPI_Bcast(&problem_choice, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&total_samples, 1, MPI_LONG_LONG, 0, MPI_COMM_WORLD);
+
+    if (problem_choice != 1 && problem_choice != 2)
+    {
+        cerr << "Error: -P must be 1 or 2." << endl;
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
+    if (total_samples <= 0)
+    {
+        cerr << "Error: -N must be a positive number." << endl;
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
 
     // --- Monte Carlo Integration ---
 
