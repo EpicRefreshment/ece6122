@@ -23,7 +23,6 @@ Arguments:
 #include <string>
 #include <cmath>
 #include <random>
-#include <cstdlib>
 #include <chrono>
 #include <mpi.h>
 
@@ -117,14 +116,14 @@ int main(int argc, char** argv)
 
     // long long to support large sample sizes
     // Determine number of samples for this process
-    long long samples_per_proc = totalSamples / size;
-    long long remainder_samples = totalSamples % size;
+    long long samplesPerProcess = totalSamples / size;
+    long long sampleRemainder = totalSamples % size;
 
-    long long local_samples = samples_per_proc;
+    long long localSamples = samplesPerProcess;
     // Spread out remaining samples
-    if (rank < remainder_samples)
+    if (rank < sampleRemainder)
     {
-        local_samples++;
+        localSamples++;
     }
 
     // Seed the random number generator differently for each process
@@ -146,7 +145,7 @@ int main(int argc, char** argv)
     }
 
     // long long in case of super large sample sizes
-    for (long long i = 0; i < local_samples; i++)
+    for (long long i = 0; i < localSamples; i++)
     {
         // Generate random sample in [0, 1]
         double x = distribution(generator);
