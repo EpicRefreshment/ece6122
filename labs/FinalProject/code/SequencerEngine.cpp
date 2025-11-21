@@ -38,9 +38,20 @@ SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& po
     globalStep = -1;
     globalTick = 0;
 
+    processingTime = 0;
+    timingDeviation = 0;
+    lastTickTime = 0;
+    lastTickScheduledTime = 0;
+
     setBpm(120);
 
     seqThread = thread(&SequencerEngine::run, this);
+
+    // Start performance measurement in a separate thread
+    pool.enqueueTask([this]
+    {
+        this->measurePerformance();
+    });
 }
 
 SequencerEngine::~SequencerEngine()
@@ -166,6 +177,10 @@ void SequencerEngine::run()
             // to prevent accumulating a huge elapsedTime.
             clock.restart();
             this_thread::sleep_for(chrono::milliseconds(10));
+
+            // Reset scheduled time when not playing
+            lastTickScheduledTime.store(perfClock.getElapsedTime().asMicroseconds());
+
             continue;
         }
         
@@ -180,8 +195,13 @@ void SequencerEngine::run()
                 break; // Exit tick processing if a command stopped playback.
             }
 
+            long long scheduledTime = lastTickScheduledTime.load();
+            lastTickScheduledTime.store(scheduledTime + stepTime.asMicroseconds());
+
             elapsedTime -= stepTime;
             long long currentTick = globalTick.fetch_add(1);
+            lastTickTime.store(perfClock.getElapsedTime().asMicroseconds());
+
             globalStep = (currentTick / 16) % 16;
 
             // For each track, check if it should be triggered on this tick.
@@ -210,6 +230,42 @@ void SequencerEngine::run()
     }
 }
 
+void SequencerEngine::measurePerformance()
+{
+    long long lastMeasuredTick = 0;
+    long long processingStartTime = 0;
+
+    while (!stopFlag)
+    {
+        long long currentTick = globalTick.load();
+        if (currentTick > lastMeasuredTick)
+        {
+            if (currentTick % 16 == 1) // Start of a 16-tick block
+            {
+                processingStartTime = lastTickTime.load();
+            }
+
+            if (currentTick % 16 == 0 && currentTick > 0) // End of a 16-tick block
+            {
+                long long processingEndTime = lastTickTime.load();
+                processingTime.store(processingEndTime - processingStartTime);
+
+                long long scheduledTime = lastTickScheduledTime.load();
+                long long actualTime = lastTickTime.load();
+                timingDeviation.store(actualTime - scheduledTime);
+
+                cout << "Processing time for last 16 ticks: " << processingTime.load() << " us. "
+                     << "Timing deviation: " << timingDeviation.load() << " us." << endl;
+            }
+
+            lastMeasuredTick = currentTick;
+        }
+
+        // Sleep to avoid busy-waiting
+        this_thread::sleep_for(chrono::milliseconds(1));
+    }
+}
+
 /*
 Sets the BPM and recalculates the stepTime.
 
@@ -225,6 +281,7 @@ void SequencerEngine::setBpm(int bpm)
     // 4 steps per beat (16th notes).
     // 16 ticks per step.
     stepTime = sf::seconds(((60.0f / bpm) / 4.0f) / 16.0f);
+    lastTickScheduledTime.store(perfClock.getElapsedTime().asMicroseconds());
 }
 
 void SequencerEngine::postCommand(function<void()> command)

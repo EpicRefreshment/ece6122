@@ -67,6 +67,14 @@ private:
 
     atomic<bool> ticked;
 
+    // Performance measurement
+    void measurePerformance();
+    Clock perfClock;
+    atomic<long long> processingTime; // in microseconds
+    atomic<long long> timingDeviation; // in microseconds
+    atomic<long long> lastTickScheduledTime;
+    atomic<long long> lastTickTime; // For performance measurement
+
     Clock clock;
     Time elapsedTime; // Accumulates time for drift-free timing
     Time stepTime; // Duration of one tick
