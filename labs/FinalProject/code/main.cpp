@@ -161,7 +161,7 @@ int main()
         // --- Logic Update ---
         // engine.update() returns true if a tick has occurred since the last check.
         // This is used to signal the GUI that it might need to update visuals.
-        bool tick = engine.update();
+        engine.update();
 
         // --- Drawing ---
         window.clear(Color(30, 30, 30)); // Dark grey background
