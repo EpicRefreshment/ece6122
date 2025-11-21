@@ -82,6 +82,10 @@ GlobalControlPanel::GlobalControlPanel(RenderWindow& window, SequencerEngine& en
     setupText(bpmValueText, bpmString, {bpmBox.getPosition().x + 15, 28});
     setupText(bpmUpText, "+", {bpmUpButton.getPosition().x + 7, bpmUpButton.getPosition().y - 2});
     setupText(bpmDownText, "-", {bpmDownButton.getPosition().x + 7, bpmDownButton.getPosition().y - 2});
+
+    // Performance Metrics
+    setupText(processingTimeText, "Per Step Processing Time: 0 us", {panelSize.x - 300, 28});
+    setupText(timingDeviationText, "Per Step Timing Deviation: 0 us", {panelSize.x - 300, 48});
 }
 
 void GlobalControlPanel::handleKeyboard(Event event)
@@ -189,6 +193,12 @@ void GlobalControlPanel::update()
     playButton.setOutlineColor(engine.isPlaying() ? Color::Green : Color::White);
     pauseButton.setOutlineColor(engine.isPaused() ? Color::Yellow : Color::White);
     stopButton.setOutlineColor(engine.isStopped() ? Color::Red : Color::White);
+
+    // Update performance metrics text
+    long long avgProcessingTime = engine.getAvgProcessingTime();
+    long long avgTimingDeviation = engine.getAvgTimingDeviation();
+    processingTimeText.setString("Per Step Processing Time: " + to_string(avgProcessingTime) + " us");
+    timingDeviationText.setString("Per Step Timing Deviation: " + to_string(avgTimingDeviation) + " us");
 }
 
 void GlobalControlPanel::draw()
@@ -210,6 +220,8 @@ void GlobalControlPanel::draw()
     window.draw(bpmDownButton);
     window.draw(bpmUpText);
     window.draw(bpmDownText);
+    window.draw(processingTimeText);
+    window.draw(timingDeviationText);
 }
 
 FloatRect GlobalControlPanel::getGlobalBounds()

@@ -42,6 +42,11 @@ SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& po
     timingDeviation = 0;
     lastTickTime = 0;
     lastTickScheduledTime = 0;
+    avgProcessingTime = 0;
+    avgTimingDeviation = 0;
+    sumProcessingTime = 0;
+    sumTimingDeviation = 0;
+    measurementCount = 0;
 
     setBpm(120);
 
@@ -55,8 +60,7 @@ SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& po
 }
 
 SequencerEngine::~SequencerEngine()
-{
-    stopFlag = true;
+{   stopFlag = true;
     if (seqThread.joinable())
     {
         seqThread.join();
@@ -175,10 +179,10 @@ void SequencerEngine::run()
         {
             // Not playing, so sleep for a bit to yield CPU and restart the clock
             // to prevent accumulating a huge elapsedTime.
+            // to prevent accumulating a huge elapsedTime.            
             clock.restart();
             this_thread::sleep_for(chrono::milliseconds(10));
 
-            // Reset scheduled time when not playing
             lastTickScheduledTime.store(perfClock.getElapsedTime().asMicroseconds());
 
             continue;
@@ -204,7 +208,6 @@ void SequencerEngine::run()
 
             globalStep = (currentTick / 16) % 16;
 
-            // For each track, check if it should be triggered on this tick.
             // First, determine if any track is in solo mode.
             bool anyTrackIsSoloed = false;
             for (const auto* track : tracks)
@@ -218,7 +221,8 @@ void SequencerEngine::run()
 
             for (auto* track : tracks)
             {
-                pool.enqueueTask([track, currentTick, anyTrackIsSoloed] {
+                pool.enqueueTask([track, currentTick, anyTrackIsSoloed]
+                {
                     track->processTick(currentTick, anyTrackIsSoloed);
                 });
             }
@@ -256,6 +260,15 @@ void SequencerEngine::measurePerformance()
 
                 cout << "Processing time for last 16 ticks: " << processingTime.load() << " us. "
                      << "Timing deviation: " << timingDeviation.load() << " us." << endl;
+                sumProcessingTime += processingTime.load();
+                sumTimingDeviation += timingDeviation.load();
+                long long count = measurementCount.fetch_add(1) + 1;
+
+                if (count > 0)
+                {
+					avgProcessingTime.store(sumProcessingTime.load() / count);
+					avgTimingDeviation.store(sumTimingDeviation.load() / count);
+                }
             }
 
             lastMeasuredTick = currentTick;
@@ -328,4 +341,14 @@ Return Values:
 int SequencerEngine::getGlobalStep()
 {
     return globalStep.load();
+}
+
+long long SequencerEngine::getAvgProcessingTime()
+{
+    return avgProcessingTime.load();
+}
+
+long long SequencerEngine::getAvgTimingDeviation()
+{
+    return avgTimingDeviation.load();
 }

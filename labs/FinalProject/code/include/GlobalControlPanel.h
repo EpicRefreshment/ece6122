@@ -62,5 +62,6 @@ private:
     RectangleShape bpmBox, bpmUpButton, bpmDownButton;
     Text logoText, nameText;
     Text playText, pauseText, stopText;
-    Text bpmLabelText, bpmValueText, bpmUpText, bpmDownText;
+    Text bpmLabelText, bpmValueText, bpmUpText, bpmDownText;    
+    Text processingTimeText, timingDeviationText;
 };

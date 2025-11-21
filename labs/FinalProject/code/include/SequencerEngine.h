@@ -55,6 +55,9 @@ public:
 
     int getBPM();
     int getGlobalStep();
+    long long getAvgProcessingTime();
+    long long getAvgTimingDeviation();
+
 private:
     atomic<bool> playing;
     atomic<bool> paused;
@@ -74,6 +77,12 @@ private:
     atomic<long long> timingDeviation; // in microseconds
     atomic<long long> lastTickScheduledTime;
     atomic<long long> lastTickTime; // For performance measurement
+
+    atomic<long long> avgProcessingTime;
+    atomic<long long> avgTimingDeviation;
+    atomic<long long> sumProcessingTime;
+    atomic<long long> sumTimingDeviation;
+    atomic<long long> measurementCount;
 
     Clock clock;
     Time elapsedTime; // Accumulates time for drift-free timing
