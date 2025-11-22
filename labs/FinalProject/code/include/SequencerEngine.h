@@ -89,6 +89,8 @@ private:
     Time stepTime; // Duration of one tick
 
     thread seqThread;
+    thread timingThread;
+    
     const vector<SeqTrack*>& tracks;
     ThreadPool& pool;
     ThreadSafeQueue<function<void()>> commandQueue;

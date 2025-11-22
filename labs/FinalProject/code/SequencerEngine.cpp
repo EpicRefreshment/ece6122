@@ -51,19 +51,19 @@ SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& po
     setBpm(120);
 
     seqThread = thread(&SequencerEngine::run, this);
-
-    // Start performance measurement in a separate thread
-    pool.enqueueTask([this]
-    {
-        this->measurePerformance();
-    });
+    timingThread = thread(&SequencerEngine::measurePerformance, this);
 }
 
 SequencerEngine::~SequencerEngine()
-{   stopFlag = true;
+{   
+    stopFlag = true;
     if (seqThread.joinable())
     {
         seqThread.join();
+    }
+    if (timingThread.joinable())
+    {
+        timingThread.join();
     }
 }
 
@@ -230,7 +230,7 @@ void SequencerEngine::run()
             ticked = true; // Signal to the UI thread that a tick happened.
         }
         // Sleep for a very short duration to be responsive but not burn 100% CPU.
-        this_thread::sleep_for(chrono::microseconds(500));
+        this_thread::sleep_for(chrono::microseconds(250));
     }
 }
 
@@ -258,7 +258,7 @@ void SequencerEngine::measurePerformance()
                 long long actualTime = lastTickTime.load();
                 timingDeviation.store(actualTime - scheduledTime);
 
-                cout << "Processing time for last 16 ticks: " << processingTime.load() << " us. "
+                cout << "Processing time for last 16 ticks: " << processingTime.load() << " us, "
                      << "Timing deviation: " << timingDeviation.load() << " us." << endl;
                 sumProcessingTime += processingTime.load();
                 sumTimingDeviation += timingDeviation.load();
@@ -272,6 +272,11 @@ void SequencerEngine::measurePerformance()
             }
 
             lastMeasuredTick = currentTick;
+        }
+        else if (currentTick == -1)
+        {
+            lastMeasuredTick = 0;
+            processingStartTime = 0;
         }
 
         // Sleep to avoid busy-waiting
