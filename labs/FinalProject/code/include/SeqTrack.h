@@ -43,20 +43,25 @@ public:
     bool muted();
     bool soloed();
 
-    void setMode();
+    void setMode(int dropdownIndex);
+    int getMode() const;
 
     int getCurrentStep() const;
     int getTrackLength() const;
     double getTempoDivision() const;
     int getProbability() const;
 
-    void updateParam1(int direction);
-    void updateParam2(int direction);
-    void updateParam3(int direction);
+    void updateTrackLength(int direction);
+    void updateTempoDivision(int direction);
+    void updateProbability(int direction);
 
     void toggleStep(int step);
     void toggleMute();
     void toggleSolo();
+
+    void generate();
+    void setRegenRate(int direction);
+    int getRegenRate();
 
     int getNumSteps() const;
 
@@ -74,6 +79,8 @@ private:
     int trackLength;
     double tempoDivision; // e.g., 1.0 for normal, 2.0 for double-time, 0.5 for half-time
     int probability;
+
+    int regenRate;
 
     int ticksPerStep;
 };

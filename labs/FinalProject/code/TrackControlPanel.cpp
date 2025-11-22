@@ -43,46 +43,61 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
 
     for (int i = 0; i < numTracks; i++)
     {
+        // use all if branches and return to avoid iterating further if click location found.
         if (param1UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam1(1); 
+                track->updateTrackLength(1); 
             });
             return;
         }
         if (param1DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam1(0); 
+                track->updateTrackLength(0); 
             });
             return;
         }
         if (param2UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam2(1); 
+                track->updateTempoDivision(1); 
             });
             return;
         }
         if (param2DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam2(0); 
+                track->updateTempoDivision(0); 
             });
             return;
         }
         if (param3UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam3(1); 
+                track->updateProbability(1); 
             });
             return;
         }
         if (param3DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
-                track->updateParam3(0); 
+                track->updateProbability(0); 
             });
+            return;
+        }
+        if (param4UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        {
+            //engine.postCommand([track = tracks[i]] { 
+            //    track->updateParam3(1); 
+            //});
+            return;
+        }
+        if (param4DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        {
+            //engine.postCommand([track = tracks[i]] { 
+            //    track->updateParam3(0); 
+            //});
             return;
         }
         if (muteButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
@@ -106,7 +121,9 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
         }
         if (soloButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { track->toggleSolo(); });
+            engine.postCommand([track = tracks[i]] {
+                track->toggleSolo();
+            });
             if (!tracks[i]->soloed()) // Check the opposite state for immediate visual feedback
             {
                 soloButtons[i].setOutlineColor(Color::Cyan);
@@ -117,6 +134,37 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                 soloButtons[i].setOutlineColor(Color(80, 80, 80));
                 soloText[i].setFillColor(Color::White);
             }
+            return;
+        }
+        if (generateButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        {
+            engine.postCommand([track = tracks[i]] {
+                track->generate();
+            });
+            return;
+        }
+        if (regenRateUpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        {
+            if (tracks[i]->getRegenRate() == 0)
+            {
+                generateButtons[i].setOutlineColor(Color::Green);
+                generateText[i].setFillColor(Color::Green);
+            }
+            engine.postCommand([track = tracks[i]] {
+                track->setRegenRate(1);
+            });
+            return;
+        }
+        if (regenRateDownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        {
+            if (tracks[i]->getRegenRate() == 1)
+            {
+                generateButtons[i].setOutlineColor(Color(80, 80, 80));
+                generateText[i].setFillColor(Color::White);
+            }
+            engine.postCommand([track = tracks[i]] {
+                track->setRegenRate(0);
+            });
             return;
         }
     }
@@ -132,6 +180,7 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
             if (dropdownItems[i].getGlobalBounds().contains(mousePosX, mousePosY))
             {
                 modeText[activeDropdown].setString(dropdownItems[i].getString());
+                tracks[activeDropdown]->setMode(static_cast<int>(i));
                 activeDropdown = -1; // Close dropdown
                 return;
             }
@@ -210,16 +259,28 @@ void TrackControlPanel::draw()
         window.draw(param3Text[i]);
         window.draw(param3UpButtons[i]);
         window.draw(param3DownButtons[i]);
+        window.draw(param4Text[i]);
+        window.draw(param4UpButtons[i]);
+        window.draw(param4DownButtons[i]);
         window.draw(param1UpText[i]);
         window.draw(param1DownText[i]);
         window.draw(param2UpText[i]);
         window.draw(param2DownText[i]);
         window.draw(param3UpText[i]);
         window.draw(param3DownText[i]);
+        window.draw(param4UpText[i]);
+        window.draw(param4DownText[i]);
         window.draw(muteButtons[i]);
         window.draw(soloButtons[i]);
         window.draw(muteText[i]);
         window.draw(soloText[i]);
+        window.draw(generateButtons[i]);
+        window.draw(generateText[i]);
+        window.draw(regenRateText[i]);
+        window.draw(regenRateUpButtons[i]);
+        window.draw(regenRateDownButtons[i]);
+        window.draw(regenRateUpText[i]);
+        window.draw(regenRateDownText[i]);
     }
     // If a dropdown is active, draw it on top of everything else
     if (activeDropdown != -1)
@@ -249,9 +310,31 @@ void TrackControlPanel::setupText(Text& text, const String& value, Vector2f posi
 
 void TrackControlPanel::initShapes()
 {
-    float trackHeight = panelBackground.getSize().y / static_cast<float>(numTracks);
-    float controlWidth = panelBackground.getSize().x - 10;
 
+    resizeUIVectors();
+
+    // Initialize all the GUI shapes
+    float trackHeight = panelBackground.getSize().y / static_cast<float>(numTracks);
+
+    for (int i = 0; i < numTracks; i++)
+    {
+        initTrackBackground(i, trackHeight);
+
+        float trackY = panelBackground.getPosition().y + i * trackHeight;
+        setupText(trackLabels[i], "Track " + to_string(i + 1), {panelBackground.getPosition().x + 5, trackY + 5}, 16);
+
+        initDropdownButtons(i, trackHeight);
+        initParameterControls(i, trackHeight);
+        initMuteSoloControls(i, trackHeight);
+        initGenerateControls(i, trackHeight);
+
+        updateTrackText(i);
+    }
+}
+
+void TrackControlPanel::resizeUIVectors()
+{
+    trackBackgrounds.resize(numTracks);
     trackLabels.resize(numTracks);
     dropdownButtons.resize(numTracks);
     modeText.resize(numTracks);
@@ -274,105 +357,157 @@ void TrackControlPanel::initShapes()
     param3UpButtons.resize(numTracks);
     param3DownButtons.resize(numTracks);
 
+    param4Text.resize(numTracks);
+    param4UpText.resize(numTracks);
+    param4DownText.resize(numTracks);
+    param4UpButtons.resize(numTracks);
+    param4DownButtons.resize(numTracks);
+
+    generateText.resize(numTracks);
+    generateButtons.resize(numTracks);
+
+    regenRateText.resize(numTracks);
+    regenRateUpText.resize(numTracks);
+    regenRateDownText.resize(numTracks);
+    regenRateUpButtons.resize(numTracks);
+    regenRateDownButtons.resize(numTracks);
+
     muteButtons.resize(numTracks);
     soloButtons.resize(numTracks);
     muteText.resize(numTracks);
     soloText.resize(numTracks);
+}
 
-    // Initialize all the GUI shapes
-    trackBackgrounds.reserve(numTracks / 2);
-    for (int i = 0; i < numTracks; i++)
+void TrackControlPanel::initTrackBackground(int index, float trackHeight)
+{
+    trackBackgrounds[index].setSize({panelBackground.getSize().x, trackHeight});
+    trackBackgrounds[index].setPosition(panelBackground.getPosition().x, panelBackground.getPosition().y + index * trackHeight);
+    trackBackgrounds[index].setOutlineColor(Color::Black);
+    trackBackgrounds[index].setOutlineThickness(2.0f);
+
+    // Shade every other row differently
+    if (index % 2 == 1)
     {
-        RectangleShape bg;
-        bg.setSize({panelBackground.getSize().x, trackHeight});
-        bg.setPosition(panelBackground.getPosition().x, panelBackground.getPosition().y + i * trackHeight);
-        bg.setOutlineColor(Color::Black);
-        bg.setOutlineThickness(2.0f);
-        if (i % 2 == 1) // Shade odd rows
-        {
-            bg.setFillColor(Color(50, 50, 50));
-        }
-        else
-        {
-            bg.setFillColor(Color(40, 40, 40));
-        }
-        trackBackgrounds.push_back(bg);
+            trackBackgrounds[index].setFillColor(Color(50, 50, 50));
     }
-
-    for (int i = 0; i < numTracks; i++)
+    else
     {
-        float trackY = panelBackground.getPosition().y + i * trackHeight;
-        setupText(trackLabels[i], "Track " + to_string(i + 1), {panelBackground.getPosition().x + 5, trackY + 5}, 16);
-
-        // Dropdown Button
-        dropdownButtons[i].setSize({panelBackground.getSize().x - 10, trackHeight / 5.0f});
-        dropdownButtons[i].setPosition(panelBackground.getPosition().x + 2, trackLabels[i].getPosition().y + 21);
-        dropdownButtons[i].setFillColor(Color::Black);
-        dropdownButtons[i].setOutlineColor(Color(80, 80, 80));
-        dropdownButtons[i].setOutlineThickness(1.0f);
-
-        // Mode Text (for dropdown buttons)
-        setupText(modeText[i], "Step Sequencer", {dropdownButtons[i].getPosition().x + 5, dropdownButtons[i].getPosition().y + 2}, 14);
-
-        // Parameter Text
-        int paramTextSize = 16;
-        float paramTextOffsetY = dropdownButtons[i].getPosition().y + dropdownButtons[i].getSize().y + 5;
-        setupText(param1Text[i], "", {panelBackground.getPosition().x + 10, paramTextOffsetY}, paramTextSize);
-        setupText(param2Text[i], "", {param1Text[i].getPosition().x + 80, paramTextOffsetY}, paramTextSize);
-        setupText(param3Text[i], "", {param2Text[i].getPosition().x + 80, paramTextOffsetY}, paramTextSize);
-
-        // Parameter 1 Controls
-        param1UpButtons[i].setSize({25, 20});
-        param1UpButtons[i].setPosition({param1Text[i].getPosition().x, param1Text[i].getPosition().y + paramTextSize + 5});
-        param1UpButtons[i].setFillColor(Color::Black);
-        param1DownButtons[i].setSize({25, 20});
-        param1DownButtons[i].setPosition({param1UpButtons[i].getPosition().x + param1UpButtons[i].getSize().x + 2, param1Text[i].getPosition().y + paramTextSize + 5});
-        param1DownButtons[i].setFillColor(Color::Black);
-        setupText(param1UpText[i], "+", {param1UpButtons[i].getPosition().x + 7, param1UpButtons[i].getPosition().y - 2}, 18);
-        setupText(param1DownText[i], "-", {param1DownButtons[i].getPosition().x + 7, param1DownButtons[i].getPosition().y - 2}, 18);
-
-        // Parameter 2 Controls
-        param2UpButtons[i].setSize({25, 20});
-        param2UpButtons[i].setPosition({param2Text[i].getPosition().x, param2Text[i].getPosition().y + paramTextSize + 5});
-        param2UpButtons[i].setFillColor(Color::Black);
-        param2DownButtons[i].setSize({25, 20});
-        param2DownButtons[i].setPosition({param2UpButtons[i].getPosition().x + param2UpButtons[i].getSize().x + 2, param2Text[i].getPosition().y + paramTextSize + 5});
-        param2DownButtons[i].setFillColor(Color::Black);
-        setupText(param2UpText[i], "+", {param2UpButtons[i].getPosition().x + 7, param2UpButtons[i].getPosition().y - 2}, 18);
-        setupText(param2DownText[i], "-", {param2DownButtons[i].getPosition().x + 7, param2DownButtons[i].getPosition().y - 2}, 18);
-
-        // Parameter 3 Controls
-        param3UpButtons[i].setSize({25, 20});
-        param3UpButtons[i].setPosition({param3Text[i].getPosition().x, param3Text[i].getPosition().y + paramTextSize + 5});
-        param3UpButtons[i].setFillColor(Color::Black);
-        param3DownButtons[i].setSize({25, 20});
-        param3DownButtons[i].setPosition({param3UpButtons[i].getPosition().x + param3UpButtons[i].getSize().x + 2, param3Text[i].getPosition().y + paramTextSize + 5});
-        param3DownButtons[i].setFillColor(Color::Black);
-        setupText(param3UpText[i], "+", {param3UpButtons[i].getPosition().x + 7, param3UpButtons[i].getPosition().y - 2}, 18);
-        setupText(param3DownText[i], "-", {param3DownButtons[i].getPosition().x + 7, param3DownButtons[i].getPosition().y - 2}, 18);
-
-        // Mute Buttons
-        float muteOffsetX = param3DownButtons[i].getPosition().x + param3DownButtons[i].getSize().x + 40;
-        float muteOffsetY = param3DownButtons[i].getPosition().y + param3DownButtons[i].getSize().y + 2;
-        muteButtons[i].setSize({50, 20});
-        muteButtons[i].setPosition({muteOffsetX, muteOffsetY});
-        muteButtons[i].setFillColor(Color::Black);
-        muteButtons[i].setOutlineColor(Color(80, 80, 80));
-        muteButtons[i].setOutlineThickness(1.0f);
-        setupText(muteText[i], "Mute", {muteButtons[i].getPosition().x + 5, muteButtons[i].getPosition().y + 2}, 14);
-
-        // Solo Buttons
-        float soloOffsetX = muteButtons[i].getPosition().x + muteButtons[i].getSize().x + 5;
-        float soloOffsetY = muteButtons[i].getPosition().y;
-        soloButtons[i].setSize({50, 20});
-        soloButtons[i].setPosition({soloOffsetX, soloOffsetY});
-        soloButtons[i].setFillColor(Color::Black);
-        soloButtons[i].setOutlineColor(Color(80, 80, 80));
-        soloButtons[i].setOutlineThickness(1.0f);
-        setupText(soloText[i], "solo", {soloButtons[i].getPosition().x + 5, soloButtons[i].getPosition().y + 2}, 14);
-
-        updateTrackText(i);
+            trackBackgrounds[index].setFillColor(Color(40, 40, 40));
     }
+}
+
+void TrackControlPanel::initDropdownButtons(int index, float trackHeight)
+{
+    // Dropdown Button
+    dropdownButtons[index].setSize({panelBackground.getSize().x - 10, trackHeight / 5.0f});
+    dropdownButtons[index].setPosition(panelBackground.getPosition().x + 2, trackLabels[index].getPosition().y + 21);
+    dropdownButtons[index].setFillColor(Color::Black);
+    dropdownButtons[index].setOutlineColor(Color(80, 80, 80));
+    dropdownButtons[index].setOutlineThickness(1.0f);
+
+    // Mode Text (for dropdown buttons)
+    setupText(modeText[index], "Step Sequencer", {dropdownButtons[index].getPosition().x + 5, dropdownButtons[index].getPosition().y + 2}, 14);
+}
+
+void TrackControlPanel::initParameterControls(int index, float trackHeight)
+{
+    // Parameter Text
+    int paramTextSize = 16;
+    float paramTextOffsetY = dropdownButtons[index].getPosition().y + dropdownButtons[index].getSize().y + 5;
+    setupText(param1Text[index], "", {panelBackground.getPosition().x + 5, paramTextOffsetY}, paramTextSize);
+    setupText(param2Text[index], "", {param1Text[index].getPosition().x + 100, paramTextOffsetY}, paramTextSize);
+    setupText(param3Text[index], "", {param2Text[index].getPosition().x + 80, paramTextOffsetY}, paramTextSize);
+    setupText(param4Text[index], "", {param3Text[index].getPosition().x + 100, paramTextOffsetY}, paramTextSize);
+
+    // Parameter 1 Controls
+    param1UpButtons[index].setSize({25, 20});
+    param1UpButtons[index].setPosition({param1Text[index].getPosition().x, param1Text[index].getPosition().y + paramTextSize + 5});
+    param1UpButtons[index].setFillColor(Color::Black);
+    param1DownButtons[index].setSize({25, 20});
+    param1DownButtons[index].setPosition({param1UpButtons[index].getPosition().x + param1UpButtons[index].getSize().x + 2, param1Text[index].getPosition().y + paramTextSize + 5});
+    param1DownButtons[index].setFillColor(Color::Black);
+    setupText(param1UpText[index], "+", {param1UpButtons[index].getPosition().x + 7, param1UpButtons[index].getPosition().y - 2}, 18);
+    setupText(param1DownText[index], "-", {param1DownButtons[index].getPosition().x + 7, param1DownButtons[index].getPosition().y - 2}, 18);
+
+    // Parameter 2 Controls
+    param2UpButtons[index].setSize({25, 20});
+    param2UpButtons[index].setPosition({param2Text[index].getPosition().x, param2Text[index].getPosition().y + paramTextSize + 5});
+    param2UpButtons[index].setFillColor(Color::Black);
+    param2DownButtons[index].setSize({25, 20});
+    param2DownButtons[index].setPosition({param2UpButtons[index].getPosition().x + param2UpButtons[index].getSize().x + 2, param2Text[index].getPosition().y + paramTextSize + 5});
+    param2DownButtons[index].setFillColor(Color::Black);
+    setupText(param2UpText[index], "+", {param2UpButtons[index].getPosition().x + 7, param2UpButtons[index].getPosition().y - 2}, 18);
+    setupText(param2DownText[index], "-", {param2DownButtons[index].getPosition().x + 7, param2DownButtons[index].getPosition().y - 2}, 18);
+
+    // Parameter 3 Controls
+    param3UpButtons[index].setSize({25, 20});
+    param3UpButtons[index].setPosition({param3Text[index].getPosition().x, param3Text[index].getPosition().y + paramTextSize + 5});
+    param3UpButtons[index].setFillColor(Color::Black);
+    param3DownButtons[index].setSize({25, 20});
+    param3DownButtons[index].setPosition({param3UpButtons[index].getPosition().x + param3UpButtons[index].getSize().x + 2, param3Text[index].getPosition().y + paramTextSize + 5});
+    param3DownButtons[index].setFillColor(Color::Black);
+    setupText(param3UpText[index], "+", {param3UpButtons[index].getPosition().x + 7, param3UpButtons[index].getPosition().y - 2}, 18);
+    setupText(param3DownText[index], "-", {param3DownButtons[index].getPosition().x + 7, param3DownButtons[index].getPosition().y - 2}, 18);
+
+    // Parameter 4 Controls
+    param4UpButtons[index].setSize({25, 20});
+    param4UpButtons[index].setPosition({param4Text[index].getPosition().x, param4Text[index].getPosition().y + paramTextSize + 5});
+    param4UpButtons[index].setFillColor(Color::Black);
+    param4DownButtons[index].setSize({25, 20});
+    param4DownButtons[index].setPosition({param4UpButtons[index].getPosition().x + param4UpButtons[index].getSize().x + 2, param4Text[index].getPosition().y + paramTextSize + 5});
+    param4DownButtons[index].setFillColor(Color::Black);
+    setupText(param4UpText[index], "+", {param4UpButtons[index].getPosition().x + 7, param4UpButtons[index].getPosition().y - 2}, 18);
+    setupText(param4DownText[index], "-", {param4DownButtons[index].getPosition().x + 7, param4DownButtons[index].getPosition().y - 2}, 18);
+}
+
+void TrackControlPanel::initMuteSoloControls(int index, float trackHeight)
+{
+    // Mute Buttons
+    float muteOffsetX = panelBackground.getPosition().x + 5;
+    float muteOffsetY = param1DownButtons[index].getPosition().y + param1DownButtons[index].getSize().y + 2;
+    muteButtons[index].setSize({50, 20});
+    muteButtons[index].setPosition({muteOffsetX, muteOffsetY});
+    muteButtons[index].setFillColor(Color::Black);
+    muteButtons[index].setOutlineColor(Color(80, 80, 80));
+    muteButtons[index].setOutlineThickness(1.0f);
+    setupText(muteText[index], "Mute", {muteButtons[index].getPosition().x + 5, muteButtons[index].getPosition().y + 2}, 14);
+
+    // Solo Buttons
+    float soloOffsetX = muteButtons[index].getPosition().x + muteButtons[index].getSize().x + 5;
+    float soloOffsetY = muteButtons[index].getPosition().y;
+    soloButtons[index].setSize({50, 20});
+    soloButtons[index].setPosition({soloOffsetX, soloOffsetY});
+    soloButtons[index].setFillColor(Color::Black);
+    soloButtons[index].setOutlineColor(Color(80, 80, 80));
+    soloButtons[index].setOutlineThickness(1.0f);
+    setupText(soloText[index], "Solo", {soloButtons[index].getPosition().x + 5, soloButtons[index].getPosition().y + 2}, 14);
+}
+
+void TrackControlPanel::initGenerateControls(int index, float trackHeight)
+{
+    // Generate Buttons
+    float genOffsetX = soloButtons[index].getPosition().x + soloButtons[index].getSize().x + 5;
+    float genOffsetY = muteButtons[index].getPosition().y;
+    generateButtons[index].setSize({80, 20});
+    generateButtons[index].setPosition({genOffsetX, genOffsetY});
+    generateButtons[index].setFillColor(Color::Black);
+    generateButtons[index].setOutlineColor(Color(80, 80, 80));
+    generateButtons[index].setOutlineThickness(1.0f);
+    setupText(generateText[index], "Generate", {generateButtons[index].getPosition().x + 5, generateButtons[index].getPosition().y + 2}, 14);
+
+    // Regenerate Rate Controls
+    float regenOffsetX = generateButtons[index].getPosition().x + generateButtons[index].getSize().x + 10;
+    float regenOffsetY = generateButtons[index].getPosition().y + 3;
+    setupText(regenRateText[index], "Regen Rate: Off", {regenOffsetX, regenOffsetY + 2}, 12);
+
+    regenRateUpButtons[index].setSize({25, 20});
+    regenRateUpButtons[index].setPosition({regenRateText[index].getPosition().x + 130, regenRateText[index].getPosition().y});
+    regenRateUpButtons[index].setFillColor(Color::Black);
+    regenRateDownButtons[index].setSize({25, 20});
+    regenRateDownButtons[index].setPosition({regenRateUpButtons[index].getPosition().x + regenRateUpButtons[index].getSize().x + 2, regenRateText[index].getPosition().y});
+    regenRateDownButtons[index].setFillColor(Color::Black);
+    setupText(regenRateUpText[index], "+", {regenRateUpButtons[index].getPosition().x + 7, regenRateUpButtons[index].getPosition().y - 2}, 18);
+    setupText(regenRateDownText[index], "-", {regenRateDownButtons[index].getPosition().x + 7, regenRateDownButtons[index].getPosition().y - 2}, 18);
 }
 
 void TrackControlPanel::initDropdownItems()
@@ -401,5 +536,21 @@ void TrackControlPanel::updateTrackText(int trackIndex)
     }
     param2Text[trackIndex].setString("Div: " + divStr);
 
-    param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()));
+    param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()) + "%");
+
+    param4Text[trackIndex].setString("Temp: 100");
+
+    int regenRate = tracks[trackIndex]->getRegenRate();
+    if (regenRate == 0)
+    {
+        regenRateText[trackIndex].setString("Regen Rate: Off");
+    }
+    else if (regenRate == 1)
+    {
+        regenRateText[trackIndex].setString("Regen Rate: 1 Bar");
+    }
+    else
+    {
+        regenRateText[trackIndex].setString("Regen Rate: " + to_string(tracks[trackIndex]->getRegenRate()) + " Bars");
+    }
 }

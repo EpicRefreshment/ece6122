@@ -30,16 +30,22 @@ SeqTrack::SeqTrack(int trackIndex, int numSteps)
 {
     this->trackIndex = trackIndex;
     this->numSteps = numSteps;
+
     // Initialize the vector with 16 steps, all set to false (off)
     steps.resize(numSteps, false);
+
+    mode = 0;
     trackLength = numSteps;
     tempoDivision = 1.0;
     probability = 100;
+
     ticksPerStep = 16;
     currentStep = 0;
     mute = false;
     solo = false;
-    mode = 0;
+
+    regenRate = 0;
+
     srand(static_cast<unsigned int>(time(0)) + trackIndex); // Seed random generator
 }
 
@@ -151,6 +157,16 @@ bool SeqTrack::soloed()
     return solo;
 }
 
+void SeqTrack::setMode(int dropdownIndex)
+{
+    mode = dropdownIndex;
+}
+
+int SeqTrack::getMode() const
+{
+    return mode;
+}
+
 int SeqTrack::getCurrentStep() const
 {
     return currentStep;
@@ -171,68 +187,42 @@ int SeqTrack::getProbability() const
     return probability;
 }
 
-void SeqTrack::updateParam1(int direction)
+void SeqTrack::updateTrackLength(int direction)
 {
-    switch (mode)
+    if (direction && trackLength < numSteps)
     {
-        case 0:
-            // Step Sequencer
-            if (direction && trackLength < numSteps)
-            {
-                trackLength++;
-            }
-            else if (!direction && trackLength > 0)
-            {
-                trackLength--;
-            }
-            break;
-        default:
-            break;
+        trackLength++;
+    }
+    else if (!direction && trackLength > 0)
+    {
+        trackLength--;
     }
 }
 
-void SeqTrack::updateParam2(int direction)
+void SeqTrack::updateTempoDivision(int direction)
 {
-    switch (mode)
+    double currentDiv = tempoDivision;
+    if (direction && currentDiv < 8.0)
     {
-        case 0:
-        {
-            // Step Sequencer
-            double currentDiv = tempoDivision;
-            if (direction && currentDiv < 8.0)
-            {
-                tempoDivision = currentDiv * 2.0;
-            }
-            else if (!direction && currentDiv > (1.0 / 8.0))
-            {
-                tempoDivision = currentDiv / 2.0;
-            }
-            // This calculation must be atomic with the change
-            ticksPerStep = static_cast<int>(16.0 / tempoDivision);
-            break;
-        }
-        default:
-            break;
+        tempoDivision = currentDiv * 2.0;
     }
+    else if (!direction && currentDiv > (1.0 / 8.0))
+    {
+        tempoDivision = currentDiv / 2.0;
+    }
+    // This calculation must be atomic with the change
+    ticksPerStep = static_cast<int>(16.0 / tempoDivision);
 }
 
-void SeqTrack::updateParam3(int direction)
+void SeqTrack::updateProbability(int direction)
 {
-    switch (mode)
+    if (direction && probability < 100)
     {
-        case 0:
-            // Step Sequencer
-            if (direction && probability < 100)
-            {
-                probability += 5;
-            }
-            else if (!direction && probability > 0)
-            {
-                probability -= 5;
-            }
-            break;
-        default:
-            break;
+        probability += 5;
+    }
+    else if (!direction && probability > 0)
+    {
+        probability -= 5;
     }
 }
 
@@ -244,6 +234,28 @@ void SeqTrack::toggleMute()
 void SeqTrack::toggleSolo()
 {
     solo = !solo;
+}
+
+void SeqTrack::generate()
+{
+
+}
+
+void SeqTrack::setRegenRate(int direction)
+{
+    if (direction && regenRate < 8)
+    {
+        regenRate++;
+    }
+    else if (!direction && regenRate > 0)
+    {
+        regenRate--;
+    }
+}
+
+int SeqTrack::getRegenRate()
+{
+    return regenRate;
 }
 
 int SeqTrack::getNumSteps() const

@@ -43,7 +43,7 @@ using namespace sf;
 int main()
 {
     // Number of threads in the thread pool
-    const size_t threadCount = 16;
+    const size_t threadCount = 32;
     ThreadPool pool(threadCount);
 
     const float panelRatio = 1.0f / 5.0f;
