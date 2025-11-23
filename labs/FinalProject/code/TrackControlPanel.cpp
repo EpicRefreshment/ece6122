@@ -88,16 +88,16 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
         }
         if (param4UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            //engine.postCommand([track = tracks[i]] { 
-            //    track->updateParam3(1); 
-            //});
+            engine.postCommand([track = tracks[i]] { 
+                track->updateRatchet(1); 
+            });
             return;
         }
         if (param4DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            //engine.postCommand([track = tracks[i]] { 
-            //    track->updateParam3(0); 
-            //});
+            engine.postCommand([track = tracks[i]] { 
+                track->updateRatchet(0); 
+            });
             return;
         }
         if (muteButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
@@ -105,8 +105,6 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             engine.postCommand([track = tracks[i]] {
                 track->toggleMute(); 
             });
-            // The visual update will lag slightly, but the UI is responsive.
-            // A more advanced solution would involve the engine posting state changes back to the UI.
             if (!tracks[i]->muted()) // Check the opposite state for immediate visual feedback
             {
                 muteButtons[i].setOutlineColor(Color::Red);
@@ -139,7 +137,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
         if (generateButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] {
-                track->generate();
+                track->generate(1, 0);
             });
             return;
         }
@@ -181,6 +179,12 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
             {
                 modeText[activeDropdown].setString(dropdownItems[i].getString());
                 tracks[activeDropdown]->setMode(static_cast<int>(i));
+                if (i > 1)
+                {
+                    engine.postCommand([track = tracks[activeDropdown]] {
+                        track->generate(0, 1);
+                    });
+                }
                 activeDropdown = -1; // Close dropdown
                 return;
             }
@@ -208,7 +212,7 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
 
 void TrackControlPanel::update()
 {
-    // This update loop now ensures the text always reflects the current state.
+    // This update loop ensures the text always reflects the current state.
     for (int i = 0; i < numTracks; i++)
     {
         updateTrackText(i);
@@ -513,9 +517,9 @@ void TrackControlPanel::initGenerateControls(int index, float trackHeight)
 void TrackControlPanel::initDropdownItems()
 {
     dropdownItems.resize(5);
-    setupText(dropdownItems[0], "Step Sequencer", {0, 0}, 14);
-    setupText(dropdownItems[1], "Stochastic Sequencer", {0, 0}, 14);
-    setupText(dropdownItems[2], "Euclidean Sequencer", {0, 0}, 14);
+    setupText(dropdownItems[0], "Probabilistic Step Sequencer", {0, 0}, 14);
+    setupText(dropdownItems[1], "Euclidean Sequencer", {0, 0}, 14);
+    setupText(dropdownItems[2], "Cellular Automata Sequencer", {0, 0}, 14);
     setupText(dropdownItems[3], "Shift Register Sequencer", {0, 0}, 14);
     setupText(dropdownItems[4], "Markov Chain Sequencer", {0, 0}, 14);
 }
@@ -538,7 +542,7 @@ void TrackControlPanel::updateTrackText(int trackIndex)
 
     param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()) + "%");
 
-    param4Text[trackIndex].setString("Temp: 100");
+    param4Text[trackIndex].setString("PRpt: " + to_string(tracks[trackIndex]->getRatchet()));
 
     int regenRate = tracks[trackIndex]->getRegenRate();
     if (regenRate == 0)

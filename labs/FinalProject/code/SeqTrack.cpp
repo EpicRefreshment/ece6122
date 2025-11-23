@@ -38,6 +38,7 @@ SeqTrack::SeqTrack(int trackIndex, int numSteps)
     trackLength = numSteps;
     tempoDivision = 1.0;
     probability = 100;
+    ratchet = 1;
 
     ticksPerStep = 16;
     currentStep = 0;
@@ -45,6 +46,7 @@ SeqTrack::SeqTrack(int trackIndex, int numSteps)
     solo = false;
 
     regenRate = 0;
+    regenTicks = 0;
 
     srand(static_cast<unsigned int>(time(0)) + trackIndex); // Seed random generator
 }
@@ -92,26 +94,50 @@ void SeqTrack::processTick(long long globalTick, bool anyTrackIsSoloed)
     // This track's step only advances when the global tick aligns with its tempo division
     if (globalTick % ticksPerStep == 0)
     {
-        bool shouldPlay = false;
+        bool trackActive = false;
         if (anyTrackIsSoloed)
         {
             // If any track is soloed, only play this track if it is also soloed (and not muted).
-            shouldPlay = solo && !mute;
+            trackActive = solo && !mute;
         }
         else
         {
             // If no tracks are soloed, play this track as long as it's not muted.
-            shouldPlay = !mute;
+            trackActive = !mute;
         }
 
-        if (shouldPlay && steps[currentStep])
+        if (trackActive && steps[currentStep])
         {
-            trigger(); // trigger() already handles probability
+            trigger();
         }
 
         currentStep = (currentStep + 1) % trackLength;
+        if (currentStep == 0 && regenRate > 0)
+        {
+            generate(0, 0);
+        }
+    }
+    else if (ratchet > 1 && globalTick % (ticksPerStep / ratchet) == 0)
+    {
+        // Calculate the sub-step within the current step
+        int prevStepActive = 0;
+        if (currentStep == 0 && steps[trackLength - 1])
+        {
+            prevStepActive = 1;
+        }
+        else if (currentStep != 0 && steps[currentStep - 1])
+        {
+            prevStepActive = 1;
+        }
+
+        // 50% chance a ratchet step occurs. Increases the randomness!
+        if (prevStepActive &&(rand() % 101) <= 50)
+        {
+            trigger();
+        }
     }
 }
+
 /*
 Clears all steps in the track (sets all to false).
 
@@ -187,6 +213,11 @@ int SeqTrack::getProbability() const
     return probability;
 }
 
+int SeqTrack::getRatchet() const
+{
+    return ratchet;
+}
+
 void SeqTrack::updateTrackLength(int direction)
 {
     if (direction && trackLength < numSteps)
@@ -226,6 +257,18 @@ void SeqTrack::updateProbability(int direction)
     }
 }
 
+void SeqTrack::updateRatchet(int direction)
+{
+    if (direction && ratchet < 4)
+    {
+        ratchet++;
+    }
+    else if (!direction && ratchet > 1)
+    {
+        ratchet--;
+    }
+}
+
 void SeqTrack::toggleMute()
 {
     mute = !mute;
@@ -236,9 +279,73 @@ void SeqTrack::toggleSolo()
     solo = !solo;
 }
 
-void SeqTrack::generate()
+void SeqTrack::generate(int clicked, int modeChange)
 {
+    if (modeChange)
+    {
+        for (int i = 0; i < trackLength; i++)
+        {
+            // default to 50 here since density isn't a parameter
+            // when the modeChange is 1
+            if ((rand() % 101) <= 50)
+            {
+                steps[i] = true;
+            }
+            else
+            {
+                steps[i] = false;
+            }
+        }
+        return;
+    }
 
+    if (!clicked)
+    {
+        regenTicks++;
+        if (regenTicks == regenRate)
+        {
+            regenTicks = 0;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    switch (mode)
+    {
+        case 0: // Probabilistic Step Sequencer
+        {
+            for (int i = 0; i < trackLength; i++)
+            {
+                if ((rand() % 101) <= 65)
+                {
+                    steps[i] = true;
+                }
+                else
+                {
+                    steps[i] = false;
+                }
+            }
+            break;
+        }
+        case 1: // Euclidean Sequencer
+        {
+            break;
+        }
+        case 2: // Cellular Automata Sequencer
+        {
+            break;
+        }
+        case 3: // Shift Register Sequencer
+        {
+            break;
+        }
+        case 4: // Markov Chain Sequencer
+        {
+            break;
+        }
+    }
 }
 
 void SeqTrack::setRegenRate(int direction)

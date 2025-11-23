@@ -50,16 +50,18 @@ public:
     int getTrackLength() const;
     double getTempoDivision() const;
     int getProbability() const;
+    int getRatchet() const;
 
     void updateTrackLength(int direction);
     void updateTempoDivision(int direction);
     void updateProbability(int direction);
+    void updateRatchet(int direction);
 
     void toggleStep(int step);
     void toggleMute();
     void toggleSolo();
 
-    void generate();
+    void generate(int clicked, int modeChange);
     void setRegenRate(int direction);
     int getRegenRate();
 
@@ -79,8 +81,10 @@ private:
     int trackLength;
     double tempoDivision; // e.g., 1.0 for normal, 2.0 for double-time, 0.5 for half-time
     int probability;
+    int ratchet;
 
     int regenRate;
+    int regenTicks;
 
     int ticksPerStep;
 };
