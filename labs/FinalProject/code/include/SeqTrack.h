@@ -51,11 +51,21 @@ public:
     double getTempoDivision() const;
     int getProbability() const;
     int getRatchet() const;
+    int getFill() const;
+    int getShift() const;
 
     void updateTrackLength(int direction);
     void updateTempoDivision(int direction);
     void updateProbability(int direction);
     void updateRatchet(int direction);
+    void updateFill(int direction);
+    void updateShift(int direction);
+    void updateRule(int direction);
+    void updateCellReset(int direction);
+    void updateXORScrambler(int direction);
+    void updateLogicDivision(int direction);
+    void updateLogic(int direction);
+
 
     void toggleStep(int step);
     void toggleMute();
@@ -68,6 +78,14 @@ public:
     int getNumSteps() const;
 
 private:
+    void generateProbabilistic();
+    void generateEuclidean();
+    void generateCellularAutomata();
+    void generateShiftRegister();
+    void generateLogic();
+
+    void shiftPattern(int shift);
+
     int trackIndex;
     int numSteps;
     vector<bool> steps; // 16 steps, true = on, false = off
@@ -82,6 +100,8 @@ private:
     double tempoDivision; // e.g., 1.0 for normal, 2.0 for double-time, 0.5 for half-time
     int probability;
     int ratchet;
+    int fill;
+    int shift;
 
     int regenRate;
     int regenTicks;

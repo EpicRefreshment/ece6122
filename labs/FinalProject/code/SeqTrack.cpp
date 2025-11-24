@@ -39,6 +39,8 @@ SeqTrack::SeqTrack(int trackIndex, int numSteps)
     tempoDivision = 1.0;
     probability = 100;
     ratchet = 1;
+    fill = 8;
+    shift = 0;
 
     ticksPerStep = 16;
     currentStep = 0;
@@ -112,7 +114,7 @@ void SeqTrack::processTick(long long globalTick, bool anyTrackIsSoloed)
         }
 
         currentStep = (currentStep + 1) % trackLength;
-        if (currentStep == 0 && regenRate > 0)
+        if (currentStep == 0 && regenRate > 0 && mode != 1)
         {
             generate(0, 0);
         }
@@ -148,7 +150,7 @@ Return Values:
 */
 void SeqTrack::clear()
 {
-    fill(this->steps.begin(), this->steps.end(), false);
+    std::fill(this->steps.begin(), this->steps.end(), false);
 }
 
 void SeqTrack::reset()
@@ -186,6 +188,45 @@ bool SeqTrack::soloed()
 void SeqTrack::setMode(int dropdownIndex)
 {
     mode = dropdownIndex;
+    switch (mode)
+    {
+        case 0: // Probabilistic Step Sequencer
+            trackLength = numSteps;
+            tempoDivision = 1.0;
+            probability = 100;
+            ratchet = 1;
+            break;
+        case 1: // Euclidean Sequencer
+            trackLength = numSteps;
+            tempoDivision = 1.0;
+            probability = 100; // set so this parameter essentially inactive since always in use
+            ratchet = 1; // set so this parameter essentially inactive since always in use
+            regenRate = 0;
+            fill = 8;
+            shift = 0;
+            break;
+        case 2: // Cellular Automata Sequencer
+            trackLength = numSteps;
+            tempoDivision = 1.0;
+            probability = 100; // set so this parameter essentially inactive since always in use
+            ratchet = 1; // set so this parameter essentially inactive since always in use
+            regenRate = 0;
+            break;
+        case 3: // Shift Register Sequencer
+            trackLength = numSteps;
+            tempoDivision = 1.0;
+            probability = 100; // set so this parameter essentially inactive since always in use
+            ratchet = 1; // set so this parameter essentially inactive since always in use
+            regenRate = 0;
+            break;
+        case 4: // Binary Counter Sequencer
+            trackLength = numSteps;
+            tempoDivision = 1.0;
+            probability = 100; // set so this parameter essentially inactive since always in use
+            ratchet = 1; // set so this parameter essentially inactive since always in use
+            regenRate = 0;
+            break;
+    }
 }
 
 int SeqTrack::getMode() const
@@ -218,6 +259,16 @@ int SeqTrack::getRatchet() const
     return ratchet;
 }
 
+int SeqTrack::getFill() const
+{
+    return fill;
+}
+
+int SeqTrack::getShift() const
+{
+    return shift;
+}
+
 void SeqTrack::updateTrackLength(int direction)
 {
     if (direction && trackLength < numSteps)
@@ -227,6 +278,18 @@ void SeqTrack::updateTrackLength(int direction)
     else if (!direction && trackLength > 0)
     {
         trackLength--;
+        for (int i = trackLength; i < numSteps; i++)
+        {
+            steps[i] = false;
+        }
+    }
+    if (fill > trackLength)
+    {
+        fill = trackLength;
+    }
+    if (shift > trackLength)
+    {
+        shift = trackLength;
     }
 }
 
@@ -269,6 +332,28 @@ void SeqTrack::updateRatchet(int direction)
     }
 }
 
+void SeqTrack::updateFill(int direction)
+{
+    if (direction && fill < trackLength)
+    {
+        fill++;
+    }
+    else if (!direction && fill > 0)
+    {
+        fill--;
+    }
+}
+
+void SeqTrack::updateShift(int direction)
+{
+    if (direction && shift < trackLength - 1) {
+        shift++;
+    }
+    else if (!direction && shift > 0) {
+        shift--;
+    }
+}
+
 void SeqTrack::toggleMute()
 {
     mute = !mute;
@@ -281,7 +366,7 @@ void SeqTrack::toggleSolo()
 
 void SeqTrack::generate(int clicked, int modeChange)
 {
-    if (modeChange)
+    if (modeChange && modeChange != 1)
     {
         for (int i = 0; i < trackLength; i++)
         {
@@ -302,11 +387,15 @@ void SeqTrack::generate(int clicked, int modeChange)
     if (!clicked)
     {
         regenTicks++;
-        if (regenTicks == regenRate)
+        if (mode == 1)
+        {
+            return; // regenerate inactive in this mode
+        }
+        else if (regenTicks == regenRate) // continue on, reset ticks
         {
             regenTicks = 0;
         }
-        else
+        else // back out of function
         {
             return;
         }
@@ -315,36 +404,188 @@ void SeqTrack::generate(int clicked, int modeChange)
     switch (mode)
     {
         case 0: // Probabilistic Step Sequencer
-        {
-            for (int i = 0; i < trackLength; i++)
+            generateProbabilistic();
+            break;
+        case 1: // Euclidean Sequencer
+            try
             {
-                if ((rand() % 101) <= 65)
-                {
-                    steps[i] = true;
-                }
-                else
-                {
-                    steps[i] = false;
-                }
+                generateEuclidean();
+            }
+            catch (const std::exception& e)
+            {
+                cout << "Error: " << e.what() << endl;
             }
             break;
-        }
-        case 1: // Euclidean Sequencer
-        {
-            break;
-        }
         case 2: // Cellular Automata Sequencer
-        {
             break;
-        }
         case 3: // Shift Register Sequencer
+            break;
+        case 4: // Logic Sequencer
+            break;
+    }
+}
+
+void SeqTrack::generateProbabilistic()
+{
+    for (int i = 0; i < trackLength; i++)
+    {
+        if ((rand() % 101) <= 65)
+        {
+            steps[i] = true;
+        }
+        else
+        {
+            steps[i] = false;
+        }
+    }
+}
+
+void SeqTrack::generateEuclidean()
+{
+    vector<vector<bool>> patterns;
+    if (fill > trackLength)
+    {
+        return;
+    }
+
+    // Generate initial pattern as column, when patterns is just one vector we're done.
+    // Values up to fill value are True, then up to track length are False
+    for (int i = 0; i < trackLength; i++)
+    {
+        if (i < fill)
+        {
+            patterns.push_back({true});
+        }
+        else
+        {
+            patterns.push_back({false});
+        }
+    }
+
+    cout << "Initial Pattern: " << endl;
+    for (size_t x = 0; x < patterns.size(); x++)
+    {
+        for (size_t y = 0; y < patterns[x].size(); y++)
+        {
+            cout << patterns[x][y] << " ";
+        }
+        cout << endl;
+    }
+
+    // Generate a sequence of values of size {fill}, t, that
+    // tell the algorithm how many "rows" to distribute
+    vector<int> t(trackLength, 0);
+    int quotient = trackLength / fill;
+    int remainder = trackLength % fill;
+    int startIndex = 0; 
+    // remove {fill} # of columns until less than {fill} silences remain
+    for (int i = 0; i < (quotient - 1); i++) 
+    {
+        t[i] = fill;
+        startIndex++;
+    }
+    // remove {remainder} # of columns
+    for (int i = startIndex; i < trackLength; i++)
+    {
+        if (remainder == 0)
         {
             break;
         }
-        case 4: // Markov Chain Sequencer
+        t[i] = remainder;
+
+        if (i != 0)
+        {
+            quotient = t[i - 1] / t[i];
+            remainder = t[i - 1] % t[i];
+        }
+        else
+        {
+            quotient = fill / t[i];
+            remainder = fill % t[i];
+        }
+
+        if (quotient > 1)
+        {
+            i++;
+            t[i] = t[i-1];
+        }
+    }
+
+    cout << "t: ";
+    for (size_t x = 0; x < t.size(); x++)
+    {
+        cout << t[x] << " ";
+    }
+    cout << endl;
+            
+    for (int i = 0; i < trackLength; i++)
+    {
+        if (patterns.size() == 1 || t[i] < 2)
         {
             break;
         }
+
+        // pop back patterns and evenly distribute starting with first vector.
+        for (int j = 0; j < t[i]; j++)
+        {
+            vector<bool> toMove = patterns.back();
+            patterns[j].insert(patterns[j].end(), toMove.begin(), toMove.end());
+            patterns.pop_back();
+        }
+        cout << "Remainder Pattern (t = " << t[i] << "): " << endl;
+        for (size_t x = 0; x < patterns.size(); x++)
+        {
+            for (size_t y = 0; y < patterns[x].size(); y++)
+            {
+                cout << patterns[x][y] << " ";
+            }
+            cout << endl;
+        }
+    }
+    // just pop back vector and add to previous vector until there's only one vector left.
+    while (patterns.size() > 1)
+    {
+        int endIndex = static_cast<int>(patterns.size()) - 1;
+        vector<bool> toMove = patterns.back();
+        patterns[endIndex - 1].insert(patterns[endIndex - 1].end(), toMove.begin(), toMove.end());
+        patterns.pop_back();
+    }
+
+    vector<bool> resultingPattern = patterns.back();
+
+    for (int i = 0; i < trackLength; i++)
+    {
+        steps[i] = resultingPattern[i];
+    }
+
+    if (shift > 0)
+    {
+        shiftPattern(shift);
+    }
+    cout << "Shifted Pattern (shift = " << shift << "): " << endl;
+    for (size_t x = 0; x < steps.size(); x++)
+    {
+        cout << steps[x] << " ";
+    }
+    cout << endl;
+}
+
+void SeqTrack::shiftPattern(int shift)
+{
+    // Perform shift
+    vector<bool> rotatedPattern(trackLength, false);
+    for (int i = 0; i < trackLength; i++)
+    {
+        int index = i - shift;
+        if (index < 0)
+        {
+            index += trackLength;
+        }
+        rotatedPattern[i] = steps[index];
+    }
+    for (int i = 0; i < trackLength; i++)
+    {
+        steps[i] = rotatedPattern[i];
     }
 }
 

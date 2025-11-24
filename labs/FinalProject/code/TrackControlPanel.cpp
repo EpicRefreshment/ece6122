@@ -43,7 +43,11 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
 
     for (int i = 0; i < numTracks; i++)
     {
+        // Get track mode just in case
+        int trackMode = tracks[i]->getMode();
+
         // use all if branches and return to avoid iterating further if click location found.
+        // Parameter 1 (Track Length) Up Button
         if (param1UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
@@ -51,6 +55,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
+        // Parameter 1 (Track Length) Down Button
         if (param1DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
@@ -58,6 +63,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
+        // Parameter 2 (Tempo Division) Up Button
         if (param2UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
@@ -65,6 +71,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
+        // Parameter 2 (Tempo Division) Down Button
         if (param2DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] { 
@@ -72,34 +79,79 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
+        // Parameter 3 (Mode Dependent) Up Button
         if (param3UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { 
-                track->updateProbability(1); 
-            });
+            switch (trackMode)
+            {
+                case 0: // Probabilistic Step Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateProbability(1); 
+                    });
+                    break;
+                case 1: // Euclidean Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateFill(1); 
+                    });
+                    break;
+            }
             return;
         }
+        // Parameter 3 (Mode Dependent) Down Button
         if (param3DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { 
-                track->updateProbability(0); 
-            });
+            switch (trackMode)
+            {
+                case 0: // Probabilistic Step Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateProbability(0); 
+                    });
+                    break;
+                case 1: // Euclidean Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateFill(0); 
+                    });
+                    break;
+            }
             return;
         }
+        // Parameter 4 (Mode Dependent) Up Button
         if (param4UpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { 
-                track->updateRatchet(1); 
-            });
+            switch (trackMode)
+            {
+                case 0: // Probabilistic Step Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateRatchet(1); 
+                    });
+                    break;
+                case 1: // Euclidean Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateShift(1); 
+                    });
+                    break;
+            }
             return;
         }
+        // Parameter 4 (Mode Dependent) Down Button
         if (param4DownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
-            engine.postCommand([track = tracks[i]] { 
-                track->updateRatchet(0); 
-            });
+            switch (trackMode)
+            {
+                case 0: // Probabilistic Step Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateRatchet(0); 
+                    });
+                    break;
+                case 1: // Euclidean Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateShift(0); 
+                    });
+                    break;
+            }
             return;
         }
+        // Mute Buttons
         if (muteButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] {
@@ -117,6 +169,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             }
             return;
         }
+        // Solo Buttons
         if (soloButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] {
@@ -134,6 +187,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             }
             return;
         }
+        // Generate Button
         if (generateButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
         {
             engine.postCommand([track = tracks[i]] {
@@ -141,7 +195,8 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
-        if (regenRateUpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        // Regenerate Rate Up Button
+        if (regenRateUpButtons[i].getGlobalBounds().contains(mousePosX, mousePosY) && trackMode != 1)
         {
             if (tracks[i]->getRegenRate() == 0)
             {
@@ -153,7 +208,7 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
             });
             return;
         }
-        if (regenRateDownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY))
+        if (regenRateDownButtons[i].getGlobalBounds().contains(mousePosX, mousePosY) && trackMode != 1)
         {
             if (tracks[i]->getRegenRate() == 1)
             {
@@ -540,9 +595,19 @@ void TrackControlPanel::updateTrackText(int trackIndex)
     }
     param2Text[trackIndex].setString("Div: " + divStr);
 
-    param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()) + "%");
-
-    param4Text[trackIndex].setString("PRpt: " + to_string(tracks[trackIndex]->getRatchet()));
+    // Get track mode
+    int trackMode = tracks[trackIndex]->getMode();
+    switch (trackMode)
+    {
+        case 0: // Probabilistic Step Sequencer
+            param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()) + "%");
+            param4Text[trackIndex].setString("PRpt: " + to_string(tracks[trackIndex]->getRatchet()));
+            break;
+        case 1: // Euclidean Sequencer
+            param3Text[trackIndex].setString("Fill: " + to_string(tracks[trackIndex]->getFill()));
+            param4Text[trackIndex].setString("Rot: " + to_string(tracks[trackIndex]->getShift()));
+            break;
+    }
 
     int regenRate = tracks[trackIndex]->getRegenRate();
     if (regenRate == 0)
