@@ -53,6 +53,11 @@ public:
     int getRatchet() const;
     int getFill() const;
     int getShift() const;
+    int getRule() const;
+    int getInject() const;
+    int getXORScrambler() const;
+    int getAdd() const;
+    int getEndianness() const;
 
     void updateTrackLength(int direction);
     void updateTempoDivision(int direction);
@@ -61,11 +66,10 @@ public:
     void updateFill(int direction);
     void updateShift(int direction);
     void updateRule(int direction);
-    void updateCellReset(int direction);
+    void updateInject(int direction);
     void updateXORScrambler(int direction);
-    void updateLogicDivision(int direction);
-    void updateLogic(int direction);
-
+    void updateAdd(int direction);
+    void updateEndiannes(int direction);
 
     void toggleStep(int step);
     void toggleMute();
@@ -102,6 +106,13 @@ private:
     int ratchet;
     int fill;
     int shift;
+    uint8_t rule;
+    int inject;
+    int xorScrambler;
+    int addAmount;
+    int endianness;
+
+    vector<uint8_t> ruleList = {30, 54, 90, 102, 110, 122, 138, 154, 162, 170, 178, 186, 194, 202, 210};
 
     int regenRate;
     int regenTicks;

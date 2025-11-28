@@ -211,6 +211,8 @@ void SeqTrack::setMode(int dropdownIndex)
             probability = 100; // set so this parameter essentially inactive since always in use
             ratchet = 1; // set so this parameter essentially inactive since always in use
             regenRate = 0;
+            rule = ruleList[0];
+            inject = 0;
             break;
         case 3: // Shift Register Sequencer
             trackLength = numSteps;
@@ -218,6 +220,8 @@ void SeqTrack::setMode(int dropdownIndex)
             probability = 100; // set so this parameter essentially inactive since always in use
             ratchet = 1; // set so this parameter essentially inactive since always in use
             regenRate = 0;
+            xorScrambler = 0;
+            inject = 0;
             break;
         case 4: // Binary Counter Sequencer
             trackLength = numSteps;
@@ -225,6 +229,8 @@ void SeqTrack::setMode(int dropdownIndex)
             probability = 100; // set so this parameter essentially inactive since always in use
             ratchet = 1; // set so this parameter essentially inactive since always in use
             regenRate = 0;
+            addAmount = 1;
+            endianness = 0;
             break;
     }
 }
@@ -267,6 +273,16 @@ int SeqTrack::getFill() const
 int SeqTrack::getShift() const
 {
     return shift;
+}
+
+int SeqTrack::getRule() const
+{
+    return rule;
+}
+
+int SeqTrack::getInject() const
+{
+    return inject;
 }
 
 void SeqTrack::updateTrackLength(int direction)
@@ -354,6 +370,28 @@ void SeqTrack::updateShift(int direction)
     }
 }
 
+void SeqTrack::updateRule(int direction)
+{
+    auto it = std::find(ruleList.begin(), ruleList.end(), rule);
+    if (it != ruleList.end())
+    {
+        int index = static_cast<int>(std::distance(ruleList.begin(), it));
+        if (direction && index < static_cast<int>(ruleList.size()) - 1)
+        {
+            rule = ruleList[index + 1];
+        }
+        else if (!direction && index > 0)
+        {
+            rule = ruleList[index - 1];
+        }
+    }
+}
+
+void SeqTrack::updateInject(int direction)
+{
+    inject = !inject;
+}
+
 void SeqTrack::toggleMute()
 {
     mute = !mute;
@@ -366,7 +404,7 @@ void SeqTrack::toggleSolo()
 
 void SeqTrack::generate(int clicked, int modeChange)
 {
-    if (modeChange && modeChange != 1)
+    if (modeChange && (mode == 0 or mode == 2))
     {
         for (int i = 0; i < trackLength; i++)
         {
@@ -407,16 +445,10 @@ void SeqTrack::generate(int clicked, int modeChange)
             generateProbabilistic();
             break;
         case 1: // Euclidean Sequencer
-            try
-            {
-                generateEuclidean();
-            }
-            catch (const std::exception& e)
-            {
-                cout << "Error: " << e.what() << endl;
-            }
+            generateEuclidean();
             break;
         case 2: // Cellular Automata Sequencer
+            generateCellularAutomata();
             break;
         case 3: // Shift Register Sequencer
             break;
@@ -568,6 +600,34 @@ void SeqTrack::generateEuclidean()
         cout << steps[x] << " ";
     }
     cout << endl;
+}
+
+void SeqTrack::generateCellularAutomata()
+{
+    vector<bool> newPattern(trackLength, false);
+    if (inject == 1) // inject a live cell on each side
+    {
+        steps[0] = true;
+        steps[trackLength - 1] = true;
+    }
+    for (int i = 0; i < trackLength; i++)
+    {
+        // Get left, center, right cells with wrap-around
+        bool left = steps[(i - 1 + trackLength) % trackLength];
+        bool center = steps[i];
+        bool right = steps[(i + 1) % trackLength];
+
+        // Create a 3-bit number from the cell states
+        int neighborhood = (left << 2) | (center << 1) | right;
+
+        // Determine the new state based on the rule
+        bool newState = (rule >> neighborhood) & 1;
+        newPattern[i] = newState;
+    }
+    for (int i = 0; i < trackLength; i++)
+    {
+        steps[i] = newPattern[i];
+    }
 }
 
 void SeqTrack::shiftPattern(int shift)

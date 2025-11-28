@@ -94,6 +94,11 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                         track->updateFill(1); 
                     });
                     break;
+                case 2: // Cellular Automata Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateRule(1); 
+                    });
+                    break;
             }
             return;
         }
@@ -110,6 +115,11 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                 case 1: // Euclidean Sequencer
                     engine.postCommand([track = tracks[i]] { 
                         track->updateFill(0); 
+                    });
+                    break;
+                case 2: // Cellular Automata Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateRule(0); 
                     });
                     break;
             }
@@ -130,6 +140,11 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                         track->updateShift(1); 
                     });
                     break;
+                case 2: // Cellular Automata Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateInject(1); 
+                    });
+                    break;
             }
             return;
         }
@@ -146,6 +161,11 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                 case 1: // Euclidean Sequencer
                     engine.postCommand([track = tracks[i]] { 
                         track->updateShift(0); 
+                    });
+                    break;
+                case 2: // Cellular Automata Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateInject(0); 
                     });
                     break;
             }
@@ -234,12 +254,9 @@ void TrackControlPanel::handleDropdown(Event event, float mousePosX, float mouse
             {
                 modeText[activeDropdown].setString(dropdownItems[i].getString());
                 tracks[activeDropdown]->setMode(static_cast<int>(i));
-                if (i > 1)
-                {
-                    engine.postCommand([track = tracks[activeDropdown]] {
-                        track->generate(0, 1);
-                    });
-                }
+                engine.postCommand([track = tracks[activeDropdown]] {
+                    track->generate(0, 1);
+                });
                 activeDropdown = -1; // Close dropdown
                 return;
             }
@@ -606,6 +623,17 @@ void TrackControlPanel::updateTrackText(int trackIndex)
         case 1: // Euclidean Sequencer
             param3Text[trackIndex].setString("Fill: " + to_string(tracks[trackIndex]->getFill()));
             param4Text[trackIndex].setString("Rot: " + to_string(tracks[trackIndex]->getShift()));
+            break;
+        case 2: // Cellular Automata Sequencer
+            param3Text[trackIndex].setString("Rule: " + to_string(tracks[trackIndex]->getRule()));
+            if (tracks[trackIndex]->getInject())
+            {
+                param4Text[trackIndex].setString("Injt: On");
+            }
+            else
+            {
+                param4Text[trackIndex].setString("Injt: Off");
+            }
             break;
     }
 
