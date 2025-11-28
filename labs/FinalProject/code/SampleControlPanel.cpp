@@ -201,7 +201,7 @@ void SampleControlPanel::loadSamples(const string& directory)
                 string ext = entry.path().extension().string();
                 if (ext == ".wav" || ext == ".flac" || ext == ".ogg")
                 {
-                    auto& path = entry.path().string();
+                    string path = entry.path().string();
                     string filename = fs::path(path).filename().string();
 
                     Text item;

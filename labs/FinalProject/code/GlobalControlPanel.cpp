@@ -103,6 +103,7 @@ void GlobalControlPanel::handleKeyboard(Event event)
         else
         {
             engine.play();
+            cout << "Playing from space bar" << endl;
         }
     }
     else if (event.key.code == Keyboard::Escape)
@@ -141,6 +142,7 @@ void GlobalControlPanel::handleMouse(Event event, float mousePosX, float mousePo
     if (playButton.getGlobalBounds().contains(mousePosX, mousePosY))
     {
         engine.play();
+        cout << "Playing from mouse click" << endl;
     }
     else if (pauseButton.getGlobalBounds().contains(mousePosX, mousePosY))
     {

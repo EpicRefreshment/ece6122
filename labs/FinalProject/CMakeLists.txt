@@ -22,23 +22,12 @@ file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/code/main.cpp
 add_executable(MultimodeSequencer ${SOURCES})
 target_include_directories(MultimodeSequencer PUBLIC ${PROJECT_SOURCE_DIR}/code/include)
 
-# Find and configure OpenMP
-find_package(OpenMP REQUIRED)
-
 include_directories(${PROJECT_SOURCE_DIR}/../SFML/include)
 
 link_directories(${PROJECT_SOURCE_DIR}/../SFML/lib)
 
 # Link the executable to the libraries in the lib directory
-target_link_libraries(MultimodeSequencer PUBLIC sfml-graphics sfml-system sfml-window sfml-audio OpenMP::OpenMP_CXX)
+target_link_libraries(MultimodeSequencer PUBLIC sfml-graphics sfml-system sfml-window sfml-audio)
 
 file(COPY "${PROJECT_SOURCE_DIR}/fonts" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
 file(COPY "${PROJECT_SOURCE_DIR}/samples" DESTINATION "${COMMON_OUTPUT_DIR}/bin/")
-
-#if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
-#    file(GET_RUNTIME_DEPENDENCIES
-#        EXECUTABLE MultimodeSequencer
-#        RESOLVED_DEPENDENCIES_VAR resolved_deps
-#    )
-#    install(FILES ${resolved_deps} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#endif()

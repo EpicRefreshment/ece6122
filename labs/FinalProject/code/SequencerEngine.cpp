@@ -31,6 +31,8 @@ Return Values:
 SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& pool)
     : tracks(tracks), pool(pool)
 {
+    stopFlag = false;
+
     playing = 0;
     paused = 0;
     stopped = 1;
@@ -56,6 +58,7 @@ SequencerEngine::SequencerEngine(const vector<SeqTrack*>& tracks, ThreadPool& po
 
 SequencerEngine::~SequencerEngine()
 {   
+    cout << "SequencerEngine destructor called, stopping threads." << endl;
     stopFlag = true;
     if (seqThread.joinable())
     {
@@ -169,6 +172,8 @@ void SequencerEngine::run()
             command();
         }
     };
+    
+    cout << "SequencerEngine run thread started." << endl;
 
     while (!stopFlag)
     {
@@ -178,8 +183,7 @@ void SequencerEngine::run()
         if (!isPlaying)
         {
             // Not playing, so sleep for a bit to yield CPU and restart the clock
-            // to prevent accumulating a huge elapsedTime.
-            // to prevent accumulating a huge elapsedTime.            
+            // to prevent accumulating a huge elapsedTime.           
             clock.restart();
             this_thread::sleep_for(chrono::milliseconds(10));
 
