@@ -55,9 +55,10 @@ public:
     int getShift() const;
     int getRule() const;
     int getInject() const;
+    int getLock() const;
     int getXORScrambler() const;
     int getAdd() const;
-    int getEndianness() const;
+    int getBitCount() const;
 
     void updateTrackLength(int direction);
     void updateTempoDivision(int direction);
@@ -67,9 +68,10 @@ public:
     void updateShift(int direction);
     void updateRule(int direction);
     void updateInject(int direction);
+    void updateLock(int direction);
     void updateXORScrambler(int direction);
     void updateAdd(int direction);
-    void updateEndiannes(int direction);
+    void updateBitCount(int direction);
 
     void toggleStep(int step);
     void toggleMute();
@@ -86,7 +88,7 @@ private:
     void generateEuclidean();
     void generateCellularAutomata();
     void generateShiftRegister();
-    void generateLogic();
+    void generateBinaryCounter();
 
     void shiftPattern(int shift);
 
@@ -108,9 +110,10 @@ private:
     int shift;
     uint8_t rule;
     int inject;
+    int lock;
     int xorScrambler;
     int addAmount;
-    int endianness;
+    int bitCount;
 
     vector<uint8_t> ruleList = {30, 54, 90, 102, 110, 122, 138, 154, 162, 170, 178, 186, 194, 202, 210};
 

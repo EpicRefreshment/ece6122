@@ -221,7 +221,7 @@ void SeqTrack::setMode(int dropdownIndex)
             ratchet = 1; // set so this parameter essentially inactive since always in use
             regenRate = 0;
             xorScrambler = 0;
-            inject = 0;
+            lock = 0;
             break;
         case 4: // Binary Counter Sequencer
             trackLength = numSteps;
@@ -230,7 +230,7 @@ void SeqTrack::setMode(int dropdownIndex)
             ratchet = 1; // set so this parameter essentially inactive since always in use
             regenRate = 0;
             addAmount = 1;
-            endianness = 0;
+            bitCount = 16;
             break;
     }
 }
@@ -283,6 +283,26 @@ int SeqTrack::getRule() const
 int SeqTrack::getInject() const
 {
     return inject;
+}
+
+int SeqTrack::getLock() const
+{
+    return lock;
+}
+
+int SeqTrack::getXORScrambler() const
+{
+    return xorScrambler;
+}
+
+int SeqTrack::getAdd() const
+{
+    return addAmount;
+}
+
+int SeqTrack::getBitCount() const
+{
+    return bitCount;
 }
 
 void SeqTrack::updateTrackLength(int direction)
@@ -389,7 +409,62 @@ void SeqTrack::updateRule(int direction)
 
 void SeqTrack::updateInject(int direction)
 {
-    inject = !inject;
+    if (direction)
+    {
+        inject = 1;
+    }
+    else
+    {
+        inject = 0; 
+    }
+}
+
+void SeqTrack::updateLock(int direction)
+{
+    if (direction && lock < 100)
+    {
+        lock += 25;
+    }
+    else if (!direction && lock > 0)
+    {
+        lock -= 25;
+    }
+}
+
+void SeqTrack::updateXORScrambler(int direction)
+{
+    if (direction)
+    {
+        xorScrambler = 1;
+    }
+    else
+    {
+        xorScrambler = 0;
+    }
+}
+
+void SeqTrack::updateAdd(int direction)
+{
+    if (direction && addAmount < 15)
+    {
+        addAmount++;
+    }
+    else if (!direction && addAmount > 1)
+    {
+        addAmount--;
+    }
+}
+
+void SeqTrack::updateBitCount(int direction)
+{
+    if (direction && bitCount < 16)
+    {
+        bitCount *= 2;
+    }
+    else if (!direction && bitCount > 2)
+    {
+        bitCount /= 2;
+    }
 }
 
 void SeqTrack::toggleMute()
@@ -404,20 +479,27 @@ void SeqTrack::toggleSolo()
 
 void SeqTrack::generate(int clicked, int modeChange)
 {
-    if (modeChange && (mode == 0 or mode == 2))
+    if (modeChange)
     {
-        for (int i = 0; i < trackLength; i++)
+        if ((mode == 0 || mode == 2))
         {
-            // default to 50 here since density isn't a parameter
-            // when the modeChange is 1
-            if ((rand() % 101) <= 50)
+            for (int i = 0; i < trackLength; i++)
             {
-                steps[i] = true;
+                // default to 50 here since density isn't a parameter
+                // when the modeChange is 1
+                if ((rand() % 101) <= 50)
+                {
+                    steps[i] = true;
+                }
+                else
+                {
+                    steps[i] = false;
+                }
             }
-            else
-            {
-                steps[i] = false;
-            }
+        }
+        else
+        {
+            this->clear();
         }
         return;
     }
@@ -451,8 +533,10 @@ void SeqTrack::generate(int clicked, int modeChange)
             generateCellularAutomata();
             break;
         case 3: // Shift Register Sequencer
+            generateShiftRegister();
             break;
         case 4: // Logic Sequencer
+            generateBinaryCounter();
             break;
     }
 }
@@ -494,16 +578,6 @@ void SeqTrack::generateEuclidean()
         }
     }
 
-    cout << "Initial Pattern: " << endl;
-    for (size_t x = 0; x < patterns.size(); x++)
-    {
-        for (size_t y = 0; y < patterns[x].size(); y++)
-        {
-            cout << patterns[x][y] << " ";
-        }
-        cout << endl;
-    }
-
     // Generate a sequence of values of size {fill}, t, that
     // tell the algorithm how many "rows" to distribute
     vector<int> t(trackLength, 0);
@@ -542,13 +616,6 @@ void SeqTrack::generateEuclidean()
             t[i] = t[i-1];
         }
     }
-
-    cout << "t: ";
-    for (size_t x = 0; x < t.size(); x++)
-    {
-        cout << t[x] << " ";
-    }
-    cout << endl;
             
     for (int i = 0; i < trackLength; i++)
     {
@@ -563,15 +630,6 @@ void SeqTrack::generateEuclidean()
             vector<bool> toMove = patterns.back();
             patterns[j].insert(patterns[j].end(), toMove.begin(), toMove.end());
             patterns.pop_back();
-        }
-        cout << "Remainder Pattern (t = " << t[i] << "): " << endl;
-        for (size_t x = 0; x < patterns.size(); x++)
-        {
-            for (size_t y = 0; y < patterns[x].size(); y++)
-            {
-                cout << patterns[x][y] << " ";
-            }
-            cout << endl;
         }
     }
     // just pop back vector and add to previous vector until there's only one vector left.
@@ -594,12 +652,6 @@ void SeqTrack::generateEuclidean()
     {
         shiftPattern(shift);
     }
-    cout << "Shifted Pattern (shift = " << shift << "): " << endl;
-    for (size_t x = 0; x < steps.size(); x++)
-    {
-        cout << steps[x] << " ";
-    }
-    cout << endl;
 }
 
 void SeqTrack::generateCellularAutomata()
@@ -627,6 +679,48 @@ void SeqTrack::generateCellularAutomata()
     for (int i = 0; i < trackLength; i++)
     {
         steps[i] = newPattern[i];
+    }
+}
+
+void SeqTrack::generateShiftRegister()
+{
+    shiftPattern(1); // Shift right by 1
+    if (lock < 100)
+    {
+        // Randomly set the new bit based on lock percentage
+        if ((rand() % 101) >= lock)
+        {
+            steps[0] = (rand() % 2) == 1; // New random bit
+        }
+    }
+    if (xorScrambler)
+    {
+        // XOR the first two bits to create feedback
+        bool feedback = steps[0] ^ steps[1];
+        steps[0] = feedback;
+    }
+}
+
+void SeqTrack::generateBinaryCounter()
+{
+    // Convert current pattern to integer
+    int value = 0;
+    for (int i = 0; i < bitCount; i++)
+    {
+        if (steps[i])
+        {
+            value |= (1 << (bitCount - 1 - i));
+        }
+    }
+
+    // Add the specified amount
+    value = (value + addAmount) % (1 << bitCount); // Wrap around based on bit count
+
+    // Convert back to pattern
+    for (int i = 0; i < trackLength; i++)
+    {
+        // if bitCount < trackLength, the pattern repeats
+        steps[i] = (value >> (bitCount - 1 - (i % bitCount))) & 1;
     }
 }
 

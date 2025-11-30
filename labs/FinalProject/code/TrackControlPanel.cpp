@@ -99,6 +99,16 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                         track->updateRule(1); 
                     });
                     break;
+                case 3: // Shift Register Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateLock(1); 
+                    });
+                    break;
+                case 4: // Binary Counter Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateAdd(1); 
+                    });
+                    break;
             }
             return;
         }
@@ -120,6 +130,16 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                 case 2: // Cellular Automata Sequencer
                     engine.postCommand([track = tracks[i]] { 
                         track->updateRule(0); 
+                    });
+                    break;
+                case 3: // Shift Register Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateLock(0); 
+                    });
+                    break;
+                case 4: // Binary Counter Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateAdd(0); 
                     });
                     break;
             }
@@ -145,6 +165,16 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                         track->updateInject(1); 
                     });
                     break;
+                case 3: // Shift Register Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateXORScrambler(1); 
+                    });
+                    break;
+                case 4: // Binary Counter Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateBitCount(1); 
+                    });
+                    break;
             }
             return;
         }
@@ -166,6 +196,16 @@ void TrackControlPanel::handleMouse(Event event, float mousePosX, float mousePos
                 case 2: // Cellular Automata Sequencer
                     engine.postCommand([track = tracks[i]] { 
                         track->updateInject(0); 
+                    });
+                    break;
+                case 3: // Shift Register Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateXORScrambler(0); 
+                    });
+                    break;
+                case 4: // Binary Counter Sequencer
+                    engine.postCommand([track = tracks[i]] { 
+                        track->updateBitCount(0); 
                     });
                     break;
             }
@@ -287,7 +327,11 @@ void TrackControlPanel::update()
     // This update loop ensures the text always reflects the current state.
     for (int i = 0; i < numTracks; i++)
     {
-        updateTrackText(i);
+        updateParam1Text(i);
+        updateParam2Text(i);
+        updateParam3Text(i);
+        updateParam4Text(i);
+        updateRegenText(i);
     }
 
     if (activeDropdown != -1)
@@ -404,7 +448,11 @@ void TrackControlPanel::initShapes()
         initMuteSoloControls(i, trackHeight);
         initGenerateControls(i, trackHeight);
 
-        updateTrackText(i);
+        updateParam1Text(i);
+        updateParam2Text(i);
+        updateParam3Text(i);
+        updateParam4Text(i);
+        updateRegenText(i);
     }
 }
 
@@ -482,7 +530,7 @@ void TrackControlPanel::initDropdownButtons(int index, float trackHeight)
     dropdownButtons[index].setOutlineThickness(1.0f);
 
     // Mode Text (for dropdown buttons)
-    setupText(modeText[index], "Step Sequencer", {dropdownButtons[index].getPosition().x + 5, dropdownButtons[index].getPosition().y + 2}, 14);
+    setupText(modeText[index], "Probabilistic Step Sequencer", {dropdownButtons[index].getPosition().x + 5, dropdownButtons[index].getPosition().y + 2}, 14);
 }
 
 void TrackControlPanel::initParameterControls(int index, float trackHeight)
@@ -593,13 +641,16 @@ void TrackControlPanel::initDropdownItems()
     setupText(dropdownItems[1], "Euclidean Sequencer", {0, 0}, 14);
     setupText(dropdownItems[2], "Cellular Automata Sequencer", {0, 0}, 14);
     setupText(dropdownItems[3], "Shift Register Sequencer", {0, 0}, 14);
-    setupText(dropdownItems[4], "Markov Chain Sequencer", {0, 0}, 14);
+    setupText(dropdownItems[4], "Binary Counter Sequencer", {0, 0}, 14);
 }
 
-void TrackControlPanel::updateTrackText(int trackIndex)
+void TrackControlPanel::updateParam1Text(int trackIndex)
 {
     param1Text[trackIndex].setString("Len: " + to_string(tracks[trackIndex]->getTrackLength()));
+}
 
+void TrackControlPanel::updateParam2Text(int trackIndex)
+{
     double div = tracks[trackIndex]->getTempoDivision();
     string divStr;
     if (div >= 1.0)
@@ -611,21 +662,45 @@ void TrackControlPanel::updateTrackText(int trackIndex)
         divStr = "1/" + to_string(static_cast<int>(1.0 / div)) + "x";
     }
     param2Text[trackIndex].setString("Div: " + divStr);
+}
 
+void TrackControlPanel::updateParam3Text(int trackIndex)
+{
     // Get track mode
     int trackMode = tracks[trackIndex]->getMode();
     switch (trackMode)
     {
         case 0: // Probabilistic Step Sequencer
             param3Text[trackIndex].setString("Prob: " + to_string(tracks[trackIndex]->getProbability()) + "%");
-            param4Text[trackIndex].setString("PRpt: " + to_string(tracks[trackIndex]->getRatchet()));
             break;
         case 1: // Euclidean Sequencer
             param3Text[trackIndex].setString("Fill: " + to_string(tracks[trackIndex]->getFill()));
-            param4Text[trackIndex].setString("Rot: " + to_string(tracks[trackIndex]->getShift()));
             break;
         case 2: // Cellular Automata Sequencer
             param3Text[trackIndex].setString("Rule: " + to_string(tracks[trackIndex]->getRule()));
+            break;
+        case 3: // Shift Register Sequencer
+            param3Text[trackIndex].setString("Lock: " + to_string(tracks[trackIndex]->getLock()) + "%");
+            break;
+        case 4: // Binary Counter Sequencer
+            param3Text[trackIndex].setString("Add: " + to_string(tracks[trackIndex]->getAdd()));
+            break;
+    }
+}
+
+void TrackControlPanel::updateParam4Text(int trackIndex)
+{
+    // Get track mode
+    int trackMode = tracks[trackIndex]->getMode();
+    switch (trackMode)
+    {
+        case 0: // Probabilistic Step Sequencer
+            param4Text[trackIndex].setString("PRpt: " + to_string(tracks[trackIndex]->getRatchet()));
+            break;
+        case 1: // Euclidean Sequencer
+            param4Text[trackIndex].setString("Rot: " + to_string(tracks[trackIndex]->getShift()));
+            break;
+        case 2: // Cellular Automata Sequencer
             if (tracks[trackIndex]->getInject())
             {
                 param4Text[trackIndex].setString("Injt: On");
@@ -635,8 +710,24 @@ void TrackControlPanel::updateTrackText(int trackIndex)
                 param4Text[trackIndex].setString("Injt: Off");
             }
             break;
+        case 3: // Shift Register Sequencer
+            if (tracks[trackIndex]->getXORScrambler())  
+            {
+                param4Text[trackIndex].setString("XOR: On");
+            }
+            else
+            {
+                param4Text[trackIndex].setString("XOR: Off");
+            }
+            break;
+        case 4: // Binary Counter Sequencer
+            param4Text[trackIndex].setString("Bits: " + to_string(tracks[trackIndex]->getBitCount()));
+            break;
     }
+}
 
+void TrackControlPanel::updateRegenText(int trackIndex)
+{
     int regenRate = tracks[trackIndex]->getRegenRate();
     if (regenRate == 0)
     {

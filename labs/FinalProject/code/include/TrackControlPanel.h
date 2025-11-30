@@ -49,7 +49,11 @@ private:
     void initParameterControls(int index, float trackHeight);
     void initMuteSoloControls(int index, float trackHeight);
     void initGenerateControls(int index, float trackHeight);
-    void updateTrackText(int trackIndex);
+    void updateParam1Text(int trackIndex);
+    void updateParam2Text(int trackIndex);
+    void updateParam3Text(int trackIndex);
+    void updateParam4Text(int trackIndex);
+    void updateRegenText(int trackIndex);
     void handleDropdown(Event event, float mousePosX, float mousePosY);
 
     RenderWindow& window;
