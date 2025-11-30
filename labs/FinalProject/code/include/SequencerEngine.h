@@ -80,9 +80,10 @@ private:
 
     atomic<long long> avgProcessingTime;
     atomic<long long> avgTimingDeviation;
-    atomic<long long> sumProcessingTime;
-    atomic<long long> sumTimingDeviation;
     atomic<long long> measurementCount;
+
+    long long sumProcessingTime;
+    long long sumTimingDeviation;
 
     Clock clock;
     Time elapsedTime; // Accumulates time for drift-free timing

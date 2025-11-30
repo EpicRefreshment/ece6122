@@ -172,6 +172,10 @@ void SequencerEngine::run()
             command();
         }
     };
+
+    // Performance measurement variables
+    long long lastMeasuredTick = 0;
+    long long processingStartTime = 0;
     
     cout << "SequencerEngine run thread started." << endl;
 
@@ -233,27 +237,16 @@ void SequencerEngine::run()
             
             ticked = true; // Signal to the UI thread that a tick happened.
         }
-        // Sleep for a very short duration to be responsive but not burn 100% CPU.
-        this_thread::sleep_for(chrono::microseconds(250));
-    }
-}
 
-void SequencerEngine::measurePerformance()
-{
-    long long lastMeasuredTick = 0;
-    long long processingStartTime = 0;
-
-    while (!stopFlag)
-    {
-        long long currentTick = globalTick.load();
-        if (currentTick > lastMeasuredTick)
+        // Performance measurement logic
+        if (globalTick > lastMeasuredTick)
         {
-            if (currentTick % 16 == 1) // Start of a 16-tick block
+            if (globalTick % 16 == 1) // Start of a 16-tick block
             {
                 processingStartTime = lastTickTime.load();
             }
 
-            if (currentTick % 16 == 0 && currentTick > 0) // End of a 16-tick block
+            if (globalTick % 16 == 0 && globalTick > 0) // End of a 16-tick block
             {
                 long long processingEndTime = lastTickTime.load();
                 processingTime.store(processingEndTime - processingStartTime);
@@ -261,26 +254,49 @@ void SequencerEngine::measurePerformance()
                 long long scheduledTime = lastTickScheduledTime.load();
                 long long actualTime = lastTickTime.load();
                 timingDeviation.store(actualTime - scheduledTime);
-
-                cout << "Processing time for last 16 ticks: " << processingTime.load() << " us, "
-                     << "Timing deviation: " << timingDeviation.load() << " us." << endl;
-                sumProcessingTime += processingTime.load();
-                sumTimingDeviation += timingDeviation.load();
-                long long count = measurementCount.fetch_add(1) + 1;
-
-                if (count > 0)
-                {
-					avgProcessingTime.store(sumProcessingTime.load() / count);
-					avgTimingDeviation.store(sumTimingDeviation.load() / count);
-                }
+                measurementCount.fetch_add(1);
             }
 
-            lastMeasuredTick = currentTick;
+            lastMeasuredTick = globalTick;
         }
-        else if (currentTick == -1)
+        else if (globalTick == -1)
         {
             lastMeasuredTick = 0;
             processingStartTime = 0;
+        }
+        // Sleep for a very short duration to be responsive but not burn 100% CPU.
+        this_thread::sleep_for(chrono::microseconds(250));
+    }
+}
+
+void SequencerEngine::measurePerformance()
+{
+    // Check performance metrics every 16 ticks and log them.
+    long long count = 0;
+    while (!stopFlag)
+    {
+        long long newCount = measurementCount.load();
+        long long procTime = processingTime.load();
+        long long timingDev = timingDeviation.load();
+        if (newCount > count)
+        {
+            // output performance metrics
+            cout << "Processing time for last 16 ticks: " << procTime << " us, "
+                 << "Timing deviation: " << timingDev << " us." << endl;
+            // accumulate timing metrics
+            sumProcessingTime += procTime;
+            sumTimingDeviation += timingDev;
+            // update count
+            count = newCount;
+            // store average for display on GUI
+            avgProcessingTime.store(sumProcessingTime / count);
+			avgTimingDeviation.store(sumTimingDeviation / count);
+        }
+
+        if (count > 0)
+        {
+			avgProcessingTime.store(sumProcessingTime / count);
+			avgTimingDeviation.store(sumTimingDeviation / count);
         }
 
         // Sleep to avoid busy-waiting
